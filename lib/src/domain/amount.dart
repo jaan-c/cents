@@ -9,7 +9,11 @@ class Amount {
 
   const Amount._internal(this.totalCents);
 
+<<<<<<< HEAD
   const Amount({int unit = 0, int cents = 0})
+=======
+  const Amount([int unit = 0, int cents = 0])
+>>>>>>> create-expense-list-page
       : this._internal(cents + (unit * _CENTS_PER_UNIT));
 
   Amount add(Amount other) {
