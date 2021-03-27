@@ -4,17 +4,21 @@ import 'amount.dart';
 import 'expense_category.dart';
 
 class Expense {
+  final int id;
   final Amount cost;
   final ExpenseCategory category;
   final String note;
 
   Expense(
-      {this.cost = const Amount(),
+      {this.id = 0,
+      this.cost = const Amount(),
       this.category = const ExpenseCategory.uncategorized(),
       this.note = ""});
 
-  Expense copyWith({Amount? cost, ExpenseCategory? category, String? note}) {
+  Expense copyWith(
+      {int? id = 0, Amount? cost, ExpenseCategory? category, String? note}) {
     return Expense(
+        id: id ?? this.id,
         cost: cost ?? this.cost,
         category: category ?? this.category,
         note: note ?? this.note);
@@ -26,5 +30,5 @@ class Expense {
   }
 
   @override
-  int get hashCode => hash3(cost, category, note);
+  int get hashCode => hash4(id, cost, category, note);
 }
