@@ -26,4 +26,13 @@ abstract class AppDatabase extends FloorDatabase {
   }
 
   ExpenseDao get expenseDao;
+
+  @override
+  Future<void> close() async {
+    if (_instance == this) {
+      _instance = null;
+    }
+
+    await super.close();
+  }
 }
