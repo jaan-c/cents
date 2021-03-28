@@ -107,6 +107,18 @@ class _$ExpenseDao extends ExpenseDao {
                   'createdAt': _dateTimeConverter.encode(item.createdAt),
                   'note': item.note
                 },
+            changeListener),
+        _databaseExpenseUpdateAdapter = UpdateAdapter(
+            database,
+            'Expenses',
+            ['id'],
+            (DatabaseExpense item) => <String, Object?>{
+                  'id': item.id,
+                  'cost': _amountConverter.encode(item.cost),
+                  'category': _expenseCategoryConverter.encode(item.category),
+                  'createdAt': _dateTimeConverter.encode(item.createdAt),
+                  'note': item.note
+                },
             changeListener);
 
   final sqflite.DatabaseExecutor database;
@@ -117,20 +129,12 @@ class _$ExpenseDao extends ExpenseDao {
 
   final InsertionAdapter<DatabaseExpense> _databaseExpenseInsertionAdapter;
 
-  @override
-  Future<List<DatabaseExpense>> getAllExpenses() async {
-    return _queryAdapter.queryList('SELECT * FROM Expenses',
-        mapper: (Map<String, Object?> row) => DatabaseExpense(
-            row['id'] as int,
-            _amountConverter.decode(row['cost'] as int),
-            _expenseCategoryConverter.decode(row['category'] as String),
-            _dateTimeConverter.decode(row['createdAt'] as String),
-            row['note'] as String));
-  }
+  final UpdateAdapter<DatabaseExpense> _databaseExpenseUpdateAdapter;
 
   @override
-  Stream<List<DatabaseExpense>> getAllExpensesStream() {
-    return _queryAdapter.queryListStream('SELECT * FROM Expenses',
+  Stream<List<DatabaseExpense>> getAllStream() {
+    return _queryAdapter.queryListStream(
+        'SELECT * FROM Expenses ORDER BY createdAt DESC',
         mapper: (Map<String, Object?> row) => DatabaseExpense(
             row['id'] as int,
             _amountConverter.decode(row['cost'] as int),
@@ -142,8 +146,45 @@ class _$ExpenseDao extends ExpenseDao {
   }
 
   @override
+  Future<DatabaseExpense?> get(int id) async {
+    return _queryAdapter.query('SELECT * FROM Expenses WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => DatabaseExpense(
+            row['id'] as int,
+            _amountConverter.decode(row['cost'] as int),
+            _expenseCategoryConverter.decode(row['category'] as String),
+            _dateTimeConverter.decode(row['createdAt'] as String),
+            row['note'] as String),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> delete(int id) async {
+    await _queryAdapter
+        .queryNoReturn('DELETE FROM Expenses WHERE id = ?1', arguments: [id]);
+  }
+
+  @override
+  Stream<List<String>> getCategoriesStream() {
+    await _queryAdapter.queryNoReturn(
+        'SELECT DISTINCT category from Expenses ORDER BY category ASC');
+  }
+
+  @override
+  Future<void> renameCategory(String oldCategory, String newCategory) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE Expenses SET category = ?2 WHERE category = ?1',
+        arguments: [oldCategory, newCategory]);
+  }
+
+  @override
   Future<void> insert(DatabaseExpense expense) async {
     await _databaseExpenseInsertionAdapter.insert(
+        expense, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> update(DatabaseExpense expense) async {
+    await _databaseExpenseUpdateAdapter.update(
         expense, OnConflictStrategy.abort);
   }
 }
