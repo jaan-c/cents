@@ -7,20 +7,27 @@ class Expense {
   final int id;
   final Amount cost;
   final ExpenseCategory category;
+  final DateTime createdAt;
   final String note;
 
   Expense(
       {this.id = 0,
-      this.cost = const Amount(),
-      this.category = const ExpenseCategory.uncategorized(),
+      required this.cost,
+      required this.category,
+      required this.createdAt,
       this.note = ""});
 
   Expense copyWith(
-      {int? id = 0, Amount? cost, ExpenseCategory? category, String? note}) {
+      {int? id = 0,
+      Amount? cost,
+      ExpenseCategory? category,
+      DateTime? createdAt,
+      String? note}) {
     return Expense(
         id: id ?? this.id,
         cost: cost ?? this.cost,
         category: category ?? this.category,
+        createdAt: createdAt ?? this.createdAt,
         note: note ?? this.note);
   }
 
@@ -30,5 +37,5 @@ class Expense {
   }
 
   @override
-  int get hashCode => hash4(id, cost, category, note);
+  int get hashCode => hashObjects([id, cost, category, createdAt, note]);
 }

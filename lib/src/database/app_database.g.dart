@@ -80,7 +80,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Expenses` (`id` INTEGER NOT NULL, `cost` INTEGER NOT NULL, `category` TEXT NOT NULL, `note` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Expenses` (`id` INTEGER NOT NULL, `cost` INTEGER NOT NULL, `category` TEXT NOT NULL, `createdAt` TEXT NOT NULL, `note` TEXT NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -104,6 +104,7 @@ class _$ExpenseDao extends ExpenseDao {
                   'id': item.id,
                   'cost': _amountConverter.encode(item.cost),
                   'category': _expenseCategoryConverter.encode(item.category),
+                  'createdAt': _dateTimeConverter.encode(item.createdAt),
                   'note': item.note
                 },
             changeListener);
@@ -123,6 +124,7 @@ class _$ExpenseDao extends ExpenseDao {
             row['id'] as int,
             _amountConverter.decode(row['cost'] as int),
             _expenseCategoryConverter.decode(row['category'] as String),
+            _dateTimeConverter.decode(row['createdAt'] as String),
             row['note'] as String));
   }
 
@@ -133,6 +135,7 @@ class _$ExpenseDao extends ExpenseDao {
             row['id'] as int,
             _amountConverter.decode(row['cost'] as int),
             _expenseCategoryConverter.decode(row['category'] as String),
+            _dateTimeConverter.decode(row['createdAt'] as String),
             row['note'] as String),
         queryableName: 'Expenses',
         isView: false);
@@ -148,3 +151,4 @@ class _$ExpenseDao extends ExpenseDao {
 // ignore_for_file: unused_element
 final _amountConverter = AmountConverter();
 final _expenseCategoryConverter = ExpenseCategoryConverter();
+final _dateTimeConverter = DateTimeConverter();
