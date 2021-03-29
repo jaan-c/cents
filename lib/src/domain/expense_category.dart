@@ -3,8 +3,9 @@ class ExpenseCategory {
 
   const ExpenseCategory(this.name);
 
-  const ExpenseCategory.uncategorized() : this("");
+  const ExpenseCategory.uncategorized() : this('');
 
+  @override
   bool operator ==(dynamic other) {
     return other is ExpenseCategory && hashCode == other.hashCode;
   }

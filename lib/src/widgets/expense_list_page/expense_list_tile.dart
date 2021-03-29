@@ -10,24 +10,24 @@ class ExpenseListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
+      padding: EdgeInsets.all(16),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _createdAtText(context),
           Row(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
             children: [
               Expanded(child: _categoryText(context)),
               _costText(context),
             ],
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
           ),
           _noteText(context),
         ],
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
       ),
-      padding: EdgeInsets.all(16),
     );
   }
 
