@@ -19,9 +19,6 @@ abstract class ExpenseDao {
   @Update()
   Future<void> update(DatabaseExpense expense);
 
-  @Query("SELECT DISTINCT category from Expenses ORDER BY category ASC")
-  Stream<List<String>> getCategoriesStream();
-
   @Query(
       "UPDATE Expenses SET category = :newCategory WHERE category = :oldCategory")
   Future<void> renameCategory(String oldCategory, String newCategory);

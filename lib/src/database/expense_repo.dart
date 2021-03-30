@@ -15,8 +15,8 @@ class ExpenseRepo {
       .map((dbExpenses) => dbExpenses.map((de) => de.asDomain()).toList());
 
   Stream<List<ExpenseCategory>> get categoriesStream =>
-      _dao.getCategoriesStream().map((dbCategories) =>
-          dbCategories.map((dc) => ExpenseCategory(dc)).toList());
+      _dao.getAllStream().map((dbExpenses) =>
+          dbExpenses.map((de) => de.asDomain().category).toSet().toList());
 
   ExpenseRepo(this._database);
 

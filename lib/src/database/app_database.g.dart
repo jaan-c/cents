@@ -164,12 +164,6 @@ class _$ExpenseDao extends ExpenseDao {
   }
 
   @override
-  Stream<List<String>> getCategoriesStream() {
-    await _queryAdapter.queryNoReturn(
-        'SELECT DISTINCT category from Expenses ORDER BY category ASC');
-  }
-
-  @override
   Future<void> renameCategory(String oldCategory, String newCategory) async {
     await _queryAdapter.queryNoReturn(
         'UPDATE Expenses SET category = ?2 WHERE category = ?1',
