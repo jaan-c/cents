@@ -46,8 +46,7 @@ class ExpenseListTile extends StatelessWidget {
   }
 
   Widget _costText(BuildContext context) {
-    final content =
-        '\u20B1${expense.cost.units}.${expense.cost.cents.toString().padLeft(2, '0')}';
+    final content = '\u20B1$expense';
 
     final textTheme = Theme.of(context).textTheme;
 
