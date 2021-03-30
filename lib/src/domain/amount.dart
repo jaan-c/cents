@@ -12,6 +12,8 @@ class Amount {
   const Amount([int unit = 0, int cents = 0])
       : this._internal(cents + (unit * _CENTS_PER_UNIT));
 
+  Amount.parse(String text) : this._internal(_textToTotalCents(text));
+
   Amount add(Amount other) {
     return Amount._internal(totalCents + other.totalCents);
   }
@@ -26,4 +28,22 @@ class Amount {
 
   @override
   int get hashCode => totalCents.hashCode;
+
+  @override
+  String toString() {
+    return '$units.${cents.toString().padLeft(2, '0')}';
+  }
+}
+
+int _textToTotalCents(String text) {
+  final decimal = RegExp(r'^\s*(\d+)(\.\d+)+\s*$');
+  if (!decimal.hasMatch(text)) {
+    throw StateError('Invalid amount $text.');
+  }
+
+  final split = text.split('.');
+  final unit = int.parse(split[0]);
+  final cents = split.length > 1 ? int.parse(split[1]) : 0;
+
+  return Amount(unit, cents).totalCents;
 }
