@@ -36,14 +36,11 @@ class Amount {
 }
 
 int _textToTotalCents(String text) {
-  final decimal = RegExp(r'^\s*(\d+)(\.\d+)+\s*$');
-  if (!decimal.hasMatch(text)) {
-    throw FormatException('Invalid amount $text.');
-  }
+  text = double.parse(text).toString();
 
   final split = text.split('.');
   final unit = int.parse(split[0]);
-  final cents = split.length > 1 ? int.parse(split[1]) : 0;
+  final cents = split.length == 2 ? int.parse(split[1]) : 0;
 
   return Amount(unit, cents).totalCents;
 }
