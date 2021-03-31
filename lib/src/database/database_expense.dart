@@ -5,7 +5,7 @@ import 'package:floor/floor.dart';
 
 @Entity(tableName: "Expenses")
 class DatabaseExpense {
-  @primaryKey
+  @PrimaryKey(autoGenerate: true)
   final int id;
   final Amount cost;
   final ExpenseCategory category;
