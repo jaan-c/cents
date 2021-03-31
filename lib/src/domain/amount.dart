@@ -38,7 +38,7 @@ class Amount {
 int _textToTotalCents(String text) {
   final decimal = RegExp(r'^\s*(\d+)(\.\d+)+\s*$');
   if (!decimal.hasMatch(text)) {
-    throw StateError('Invalid amount $text.');
+    throw FormatException('Invalid amount $text.');
   }
 
   final split = text.split('.');
