@@ -10,7 +10,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Cents',
-      home: ExpenseListPage(expenses: []),
+      home: ExpenseListPage(),
     );
   }
 }
