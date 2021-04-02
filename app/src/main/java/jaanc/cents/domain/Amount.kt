@@ -11,7 +11,7 @@ data class Amount(val totalCents: Int) {
             return Amount(0)
         }
 
-        fun from(unit: Int, cent: Int = 0): Amount {
+        fun of(unit: Int, cent: Int = 0): Amount {
             if (cent !in 0..99) {
                 throw IllegalArgumentException("cent must be between 0..99")
             }

@@ -39,19 +39,19 @@ fun ExpenseListPagePreview() {
             Expense(
                 id = 1,
                 category = ExpenseCategory("Food"),
-                cost = Amount.from(12),
+                cost = Amount.of(12),
                 note = "Cofe!"
             ),
             Expense(
                 id = 2,
                 category = ExpenseCategory("Commute"),
-                cost = Amount.from(20),
+                cost = Amount.of(20),
                 createdAt = LocalDateTime.now().minusDays(3)
             ),
             Expense(
                 id = 3,
                 category = ExpenseCategory("Internet"),
-                cost = Amount.from(99),
+                cost = Amount.of(99),
                 createdAt = LocalDateTime.now().minusDays(15)
             ),
         )

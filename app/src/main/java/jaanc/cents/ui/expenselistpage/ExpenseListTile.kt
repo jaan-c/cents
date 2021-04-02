@@ -62,7 +62,7 @@ fun ExpenseListTilePreview() {
     ExpenseListTile(
         Expense(
             category = ExpenseCategory("Food"),
-            cost = Amount.from(12),
+            cost = Amount.of(12),
             note = "Cofe!"
         )
     )
