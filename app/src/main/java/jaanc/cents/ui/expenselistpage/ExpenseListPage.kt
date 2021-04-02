@@ -1,4 +1,4 @@
-package jaanc.cents.widgets
+package jaanc.cents.ui.expenselistpage
 
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons

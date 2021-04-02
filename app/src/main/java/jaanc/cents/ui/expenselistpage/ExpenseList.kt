@@ -1,4 +1,4 @@
-package jaanc.cents.widgets
+package jaanc.cents.ui.expenselistpage
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
