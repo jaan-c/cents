@@ -1,5 +1,6 @@
 package jaanc.cents.ui.expenselistpage
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -16,11 +17,11 @@ import jaanc.cents.utils.display
 import jaanc.cents.utils.displayRelative
 
 @Composable
-fun ExpenseListTile(expense: Expense) {
+fun ExpenseListTile(expense: Expense, onClick: () -> Unit) {
     val typography = MaterialTheme.typography
     val colors = MaterialTheme.colors
 
-    Surface() {
+    Surface(modifier = Modifier.clickable { onClick() }) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 expense.createdAt.displayRelative(), style = typography.overline
@@ -65,5 +66,5 @@ fun ExpenseListTilePreview() {
             cost = Amount.of(12),
             note = "Cofe!"
         )
-    )
+    ) {}
 }

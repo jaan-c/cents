@@ -5,6 +5,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.navigate
+import androidx.navigation.compose.rememberNavController
 import jaanc.cents.domain.Amount
 import jaanc.cents.domain.Expense
 import jaanc.cents.domain.ExpenseCategory
@@ -12,22 +14,31 @@ import java.time.LocalDateTime
 
 @Composable
 fun ExpenseListPage() {
+    val navController = rememberNavController()
 
+    ExpenseListPage(
+        expenses = listOf(),
+        onOpenEditor = { expenseId ->
+            navController.navigate("expense_editor_page?expenseId=$expenseId")
+        },
+    )
 }
 
 @Composable
-fun ExpenseListPage(expenses: List<Expense>) {
+fun ExpenseListPage(
+    expenses: List<Expense>, onOpenEditor: (expenseId: Int) -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("Expenses") })
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO*/ }) {
+            FloatingActionButton(onClick = { onOpenEditor(Expense.UNSET_ID) }) {
                 Icon(Icons.Rounded.Add, contentDescription = "Add Expense")
             }
         },
     ) {
-        ExpenseList(expenses)
+        ExpenseList(expenses, onOpenEditor)
     }
 }
 
@@ -54,6 +65,6 @@ fun ExpenseListPagePreview() {
                 cost = Amount.of(99),
                 createdAt = LocalDateTime.now().minusDays(15)
             ),
-        )
-    )
+        ),
+    ) {}
 }

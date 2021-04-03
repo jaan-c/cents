@@ -11,10 +11,12 @@ import jaanc.cents.domain.ExpenseCategory
 import java.time.LocalDateTime
 
 @Composable
-fun ExpenseList(expenses: List<Expense>) {
+fun ExpenseList(
+    expenses: List<Expense>, onOpenEditor: (expenseId: Int) -> Unit
+) {
     LazyColumn() {
         items(items = expenses, key = Expense::id) { e ->
-            ExpenseListTile(e)
+            ExpenseListTile(e) { onOpenEditor(e.id) }
             if (e != expenses.last()) {
                 Divider()
             }
@@ -45,6 +47,6 @@ fun ExpenseListPreview() {
                 cost = Amount.of(99),
                 createdAt = LocalDateTime.now().minusDays(15)
             ),
-        )
-    )
+        ),
+    ) {}
 }
