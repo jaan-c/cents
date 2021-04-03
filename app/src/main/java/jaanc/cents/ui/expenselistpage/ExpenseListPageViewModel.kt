@@ -8,6 +8,7 @@ import jaanc.cents.database.AppRepo
 
 class ExpenseListPageViewModel(context: Context) :
     AndroidViewModel(context.applicationContext as Application) {
+    
     private val repo = AppRepo(AppDatabase.getInstance(context))
 
     val allExpenses = repo.allExpenses
