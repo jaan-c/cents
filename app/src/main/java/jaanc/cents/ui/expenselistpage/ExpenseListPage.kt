@@ -4,6 +4,9 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
@@ -14,10 +17,13 @@ import java.time.LocalDateTime
 
 @Composable
 fun ExpenseListPage() {
+    val viewModel = ExpenseListPageViewModel(LocalContext.current)
     val navController = rememberNavController()
 
+    val allExpenses by viewModel.allExpenses.observeAsState(listOf())
+
     ExpenseListPage(
-        expenses = listOf(),
+        expenses = allExpenses,
         onOpenEditor = { expenseId ->
             navController.navigate("expense_editor_page?expenseId=$expenseId")
         },
