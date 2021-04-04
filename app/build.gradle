@@ -67,4 +67,5 @@ dependencies {
     implementation "androidx.compose.material:material-icons-core:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
 
+    implementation "com.vanpra.compose-material-dialogs:datetime:0.3.2"
 }
