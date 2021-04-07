@@ -5,7 +5,7 @@ import androidx.lifecycle.Transformations
 import jaanc.cents.domain.Expense
 import jaanc.cents.domain.ExpenseCategory
 
-class AppRepo(private val database: AppDatabase) {
+class AppRepo(database: AppDatabase) {
     private val expenseDao = database.expenseDao()
 
     val allExpenses: LiveData<List<Expense>> =

@@ -17,7 +17,11 @@ fun Navigator() {
 
     CentsTheme {
         NavHost(navController, startDestination = "expense_list_page") {
-            composable("expense_list_page") { ExpenseListPage() }
+            
+            composable("expense_list_page") {
+                ExpenseListPage(navController)
+            }
+
             composable(
                 "expense_editor_page?expenseId={expenseId}", arguments = listOf(
                     navArgument("expenseId") {
@@ -26,7 +30,8 @@ fun Navigator() {
                     },
                 )
             ) { backStackEntry ->
-                ExpenseEditorPage(backStackEntry.arguments?.getInt("expense_id")!!)
+                val expenseId = backStackEntry.arguments?.getInt("expense_id")!!
+                ExpenseEditorPage(navController, expenseId)
             }
         }
     }

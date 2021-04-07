@@ -28,6 +28,6 @@ data class DatabaseExpense(
     }
 
     fun asDomain(): Expense {
-        return Expense(id, cost, category, note, createdAt)
+        return Expense(id, category, cost, note, createdAt)
     }
 }

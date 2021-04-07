@@ -1,5 +1,6 @@
 package jaanc.cents.ui.expenselistpage
 
+import android.app.Application
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -8,17 +9,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
-import androidx.navigation.compose.rememberNavController
 import jaanc.cents.domain.Amount
 import jaanc.cents.domain.Expense
 import jaanc.cents.domain.ExpenseCategory
 import java.time.LocalDateTime
 
 @Composable
-fun ExpenseListPage() {
-    val viewModel = ExpenseListPageViewModel(LocalContext.current)
-    val navController = rememberNavController()
+fun ExpenseListPage(navController: NavHostController) {
+    val viewModel = viewModel<ExpenseListPageViewModel>(
+        factory = ExpenseListPageViewModelFactory(LocalContext.current.applicationContext as Application)
+    )
 
     val allExpenses by viewModel.allExpenses.observeAsState(listOf())
 

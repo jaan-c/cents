@@ -4,8 +4,8 @@ import java.time.LocalDateTime
 
 data class Expense(
     val id: Int = UNSET_ID,
-    val cost: Amount = Amount.zero(),
     val category: ExpenseCategory = ExpenseCategory.uncategorized(),
+    val cost: Amount = Amount.zero(),
     val note: String = "",
     val createdAt: LocalDateTime = LocalDateTime.now(),
 ) {
