@@ -42,8 +42,9 @@ fun ExpenseEditorPage(navController: NavHostController, expenseId: Int) {
     val shouldNavigateUp by viewModel.shouldNavigateUp.observeAsState(false)
 
     if (shouldNavigateUp) {
-        navController.popBackStack()
-        viewModel.doneNavigatingUp()
+        if (navController.popBackStack()) {
+            viewModel.doneNavigatingUp()
+        }
     }
 
     ExpenseEditorPage(
