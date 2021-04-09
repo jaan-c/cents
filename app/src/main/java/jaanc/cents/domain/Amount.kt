@@ -43,4 +43,12 @@ data class Amount(val totalCents: Int) {
 
     val cent: Int
         get() = totalCents - (unit * CENT_PER_UNIT)
+
+    override fun toString(): String {
+        return if (cent == 0) {
+            unit.toString()
+        } else {
+            "$unit.${cent.toString().padStart(2, '0')}"
+        }
+    }
 }
