@@ -1,16 +1,12 @@
 package jaanc.cents
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import jaanc.cents.ui.Navigator
+import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContent {
-            Navigator()
-        }
+        setContentView(R.layout.activity_main)
     }
 }
