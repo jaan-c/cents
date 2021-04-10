@@ -10,7 +10,9 @@ import jaanc.cents.domain.ExpenseCategory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 class ExpenseEditorPageViewModelFactory(
     private val application: Application, private val expenseId: Int
@@ -42,8 +44,11 @@ class ExpenseEditorPageViewModel(
     private val _noteText = MutableLiveData("")
     val noteText: LiveData<String> = _noteText
 
-    private val _createdAt = MutableLiveData(LocalDateTime.now())
-    val createdAt: LiveData<LocalDateTime> = _createdAt
+    private val _creationDate = MutableLiveData(LocalDate.now())
+    val creationDate: LiveData<LocalDate> = _creationDate
+
+    private val _creationTime = MutableLiveData(LocalTime.now())
+    val creationTime: LiveData<LocalTime> = _creationTime
 
     val canSave: LiveData<Boolean> =
         Transformations.map(_costText) { costText ->
@@ -54,6 +59,12 @@ class ExpenseEditorPageViewModel(
                 false
             }
         }
+
+    private val _shouldShowDatePicker = MutableLiveData(false)
+    val shouldShowDatePicker: LiveData<Boolean> = _shouldShowDatePicker
+
+    private val _shouldShowTimePicker = MutableLiveData(false)
+    val shouldShowTimePicker: LiveData<Boolean> = _shouldShowTimePicker
 
     private val _shouldNavigateUp = MutableLiveData(false)
     val shouldNavigateUp: LiveData<Boolean> = _shouldNavigateUp
@@ -68,7 +79,8 @@ class ExpenseEditorPageViewModel(
                 setCategoryText(expense.category.name)
                 setCostText(expense.cost.toString())
                 setNoteText(expense.note)
-                setCreatedAt(expense.createdAt)
+                setCreationDate(expense.createdAt.toLocalDate())
+                setCreationTime(expense.createdAt.toLocalTime())
             }
         }
     }
@@ -85,8 +97,12 @@ class ExpenseEditorPageViewModel(
         _noteText.value = newNoteText
     }
 
-    fun setCreatedAt(newCreatedAt: LocalDateTime) {
-        _createdAt.value = newCreatedAt
+    fun setCreationDate(newCreationDate: LocalDate) {
+        _creationDate.value = newCreationDate
+    }
+
+    fun setCreationTime(newCreationTime: LocalTime) {
+        _creationTime.value = newCreationTime
     }
 
     fun saveExpense() {
@@ -105,7 +121,7 @@ class ExpenseEditorPageViewModel(
 
             withContext(Dispatchers.IO) {
                 if (expense.id == Expense.UNSET_ID) {
-                repo.add(expense)
+                    repo.add(expense)
                 } else {
                     repo.update(expense)
                 }
@@ -121,5 +137,21 @@ class ExpenseEditorPageViewModel(
 
     fun doneNavigatingUp() {
         _shouldNavigateUp.value = false
+    }
+
+    fun showDatePicker() {
+        _shouldShowDatePicker.value = true
+    }
+
+    fun doneShowingDatePicker() {
+        _shouldShowDatePicker.value = false
+    }
+
+    fun showTimePicker() {
+        _shouldShowTimePicker.value = true
+    }
+
+    fun doneShowingTimePicker() {
+        _shouldShowTimePicker.value = false
     }
 }
