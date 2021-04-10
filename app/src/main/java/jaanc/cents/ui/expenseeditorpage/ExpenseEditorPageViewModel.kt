@@ -100,11 +100,15 @@ class ExpenseEditorPageViewModel(
                 ExpenseCategory(categoryText.value!!.trim()),
                 Amount.of(costText.value!!),
                 noteText.value!!.trim(),
-                createdAt.value!!
+                LocalDateTime.of(creationDate.value!!, creationTime.value!!),
             )
 
             withContext(Dispatchers.IO) {
+                if (expense.id == Expense.UNSET_ID) {
                 repo.add(expense)
+                } else {
+                    repo.update(expense)
+                }
             }
 
             navigateUp()
