@@ -3,22 +3,21 @@ package jaanc.cents.ui.expenseeditorpage
 import android.app.Application
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.CalendarToday
-import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.Schedule
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -26,6 +25,7 @@ import androidx.navigation.NavHostController
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import jaanc.cents.ui.widgets.ButtonBar
 import jaanc.cents.utils.display
 import jaanc.cents.utils.display12Hour
 import jaanc.cents.utils.toEpochMilli
@@ -48,6 +48,7 @@ fun ExpenseEditorPage(navController: NavHostController, expenseId: Int) {
     val canSave by viewModel.canSave.observeAsState(false)
     val creationDate by viewModel.creationDate.observeAsState(LocalDate.now())
     val creationTime by viewModel.creationTime.observeAsState(LocalTime.now())
+    val categories by viewModel.categories.observeAsState(listOf())
     val shouldShowDatePicker by viewModel.shouldShowDatePicker.observeAsState(
         false
     )
@@ -65,7 +66,7 @@ fun ExpenseEditorPage(navController: NavHostController, expenseId: Int) {
     if (shouldShowDatePicker) {
         val activity = LocalContext.current as FragmentActivity
         val fragmentManager = activity.supportFragmentManager
-        
+
         showDatePicker(
             fragmentManager,
             creationDate,
@@ -92,6 +93,7 @@ fun ExpenseEditorPage(navController: NavHostController, expenseId: Int) {
         note = note,
         creationDate = creationDate,
         creationTime = creationTime,
+        categories = categories,
         setCategory = viewModel::setCategoryText,
         setCost = viewModel::setCostText,
         setNote = viewModel::setNoteText,
@@ -110,6 +112,7 @@ fun ExpenseEditorPage(
     note: String,
     creationDate: LocalDate,
     creationTime: LocalTime,
+    categories: List<String>,
     setCategory: (String) -> Unit,
     setCost: (String) -> Unit,
     setNote: (String) -> Unit,
@@ -119,6 +122,8 @@ fun ExpenseEditorPage(
     canSave: Boolean,
     onSaveExpense: () -> Unit,
 ) {
+    var shouldShowCategoryPicker by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = { AppBar(onNavigateUp) },
         floatingActionButton = {
@@ -133,7 +138,12 @@ fun ExpenseEditorPage(
         ) {
             Row {
                 CategoryField(
-                    category, setCategory, modifier = Modifier.weight(1f)
+                    category,
+                    setCategory,
+                    onShowCategoryPicker = if (categories.isNotEmpty()) {
+                        { shouldShowCategoryPicker = true }
+                    } else null,
+                    modifier = Modifier.weight(1f),
                 )
                 CostField(
                     cost,
@@ -155,11 +165,19 @@ fun ExpenseEditorPage(
             CreationDateTimePicker(
                 creationDate,
                 creationTime,
-                onEditDate = onEditCreationDate,
-                onEditTime = onEditCreationTime,
+                onShowDatePicker = onEditCreationDate,
+                onShowTimePicker = onEditCreationTime,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
+            )
+        }
+
+        if (shouldShowCategoryPicker) {
+            CategoryPickerDialog(
+                categories,
+                onPickCategory = setCategory,
+                onClose = { shouldShowCategoryPicker = false },
             )
         }
     }
@@ -192,7 +210,8 @@ fun SaveExpenseFab(onSaveExpense: () -> Unit) {
 private fun CategoryField(
     category: String,
     setCategory: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onShowCategoryPicker: (() -> Unit)? = null,
 ) {
     OutlinedTextField(
         category,
@@ -204,6 +223,16 @@ private fun CategoryField(
         ),
         label = { Text("Category") },
         placeholder = { Text("Uncategorized") },
+        trailingIcon = {
+            if (onShowCategoryPicker != null) {
+                IconButton(onClick = onShowCategoryPicker) {
+                    Icon(
+                        Icons.Rounded.MoreHoriz,
+                        contentDescription = "Pick categories",
+                    )
+                }
+            }
+        },
     )
 }
 
@@ -216,11 +245,9 @@ private fun CostField(
         setCost,
         modifier = modifier,
         singleLine = true,
-        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         label = { Text("Cost") },
-        // FIXME: textAlign does not work!
-        placeholder = { Text("0.00", textAlign = TextAlign.End) },
+        placeholder = { Text("0.00") },
     )
 }
 
@@ -244,8 +271,8 @@ private fun NoteField(
 private fun CreationDateTimePicker(
     date: LocalDate,
     time: LocalTime,
-    onEditDate: () -> Unit,
-    onEditTime: () -> Unit,
+    onShowDatePicker: () -> Unit,
+    onShowTimePicker: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val typography = MaterialTheme.typography
@@ -263,13 +290,13 @@ private fun CreationDateTimePicker(
         Row {
             CreationDatePicker(
                 date,
-                onEditDate,
+                onShowDatePicker,
                 modifier = Modifier.weight(1f),
             )
             Spacer(modifier = Modifier.width(8.dp))
             CreationTimePicker(
                 time,
-                onEditTime,
+                onShowTimePicker,
                 modifier = Modifier.weight(1f),
             )
         }
@@ -277,40 +304,40 @@ private fun CreationDateTimePicker(
 }
 
 @Composable
-fun CreationDatePicker(
-    initialDate: LocalDate, onEditDate: () -> Unit, modifier: Modifier
+private fun CreationDatePicker(
+    initialDate: LocalDate, onShowDatePicker: () -> Unit, modifier: Modifier
 ) {
     ClickableOutlinedTextField(
         initialDate.display(),
-        onEditDate,
+        onShowDatePicker,
         modifier = modifier,
         label = { Text("Date") },
         leadingIcon = {
             Icon(
                 Icons.Rounded.CalendarToday,
-                contentDescription = "Creation Date",
+                contentDescription = "Creation date",
             )
         },
     )
 }
 
 @Composable
-fun CreationTimePicker(
-    initialTime: LocalTime, onEditTime: () -> Unit, modifier: Modifier
+private fun CreationTimePicker(
+    initialTime: LocalTime, onShowTimePicker: () -> Unit, modifier: Modifier
 ) {
     ClickableOutlinedTextField(
         initialTime.display12Hour(),
-        onEditTime,
+        onShowTimePicker,
         modifier = modifier,
         label = { Text("Time") },
         leadingIcon = {
-            Icon(Icons.Rounded.Schedule, contentDescription = "Creation Time")
+            Icon(Icons.Rounded.Schedule, contentDescription = "Creation time")
         },
     )
 }
 
 @Composable
-fun ClickableOutlinedTextField(
+private fun ClickableOutlinedTextField(
     value: String,
     onClick: () -> Unit,
     modifier: Modifier,
@@ -334,7 +361,42 @@ fun ClickableOutlinedTextField(
     }
 }
 
-fun showDatePicker(
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun CategoryPickerDialog(
+    categories: List<String>,
+    onPickCategory: (String) -> Unit,
+    onClose: () -> Unit,
+) {
+    AlertDialog(
+        title = { Text("Select Category") },
+        text = {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                for (c in categories) {
+                    ListItem(
+                        text = { Text(c) },
+                        modifier = Modifier.clickable {
+                            onPickCategory(c)
+                            onClose()
+                        },
+                    )
+                }
+            }
+        },
+        buttons = {
+            ButtonBar(modifier = Modifier.fillMaxWidth()) {
+                TextButton(onClick = onClose) { Text("CLOSE") }
+            }
+        },
+        onDismissRequest = onClose,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = false,
+        ),
+    )
+}
+
+private fun showDatePicker(
     fragmentManager: FragmentManager,
     initialDate: LocalDate,
     onPickDate: (LocalDate) -> Unit,
@@ -351,7 +413,7 @@ fun showDatePicker(
     picker.show(fragmentManager, "datePicker")
 }
 
-fun showTimePicker(
+private fun showTimePicker(
     fragmentManager: FragmentManager,
     initialTime: LocalTime,
     onPickTime: (LocalTime) -> Unit,
@@ -378,6 +440,9 @@ fun ExpenseEditorPagePreview() {
     var note by remember { mutableStateOf("") }
     val creationDate by remember { mutableStateOf(LocalDate.now()) }
     val creationTime by remember { mutableStateOf(LocalTime.now()) }
+    val categories by remember {
+        mutableStateOf(listOf("Food", "Commute", "Health"))
+    }
 
     ExpenseEditorPage(
         category = category,
@@ -385,6 +450,7 @@ fun ExpenseEditorPagePreview() {
         note = note,
         creationDate = creationDate,
         creationTime = creationTime,
+        categories = categories,
         setCategory = { category = it },
         setCost = { cost = it },
         setNote = { note = it },
