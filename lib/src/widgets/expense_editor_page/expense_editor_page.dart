@@ -85,7 +85,7 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.id == 0 ? _addAppBar() : _editAppBar(),
+      appBar: _appBar(),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: Column(
@@ -109,18 +109,15 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
         ),
       ),
       floatingActionButton: _saveExpenseFab(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: _bottomActionsBar(context),
     );
   }
 
-  AppBar _addAppBar() {
+  AppBar _appBar() {
     return AppBar(
-      title: Text('Add Expense'),
-    );
-  }
-
-  AppBar _editAppBar() {
-    return AppBar(
-      title: Text('Edit Expense'),
+      automaticallyImplyLeading: false,
+      title: Text(_id == Expense.UNSET_ID ? 'Add Expense' : 'Edit Expense'),
     );
   }
 
@@ -253,14 +250,55 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
     }
   }
 
+  Widget _bottomActionsBar(BuildContext context) {
+    return BottomAppBar(
+      shape: CircularNotchedRectangle(),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _closeEditorButton(context),
+          Spacer(),
+          if (_id != Expense.UNSET_ID) _deleteExpenseButton(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _closeEditorButton(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.close_rounded),
+      onPressed: () => Navigator.pop(context),
+    );
+  }
+
+  Widget _deleteExpenseButton(BuildContext context) {
+    return IconButton(
+        icon: Icon(Icons.delete_outline_rounded),
+        onPressed: () {
+          _deleteExpense();
+          Navigator.pop(context);
+        });
+  }
+
+  Future<void> _deleteExpense() async {
+    final repo = await _repo;
+    await repo.delete(_id);
+  }
+
   Widget _saveExpenseFab(BuildContext context) {
     return FloatingActionButton(
-      onPressed: _canSave ? () => _saveExpense(context) : null,
+      onPressed: _canSave
+          ? () {
+              _saveExpense();
+              Navigator.pop(context);
+            }
+          : null,
       child: Icon(Icons.check),
     );
   }
 
-  Future<void> _saveExpense(BuildContext context) async {
+  Future<void> _saveExpense() async {
     final expense = Expense(
       id: _id,
       category: ExpenseCategory(_categoryController.text),
@@ -275,7 +313,5 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
     } else {
       await repo.update(expense);
     }
-
-    Navigator.pop(context);
   }
 }

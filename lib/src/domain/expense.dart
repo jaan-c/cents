@@ -4,6 +4,8 @@ import 'amount.dart';
 import 'expense_category.dart';
 
 class Expense {
+  static const UNSET_ID = 0;
+
   final int id;
   final Amount cost;
   final ExpenseCategory category;
@@ -11,11 +13,11 @@ class Expense {
   final String note;
 
   Expense(
-      {this.id = 0,
+      {this.id = UNSET_ID,
       required this.cost,
       required this.category,
       required this.createdAt,
-      this.note = ""});
+      this.note = ''});
 
   Expense copyWith(
       {int? id = 0,
