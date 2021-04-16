@@ -22,6 +22,7 @@ class Amount {
     return Amount._internal(totalCents - other.totalCents);
   }
 
+  @override
   bool operator ==(dynamic other) {
     return other is Amount && hashCode == other.hashCode;
   }

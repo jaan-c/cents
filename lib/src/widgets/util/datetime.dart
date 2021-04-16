@@ -43,8 +43,8 @@ extension WeekOfYear on DateTime {
   int get weekOfYear {
     final oneDay = Duration(days: 1);
 
-    int weekCount = 1;
-    DateTime dateTime = DateTime(year);
+    var weekCount = 1;
+    var dateTime = DateTime(year);
 
     while (dateTime.isBefore(this)) {
       dateTime = dateTime.add(oneDay);
