@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:cents/src/database/app_database.dart';
+import 'package:cents/src/database/database_opener.dart';
 import 'package:cents/src/database/expense_repo.dart';
 import 'package:cents/src/domain/amount.dart';
 import 'package:cents/src/domain/expense.dart';
