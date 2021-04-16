@@ -7,9 +7,9 @@ class Amount {
   int get units => (totalCents / _CENTS_PER_UNIT).truncate();
   int get cents => totalCents - (units * _CENTS_PER_UNIT);
 
-  const Amount.fromTotalCents(this.totalCents);
+  Amount.fromTotalCents(this.totalCents);
 
-  const Amount([int unit = 0, int cents = 0])
+  Amount([int unit = 0, int cents = 0])
       : this.fromTotalCents(cents + (unit * _CENTS_PER_UNIT));
 
   Amount.parse(String text) : this.fromTotalCents(_textToTotalCents(text));
