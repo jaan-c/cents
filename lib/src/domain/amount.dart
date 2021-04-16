@@ -7,19 +7,19 @@ class Amount {
   int get units => (totalCents / _CENTS_PER_UNIT).truncate();
   int get cents => totalCents - (units * _CENTS_PER_UNIT);
 
-  const Amount._internal(this.totalCents);
+  const Amount.fromTotalCents(this.totalCents);
 
   const Amount([int unit = 0, int cents = 0])
-      : this._internal(cents + (unit * _CENTS_PER_UNIT));
+      : this.fromTotalCents(cents + (unit * _CENTS_PER_UNIT));
 
-  Amount.parse(String text) : this._internal(_textToTotalCents(text));
+  Amount.parse(String text) : this.fromTotalCents(_textToTotalCents(text));
 
   Amount add(Amount other) {
-    return Amount._internal(totalCents + other.totalCents);
+    return Amount.fromTotalCents(totalCents + other.totalCents);
   }
 
   Amount subtract(Amount other) {
-    return Amount._internal(totalCents - other.totalCents);
+    return Amount.fromTotalCents(totalCents - other.totalCents);
   }
 
   @override
