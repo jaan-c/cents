@@ -207,7 +207,11 @@ private fun CategoryField(
         ),
         label = { Text("Category") },
         placeholder = { Text("Uncategorized") },
-        trailingIcon = { CategoryPopupButton(categories, setCategory) },
+        trailingIcon = {
+            if (categories.isNotEmpty()) {
+                CategoryPopupButton(categories, setCategory)
+            }
+        },
     )
 }
 
