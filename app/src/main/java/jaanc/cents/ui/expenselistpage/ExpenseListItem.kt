@@ -2,10 +2,9 @@ package jaanc.cents.ui.expenselistpage
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,15 +16,19 @@ import jaanc.cents.utils.display
 import jaanc.cents.utils.displayRelative
 
 @Composable
-fun ExpenseListTile(expense: Expense, onClick: () -> Unit) {
+fun ExpenseListItem(expense: Expense, onClick: () -> Unit) {
     val typography = MaterialTheme.typography
     val colors = MaterialTheme.colors
 
     Surface(modifier = Modifier.clickable { onClick() }) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                expense.createdAt.displayRelative(), style = typography.overline
-            )
+
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                Text(
+                    expense.createdAt.displayRelative(),
+                    style = typography.overline,
+                )
+            }
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -45,13 +48,14 @@ fun ExpenseListTile(expense: Expense, onClick: () -> Unit) {
             }
 
             if (expense.note.isNotBlank()) {
-                Text(
-                    expense.note,
-                    style = typography.subtitle2,
-                    color = colors.onSurface.copy(alpha = 0.6f),
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis
-                )
+                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                    Text(
+                        expense.note,
+                        style = typography.subtitle2,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
     }
@@ -60,7 +64,7 @@ fun ExpenseListTile(expense: Expense, onClick: () -> Unit) {
 @Preview
 @Composable
 fun ExpenseListTilePreview() {
-    ExpenseListTile(
+    ExpenseListItem(
         Expense(
             category = ExpenseCategory("Food"),
             cost = Amount.of(12),

@@ -16,7 +16,7 @@ fun ExpenseList(
 ) {
     LazyColumn() {
         items(items = expenses, key = Expense::id) { e ->
-            ExpenseListTile(e) { onOpenEditor(e.id) }
+            ExpenseListItem(e) { onOpenEditor(e.id) }
             if (e != expenses.last()) {
                 Divider()
             }
