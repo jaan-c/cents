@@ -209,14 +209,14 @@ private fun CategoryField(
         placeholder = { Text("Uncategorized") },
         trailingIcon = {
             if (categories.isNotEmpty()) {
-                CategoryPopupButton(categories, setCategory)
+                CategoryDropdownButton(categories, setCategory)
             }
         },
     )
 }
 
 @Composable
-fun CategoryPopupButton(
+fun CategoryDropdownButton(
     categories: List<String>, onPickCategory: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
