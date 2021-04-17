@@ -1,11 +1,12 @@
 package jaanc.cents.ui.expenseeditorpage
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 
 @Composable
 fun ClickableOutlinedTextField(
@@ -26,8 +27,12 @@ fun ClickableOutlinedTextField(
             leadingIcon = leadingIcon,
         )
 
-        Box(modifier = Modifier
-            .matchParentSize()
-            .clickable { onClick() })
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = { onClick() })
+                },
+        )
     }
 }
