@@ -3,9 +3,7 @@ package jaanc.cents.ui.expenseeditorpage
 import android.app.Application
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
@@ -17,7 +15,6 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -25,7 +22,6 @@ import androidx.navigation.NavHostController
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import jaanc.cents.ui.widgets.ButtonBar
 import jaanc.cents.utils.display
 import jaanc.cents.utils.display12Hour
 import jaanc.cents.utils.toEpochMilli
@@ -122,8 +118,6 @@ fun ExpenseEditorPage(
     canSave: Boolean,
     onSaveExpense: () -> Unit,
 ) {
-    var shouldShowCategoryPicker by remember { mutableStateOf(false) }
-
     Scaffold(
         topBar = { AppBar(onNavigateUp) },
         floatingActionButton = {
@@ -133,24 +127,21 @@ fun ExpenseEditorPage(
         },
         floatingActionButtonPosition = FabPosition.End,
     ) {
-        Column(
-            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
-        ) {
-            Row {
+        Column {
+            Row(
+                modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+            ) {
                 CategoryField(
                     category,
                     setCategory,
-                    onShowCategoryPicker = if (categories.isNotEmpty()) {
-                        { shouldShowCategoryPicker = true }
-                    } else null,
+                    categories,
                     modifier = Modifier.weight(1f),
                 )
+                Spacer(modifier = Modifier.padding(8.dp))
                 CostField(
                     cost,
                     setCost,
-                    modifier = Modifier
-                        .width(100.dp)
-                        .padding(start = 8.dp),
+                    modifier = Modifier.width(100.dp),
                 )
             }
 
@@ -159,9 +150,10 @@ fun ExpenseEditorPage(
                 setNote,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp),
+                    .padding(horizontal = 8.dp),
             )
 
+            Spacer(modifier = Modifier.height(16.dp))
             CreationDateTimePicker(
                 creationDate,
                 creationTime,
@@ -169,15 +161,7 @@ fun ExpenseEditorPage(
                 onShowTimePicker = onEditCreationTime,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
-            )
-        }
-
-        if (shouldShowCategoryPicker) {
-            CategoryPickerDialog(
-                categories,
-                onPickCategory = setCategory,
-                onClose = { shouldShowCategoryPicker = false },
+                    .padding(horizontal = 8.dp),
             )
         }
     }
@@ -210,8 +194,8 @@ fun SaveExpenseFab(onSaveExpense: () -> Unit) {
 private fun CategoryField(
     category: String,
     setCategory: (String) -> Unit,
+    categories: List<String>,
     modifier: Modifier = Modifier,
-    onShowCategoryPicker: (() -> Unit)? = null,
 ) {
     OutlinedTextField(
         category,
@@ -223,17 +207,29 @@ private fun CategoryField(
         ),
         label = { Text("Category") },
         placeholder = { Text("Uncategorized") },
-        trailingIcon = {
-            if (onShowCategoryPicker != null) {
-                IconButton(onClick = onShowCategoryPicker) {
-                    Icon(
-                        Icons.Rounded.MoreHoriz,
-                        contentDescription = "Pick categories",
-                    )
+        trailingIcon = { CategoryPopupButton(categories, setCategory) },
+    )
+}
+
+@Composable
+fun CategoryPopupButton(
+    categories: List<String>, onPickCategory: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box {
+        IconButton(onClick = { expanded = true }) {
+            Icon(Icons.Rounded.MoreHoriz, contentDescription = "Pick category")
+        }
+
+        DropdownMenu(expanded, onDismissRequest = { expanded = false }) {
+            for (c in categories) {
+                DropdownMenuItem(onClick = { onPickCategory(c) }) {
+                    Text(c)
                 }
             }
-        },
-    )
+        }
+    }
 }
 
 @Composable
@@ -359,41 +355,6 @@ private fun ClickableOutlinedTextField(
             .matchParentSize()
             .clickable { onClick() })
     }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun CategoryPickerDialog(
-    categories: List<String>,
-    onPickCategory: (String) -> Unit,
-    onClose: () -> Unit,
-) {
-    AlertDialog(
-        title = { Text("Select Category") },
-        text = {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                for (c in categories) {
-                    ListItem(
-                        text = { Text(c) },
-                        modifier = Modifier.clickable {
-                            onPickCategory(c)
-                            onClose()
-                        },
-                    )
-                }
-            }
-        },
-        buttons = {
-            ButtonBar(modifier = Modifier.fillMaxWidth()) {
-                TextButton(onClick = onClose) { Text("CLOSE") }
-            }
-        },
-        onDismissRequest = onClose,
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = false,
-        ),
-    )
 }
 
 private fun showDatePicker(
