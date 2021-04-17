@@ -44,7 +44,7 @@ fun ExpenseEditorPage(navController: NavHostController, expenseId: Int) {
     val canSave by viewModel.canSave.observeAsState(false)
     val creationDate by viewModel.creationDate.observeAsState(LocalDate.now())
     val creationTime by viewModel.creationTime.observeAsState(LocalTime.now())
-    val categories by viewModel.categories.observeAsState(listOf())
+    val existingCategories by viewModel.existingCategories.observeAsState(listOf())
     val shouldShowDatePicker by viewModel.shouldShowDatePicker.observeAsState(
         false
     )
@@ -89,7 +89,7 @@ fun ExpenseEditorPage(navController: NavHostController, expenseId: Int) {
         note = note,
         creationDate = creationDate,
         creationTime = creationTime,
-        categories = categories,
+        existingCategories = existingCategories,
         setCategory = viewModel::setCategoryText,
         setCost = viewModel::setCostText,
         setNote = viewModel::setNoteText,
@@ -108,7 +108,7 @@ fun ExpenseEditorPage(
     note: String,
     creationDate: LocalDate,
     creationTime: LocalTime,
-    categories: List<String>,
+    existingCategories: List<String>,
     setCategory: (String) -> Unit,
     setCost: (String) -> Unit,
     setNote: (String) -> Unit,
@@ -134,7 +134,7 @@ fun ExpenseEditorPage(
                 CategoryField(
                     category,
                     setCategory,
-                    categories,
+                    existingCategories,
                     modifier = Modifier.weight(1f),
                 )
                 Spacer(modifier = Modifier.padding(8.dp))
@@ -194,7 +194,7 @@ fun SaveExpenseFab(onSaveExpense: () -> Unit) {
 private fun CategoryField(
     category: String,
     setCategory: (String) -> Unit,
-    categories: List<String>,
+    existingCategories: List<String>,
     modifier: Modifier = Modifier,
 ) {
     OutlinedTextField(
@@ -208,8 +208,8 @@ private fun CategoryField(
         label = { Text("Category") },
         placeholder = { Text("Uncategorized") },
         trailingIcon = {
-            if (categories.isNotEmpty()) {
-                CategoryDropdownButton(categories, setCategory)
+            if (existingCategories.isNotEmpty()) {
+                CategoryDropdownButton(existingCategories, setCategory)
             }
         },
     )
@@ -217,7 +217,7 @@ private fun CategoryField(
 
 @Composable
 fun CategoryDropdownButton(
-    categories: List<String>, onPickCategory: (String) -> Unit
+    existingCategories: List<String>, onPickCategory: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -227,7 +227,7 @@ fun CategoryDropdownButton(
         }
 
         DropdownMenu(expanded, onDismissRequest = { expanded = false }) {
-            for (c in categories) {
+            for (c in existingCategories) {
                 DropdownMenuItem(onClick = { onPickCategory(c) }) {
                     Text(c)
                 }
@@ -405,7 +405,7 @@ fun ExpenseEditorPagePreview() {
     var note by remember { mutableStateOf("") }
     val creationDate by remember { mutableStateOf(LocalDate.now()) }
     val creationTime by remember { mutableStateOf(LocalTime.now()) }
-    val categories by remember {
+    val existingCategories by remember {
         mutableStateOf(listOf("Food", "Commute", "Health"))
     }
 
@@ -415,7 +415,7 @@ fun ExpenseEditorPagePreview() {
         note = note,
         creationDate = creationDate,
         creationTime = creationTime,
-        categories = categories,
+        existingCategories = existingCategories,
         setCategory = { category = it },
         setCost = { cost = it },
         setNote = { note = it },

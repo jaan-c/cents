@@ -50,7 +50,7 @@ class ExpenseEditorPageViewModel(
     private val _creationTime = MutableLiveData(LocalTime.now())
     val creationTime: LiveData<LocalTime> = _creationTime
 
-    val categories =
+    val existingCategories =
         Transformations.map(repo.allCategories) { cs -> cs.map { c -> c.name } }
 
     val canSave: LiveData<Boolean> =
