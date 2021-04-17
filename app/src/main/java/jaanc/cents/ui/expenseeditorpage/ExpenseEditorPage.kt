@@ -233,7 +233,10 @@ fun CategoryDropdownButton(
 
         DropdownMenu(expanded, onDismissRequest = { expanded = false }) {
             for (c in existingCategories) {
-                DropdownMenuItem(onClick = { onPickCategory(c) }) {
+                DropdownMenuItem(onClick = {
+                    onPickCategory(c)
+                    expanded = false
+                }) {
                     Text(c)
                 }
             }
