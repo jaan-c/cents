@@ -2,6 +2,7 @@ package jaanc.cents.ui.expenseeditorpage
 
 import android.app.Application
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -21,6 +22,7 @@ import androidx.navigation.NavHostController
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import jaanc.cents.domain.Expense
 import jaanc.cents.utils.display
 import jaanc.cents.utils.display12Hour
 import jaanc.cents.utils.toEpochMilli
@@ -83,6 +85,7 @@ fun ExpenseEditorPage(navController: NavHostController, expenseId: Int) {
     }
 
     ExpenseEditorPage(
+        mode = if (expenseId == Expense.UNSET_ID) ExpenseEditorPageMode.Add else ExpenseEditorPageMode.Edit,
         category = category,
         cost = cost,
         note = note,
@@ -97,11 +100,15 @@ fun ExpenseEditorPage(navController: NavHostController, expenseId: Int) {
         onNavigateUp = viewModel::navigateUp,
         canSave = canSave,
         onSaveExpense = viewModel::saveExpense,
+        onDeleteExpense = if (expenseId != Expense.UNSET_ID) viewModel::deleteExpense else null,
     )
 }
 
+enum class ExpenseEditorPageMode { Add, Edit }
+
 @Composable
 fun ExpenseEditorPage(
+    mode: ExpenseEditorPageMode,
     category: String,
     cost: String,
     note: String,
@@ -116,15 +123,18 @@ fun ExpenseEditorPage(
     onNavigateUp: () -> Unit,
     canSave: Boolean,
     onSaveExpense: () -> Unit,
+    onDeleteExpense: (() -> Unit)?,
 ) {
     Scaffold(
-        topBar = { AppBar(onNavigateUp) },
+        topBar = { AppBar(mode) },
         floatingActionButton = {
             if (canSave) {
                 SaveExpenseFab(onSaveExpense)
             }
         },
-        floatingActionButtonPosition = FabPosition.End,
+        floatingActionButtonPosition = FabPosition.Center,
+        isFloatingActionButtonDocked = true,
+        bottomBar = { BottomBar(onNavigateUp, onDeleteExpense) },
     ) {
         Column {
             Row(
@@ -167,18 +177,21 @@ fun ExpenseEditorPage(
 }
 
 @Composable
-private fun AppBar(onNavigateUp: () -> Unit) {
+private fun AppBar(mode: ExpenseEditorPageMode) {
     val colors = MaterialTheme.colors
 
     TopAppBar(
         contentColor = colors.onSurface,
         backgroundColor = colors.surface,
-        navigationIcon = {
-            IconButton(onClick = onNavigateUp) {
-                Icon(Icons.Rounded.ArrowBack, contentDescription = "Back")
-            }
+        elevation = 0.dp,
+        title = {
+            Text(
+                when (mode) {
+                    ExpenseEditorPageMode.Add -> "Add Expense"
+                    ExpenseEditorPageMode.Edit -> "Edit Expense"
+                }
+            )
         },
-        title = { Text("Add Expense") },
     )
 }
 
@@ -186,6 +199,25 @@ private fun AppBar(onNavigateUp: () -> Unit) {
 fun SaveExpenseFab(onSaveExpense: () -> Unit) {
     FloatingActionButton(onClick = onSaveExpense) {
         Icon(Icons.Rounded.Check, contentDescription = "Save Expense")
+    }
+}
+
+@Composable
+fun BottomBar(onNavigateUp: () -> Unit, onDelete: (() -> Unit)?) {
+    BottomAppBar(cutoutShape = CircleShape) {
+        IconButton(onNavigateUp) {
+            Icon(Icons.Rounded.Close, contentDescription = "Close editor")
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        if (onDelete != null) {
+            IconButton(onDelete) {
+                Icon(
+                    Icons.Rounded.Delete, contentDescription = "Delete expense"
+                )
+            }
+        }
     }
 }
 
@@ -393,6 +425,7 @@ fun ExpenseEditorPagePreview() {
     }
 
     ExpenseEditorPage(
+        mode = ExpenseEditorPageMode.Edit,
         category = category,
         cost = cost,
         note = note,
@@ -407,5 +440,6 @@ fun ExpenseEditorPagePreview() {
         onNavigateUp = {},
         canSave = true,
         onSaveExpense = {},
+        onDeleteExpense = {},
     )
 }

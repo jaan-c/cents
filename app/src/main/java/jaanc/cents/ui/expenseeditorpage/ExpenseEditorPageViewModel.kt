@@ -108,6 +108,30 @@ class ExpenseEditorPageViewModel(
         _creationTime.value = newCreationTime
     }
 
+    fun navigateUp() {
+        _shouldNavigateUp.value = true
+    }
+
+    fun doneNavigatingUp() {
+        _shouldNavigateUp.value = false
+    }
+
+    fun showDatePicker() {
+        _shouldShowDatePicker.value = true
+    }
+
+    fun doneShowingDatePicker() {
+        _shouldShowDatePicker.value = false
+    }
+
+    fun showTimePicker() {
+        _shouldShowTimePicker.value = true
+    }
+
+    fun doneShowingTimePicker() {
+        _shouldShowTimePicker.value = false
+    }
+
     fun saveExpense() {
         if (!canSave.value!!) {
             throw IllegalStateException("Expense not saveable.")
@@ -134,27 +158,13 @@ class ExpenseEditorPageViewModel(
         }
     }
 
-    fun navigateUp() {
-        _shouldNavigateUp.value = true
-    }
+    fun deleteExpense() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repo.delete(expenseId)
+            }
 
-    fun doneNavigatingUp() {
-        _shouldNavigateUp.value = false
-    }
-
-    fun showDatePicker() {
-        _shouldShowDatePicker.value = true
-    }
-
-    fun doneShowingDatePicker() {
-        _shouldShowDatePicker.value = false
-    }
-
-    fun showTimePicker() {
-        _shouldShowTimePicker.value = true
-    }
-
-    fun doneShowingTimePicker() {
-        _shouldShowTimePicker.value = false
+            navigateUp()
+        }
     }
 }
