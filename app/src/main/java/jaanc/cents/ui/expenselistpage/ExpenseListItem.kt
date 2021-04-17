@@ -18,7 +18,6 @@ import jaanc.cents.utils.displayRelative
 @Composable
 fun ExpenseListItem(expense: Expense, onClick: () -> Unit) {
     val typography = MaterialTheme.typography
-    val colors = MaterialTheme.colors
 
     Surface(modifier = Modifier.clickable { onClick() }) {
         Column(modifier = Modifier.padding(16.dp)) {
