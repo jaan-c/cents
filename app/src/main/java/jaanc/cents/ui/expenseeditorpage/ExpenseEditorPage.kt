@@ -1,7 +1,6 @@
 package jaanc.cents.ui.expenseeditorpage
 
 import android.app.Application
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -334,31 +333,6 @@ private fun CreationTimePicker(
             Icon(Icons.Rounded.Schedule, contentDescription = "Creation time")
         },
     )
-}
-
-@Composable
-private fun ClickableOutlinedTextField(
-    value: String,
-    onClick: () -> Unit,
-    modifier: Modifier,
-    label: @Composable () -> Unit,
-    leadingIcon: @Composable () -> Unit
-) {
-    Box(modifier = modifier) {
-        OutlinedTextField(
-            value,
-            {},
-            modifier = Modifier.fillMaxWidth(),
-            readOnly = true,
-            singleLine = true,
-            label = label,
-            leadingIcon = leadingIcon,
-        )
-
-        Box(modifier = Modifier
-            .matchParentSize()
-            .clickable { onClick() })
-    }
 }
 
 private fun showDatePicker(
