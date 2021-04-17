@@ -91,7 +91,7 @@ fun ExpenseEditorPage(navController: NavHostController, expenseId: Int) {
         note = note,
         creationDate = creationDate,
         creationTime = creationTime,
-        existingCategories = existingCategories,
+        existingCategories = existingCategories.filter { it != category },
         setCategory = viewModel::setCategoryText,
         setCost = viewModel::setCostText,
         setNote = viewModel::setNoteText,
