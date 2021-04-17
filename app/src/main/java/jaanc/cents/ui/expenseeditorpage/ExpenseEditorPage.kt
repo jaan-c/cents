@@ -208,7 +208,11 @@ private fun CategoryField(
         placeholder = { Text("Uncategorized") },
         trailingIcon = {
             if (existingCategories.isNotEmpty()) {
-                CategoryDropdownButton(existingCategories, setCategory)
+                CategoryDropdownButton(
+                    existingCategories,
+                    setCategory,
+                    modifier = Modifier.offset(x = 8.dp),
+                )
             }
         },
     )
@@ -216,11 +220,13 @@ private fun CategoryField(
 
 @Composable
 fun CategoryDropdownButton(
-    existingCategories: List<String>, onPickCategory: (String) -> Unit
+    existingCategories: List<String>,
+    onPickCategory: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    Box {
+    Box(modifier = modifier) {
         IconButton(onClick = { expanded = true }) {
             Icon(Icons.Rounded.MoreHoriz, contentDescription = "Pick category")
         }
