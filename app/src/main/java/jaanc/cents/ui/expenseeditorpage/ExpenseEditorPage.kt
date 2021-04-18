@@ -10,6 +10,8 @@ import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -280,15 +282,22 @@ fun CategoryDropdownButton(
 private fun CostField(
     cost: String, setCost: (String) -> Unit, modifier: Modifier = Modifier
 ) {
+    val focusRequester = remember { FocusRequester() }
+
     OutlinedTextField(
         cost,
         setCost,
-        modifier = modifier,
+        modifier = modifier.focusRequester(focusRequester),
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         label = { Text("Cost") },
         placeholder = { Text("0.00") },
     )
+
+    DisposableEffect(focusRequester) {
+        focusRequester.requestFocus()
+        onDispose {}
+    }
 }
 
 @Composable
