@@ -1,14 +1,19 @@
 package jaanc.cents.ui.expenselistpage
 
 import android.app.Application
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
@@ -30,24 +35,84 @@ fun ExpenseListPage(navController: NavHostController) {
         onOpenEditor = { expenseId ->
             navController.navigate("expense_editor_page?expenseId=$expenseId")
         },
+        onOpenSettings = {},
+        onOpenAbout = {},
     )
 }
 
 @Composable
 fun ExpenseListPage(
-    expenses: List<Expense>, onOpenEditor: (expenseId: Int) -> Unit
+    expenses: List<Expense>,
+    onOpenEditor: (expenseId: Int) -> Unit,
+    onOpenSettings: () -> Unit,
+    onOpenAbout: () -> Unit,
 ) {
     Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("Expenses") })
-        },
+        topBar = { AppBar() },
         floatingActionButton = {
-            FloatingActionButton(onClick = { onOpenEditor(Expense.UNSET_ID) }) {
-                Icon(Icons.Rounded.Add, contentDescription = "Add Expense")
-            }
+            AddExpenseFab(onAddExpense = { onOpenEditor(Expense.UNSET_ID) })
         },
+        floatingActionButtonPosition = FabPosition.Center,
+        isFloatingActionButtonDocked = true,
+        bottomBar = { BottomBar(onOpenSettings, onOpenAbout) },
     ) {
         ExpenseList(expenses, onOpenEditor)
+    }
+}
+
+@Composable
+fun AppBar() {
+    val colors = MaterialTheme.colors
+
+    TopAppBar(
+        contentColor = colors.onSurface,
+        backgroundColor = colors.surface,
+        elevation = 0.dp,
+        title = { Text("Expenses") },
+    )
+}
+
+@Composable
+fun AddExpenseFab(onAddExpense: () -> Unit) {
+    FloatingActionButton(onClick = { onAddExpense() }) {
+        Icon(Icons.Rounded.Add, contentDescription = "Add Expense")
+    }
+}
+
+@Composable
+fun BottomBar(onOpenSettings: () -> Unit, onOpenAbout: () -> Unit) {
+    BottomAppBar(cutoutShape = CircleShape) {
+        Spacer(modifier = Modifier.weight(1f))
+        OverflowMenuButton(onOpenSettings, onOpenAbout)
+    }
+}
+
+@Composable
+fun OverflowMenuButton(onOpenSettings: () -> Unit, onOpenAbout: () -> Unit) {
+    var showDropdown by remember { mutableStateOf(false) }
+
+    Box {
+        IconButton(onClick = { showDropdown = true }) {
+            Icon(Icons.Rounded.MoreVert, contentDescription = "More")
+        }
+
+        DropdownMenu(
+            expanded = showDropdown,
+            onDismissRequest = { showDropdown = false },
+        ) {
+            DropdownMenuItem(onClick = {
+                onOpenSettings()
+                showDropdown = false
+            }) {
+                Text("Settings")
+            }
+            DropdownMenuItem(onClick = {
+                onOpenAbout()
+                showDropdown = false
+            }) {
+                Text("About")
+            }
+        }
     }
 }
 
@@ -55,7 +120,7 @@ fun ExpenseListPage(
 @Composable
 fun ExpenseListPagePreview() {
     ExpenseListPage(
-        listOf(
+        expenses = listOf(
             Expense(
                 id = 1,
                 category = ExpenseCategory("Food"),
@@ -75,5 +140,8 @@ fun ExpenseListPagePreview() {
                 createdAt = LocalDateTime.now().minusDays(15)
             ),
         ),
-    ) {}
+        onOpenEditor = {},
+        onOpenSettings = {},
+        onOpenAbout = {},
+    )
 }
