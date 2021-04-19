@@ -50,6 +50,8 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
         onEditExpense: (expenseId) => _navigateToEditor(context, expenseId),
       ),
       floatingActionButton: _addExpenseFab(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: _bottomBar(),
     );
   }
 
@@ -60,6 +62,7 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
 
     return AppBar(
       backgroundColor: colorScheme.surface,
+      foregroundColor: colorScheme.onSurface,
       elevation: 0,
       title: Text(
         'Expenses',
@@ -72,6 +75,27 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
     return FloatingActionButton(
       onPressed: () => _navigateToEditor(context, 0),
       child: Icon(Icons.add),
+    );
+  }
+
+  Widget _bottomBar() {
+    return BottomAppBar(
+      shape: CircularNotchedRectangle(),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [Spacer(), _overflowMenuButton()],
+      ),
+    );
+  }
+
+  Widget _overflowMenuButton() {
+    return PopupMenuButton(
+      itemBuilder: (_) {
+        return ['Settings', 'About']
+            .map((x) => PopupMenuItem(value: x, child: Text(x)))
+            .toList();
+      },
     );
   }
 
