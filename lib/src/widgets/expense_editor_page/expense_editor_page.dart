@@ -1,13 +1,11 @@
 import 'dart:async';
 
 import 'package:cents/src/database/expense_provider.dart';
-import 'package:cents/src/domain/amount.dart';
 import 'package:cents/src/domain/expense.dart';
-import 'package:cents/src/domain/expense_category.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../util/datetime.dart';
+import 'expense_editor_page_scaffold.dart';
 
 class ExpenseEditorPage extends StatefulWidget {
   final int id;
@@ -19,319 +17,80 @@ class ExpenseEditorPage extends StatefulWidget {
 }
 
 class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
-  final int _id;
-  late ExpenseProvider _provider;
+  late ExpenseProvider provider;
 
-  final _categoryController = TextEditingController();
-  final _costController = TextEditingController();
-  final _noteController = TextEditingController();
+  final int id;
+  String category = '';
+  String cost = '';
+  String note = '';
+  DateTime createdAt = DateTime.now();
+  List<String> categorySelection = [];
 
-  var _createdAt = DateTime.now();
-  var _allCategories = <ExpenseCategory>[];
-
-  var _canSave = false;
-
-  _ExpenseEditorPageState(this._id);
-
-  @override
-  void initState() {
-    super.initState();
-
-    _costController.addListener(() => setState(() {
-          try {
-            Amount.parse(_costController.text);
-            _canSave = true;
-          } on FormatException catch (_) {
-            _canSave = false;
-          }
-        }));
-  }
+  _ExpenseEditorPageState(this.id);
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
     setState(() {
-      _provider = context.read<ExpenseProvider>();
+      provider = context.read<ExpenseProvider>();
       _initializeFields();
-      _onProviderMutation();
-      _provider.addListener(_onProviderMutation);
+      provider.addListener(_onProviderMutation);
     });
   }
 
   @override
   void dispose() {
-    _categoryController.dispose();
-    _costController.dispose();
-    _noteController.dispose();
-    _provider.removeListener(_onProviderMutation);
+    provider.removeListener(_onProviderMutation);
 
     super.dispose();
   }
 
   Future<void> _initializeFields() async {
-    final expense = await _provider.get(_id);
+    final expense = await provider.get(id);
     if (expense != null) {
-      _categoryController.text = expense.category.name;
-      _costController.text = expense.cost.toString();
-      _costController.selection = TextSelection.fromPosition(
-          TextPosition(offset: _costController.text.length));
-      _noteController.text = expense.note;
       setState(() {
-        _createdAt = expense.createdAt;
+        category = expense.category.name;
+        cost = expense.cost.toString();
+        note = expense.note;
+        createdAt = expense.createdAt;
       });
     }
+
+    await _onProviderMutation();
   }
 
   Future<void> _onProviderMutation() async {
-    final allCategories = await _provider.getAllCategories();
+    final newCategorySelection = await provider.getAllCategories();
     setState(() {
-      _allCategories = allCategories;
+      categorySelection = newCategorySelection.map((c) => c.name).toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _appBar(context),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(child: _categoryField()),
-                SizedBox(width: 8),
-                SizedBox(width: 100, child: _costField())
-              ],
-            ),
-            SizedBox(height: 8),
-            _noteField(),
-            SizedBox(height: 16),
-            _creationDateTimePicker(context),
-          ],
-        ),
-      ),
-      floatingActionButton: _saveExpenseFab(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _bottomActionsBar(context),
+    return ExpenseEditorPageScaffold(
+      id: id,
+      category: category,
+      cost: cost,
+      note: note,
+      createdAt: createdAt,
+      categorySelection: categorySelection,
+      onSaveExpense: onSaveExpense,
+      onDeleteExpense: onDeleteExpense,
+      onClose: () => Navigator.pop(context),
     );
   }
 
-  AppBar _appBar(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final colorScheme = theme.colorScheme;
-
-    return AppBar(
-      automaticallyImplyLeading: false,
-      backgroundColor: colorScheme.surface,
-      elevation: 0,
-      title: Text(
-        _id == Expense.UNSET_ID ? 'Add Expense' : 'Edit Expense',
-        style: textTheme.headline6?.copyWith(color: colorScheme.onSurface),
-      ),
-    );
-  }
-
-  Widget _categoryField() {
-    return TextField(
-      controller: _categoryController,
-      textCapitalization: TextCapitalization.words,
-      decoration: InputDecoration(
-        labelText: 'Category',
-        hintText: 'Uncategorized',
-        border: OutlineInputBorder(),
-        suffixIcon: _allCategories.isNotEmpty ? _categoryPickerButton() : null,
-      ),
-    );
-  }
-
-  Widget _categoryPickerButton() {
-    return PopupMenuButton<ExpenseCategory>(
-      onSelected: (category) => setState(() {
-        _categoryController.text = category.name;
-      }),
-      icon: Icon(Icons.more_horiz_rounded),
-      itemBuilder: (_) {
-        return _allCategories
-            .map((c) => PopupMenuItem(value: c, child: Text(c.name)))
-            .toList();
-      },
-    );
-  }
-
-  Widget _costField() {
-    return TextField(
-      controller: _costController,
-      keyboardType: TextInputType.numberWithOptions(decimal: true),
-      autofocus: true,
-      decoration: InputDecoration(
-        labelText: 'Cost',
-        hintText: '0.00',
-        border: OutlineInputBorder(),
-      ),
-    );
-  }
-
-  Widget _noteField() {
-    return TextField(
-      controller: _noteController,
-      textCapitalization: TextCapitalization.sentences,
-      minLines: 3,
-      maxLines: 5,
-      decoration: InputDecoration(
-        labelText: 'Note',
-        border: OutlineInputBorder(),
-      ),
-    );
-  }
-
-  Widget _creationDateTimePicker(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final colorScheme = theme.colorScheme;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text('Creation Time',
-            style: textTheme.subtitle2
-                ?.apply(color: colorScheme.onSurface.withOpacity(0.6))),
-        SizedBox(height: 8),
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
-          children: [
-            Expanded(child: _creationDatePicker(context)),
-            SizedBox(width: 8),
-            Expanded(child: _creationTimePicker(context))
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _creationDatePicker(BuildContext context) {
-    return TextField(
-      controller: TextEditingController(text: _createdAt.dateDisplay()),
-      readOnly: true,
-      onTap: () => _showDatePicker(context),
-      decoration: InputDecoration(
-        prefixIcon: Icon(Icons.calendar_today_rounded),
-        border: OutlineInputBorder(),
-      ),
-    );
-  }
-
-  Widget _creationTimePicker(BuildContext context) {
-    return TextField(
-      controller: TextEditingController(text: _createdAt.time12Display()),
-      readOnly: true,
-      onTap: () => _showTimePicker(context),
-      decoration: InputDecoration(
-        prefixIcon: Icon(Icons.schedule_rounded),
-        border: OutlineInputBorder(),
-      ),
-    );
-  }
-
-  Future<void> _showDatePicker(BuildContext context) async {
-    final newDate = await showDatePicker(
-      context: context,
-      initialDate: _createdAt,
-      firstDate: DateTime.fromMillisecondsSinceEpoch(0),
-      lastDate: DateTime(2200),
-    );
-
-    if (newDate != null) {
-      setState(() {
-        _createdAt = DateTime(newDate.year, newDate.month, newDate.day,
-            _createdAt.hour, _createdAt.minute);
-      });
-    }
-  }
-
-  Future<void> _showTimePicker(BuildContext context) async {
-    final newTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(_createdAt),
-    );
-
-    if (newTime != null) {
-      setState(() {
-        _createdAt = DateTime(_createdAt.year, _createdAt.month, _createdAt.day,
-            newTime.hour, newTime.minute);
-      });
-    }
-  }
-
-  Widget _bottomActionsBar(BuildContext context) {
-    return BottomAppBar(
-      shape: CircularNotchedRectangle(),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _closeEditorButton(context),
-          Spacer(),
-          if (_id != Expense.UNSET_ID) _deleteExpenseButton(context),
-        ],
-      ),
-    );
-  }
-
-  Widget _closeEditorButton(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.close_rounded),
-      onPressed: () => Navigator.pop(context),
-    );
-  }
-
-  Widget _deleteExpenseButton(BuildContext context) {
-    return IconButton(
-        icon: Icon(Icons.delete_outline_rounded),
-        onPressed: () {
-          _deleteExpense();
-          Navigator.pop(context);
-        });
-  }
-
-  Future<void> _deleteExpense() async {
-    await _provider.delete(_id);
-  }
-
-  Widget _saveExpenseFab(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: _canSave
-          ? () {
-              _saveExpense();
-              Navigator.pop(context);
-            }
-          : null,
-      child: Icon(Icons.check),
-    );
-  }
-
-  Future<void> _saveExpense() async {
-    final expense = Expense(
-      id: _id,
-      category: ExpenseCategory(_categoryController.text),
-      cost: Amount.parse(_costController.text),
-      createdAt: _createdAt,
-      note: _noteController.text,
-    );
-
+  Future<void> onSaveExpense(Expense expense) async {
     if (expense.id == Expense.UNSET_ID) {
-      await _provider.add(expense);
+      await provider.add(expense);
     } else {
-      await _provider.update(expense);
+      await provider.update(expense);
     }
+  }
+
+  Future<void> onDeleteExpense(int expenseId) async {
+    await provider.delete(expenseId);
   }
 }
