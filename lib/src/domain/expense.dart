@@ -17,7 +17,7 @@ class Expense {
       required this.category,
       required this.cost,
       required this.createdAt,
-      this.note = ''});
+      String note = ''}): note = note.trim();
 
   Expense copyWith(
       {int? id,

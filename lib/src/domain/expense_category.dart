@@ -1,9 +1,9 @@
 class ExpenseCategory {
   final String name;
 
-  const ExpenseCategory(this.name);
+  ExpenseCategory(String name) : name = name.trim();
 
-  const ExpenseCategory.uncategorized() : this('');
+  ExpenseCategory.uncategorized() : this('');
 
   @override
   bool operator ==(dynamic other) {
