@@ -26,8 +26,8 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
   final _costController = TextEditingController();
   final _noteController = TextEditingController();
 
-  var _allCategories = <ExpenseCategory>[];
   var _createdAt = DateTime.now();
+  var _allCategories = <ExpenseCategory>[];
 
   var _canSave = false;
 
@@ -53,6 +53,7 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
 
     setState(() {
       _provider = context.read<ExpenseProvider>();
+      _initializeFields();
       _onProviderMutation();
       _provider.addListener(_onProviderMutation);
     });
@@ -66,6 +67,18 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
     _provider.removeListener(_onProviderMutation);
 
     super.dispose();
+  }
+
+  Future<void> _initializeFields() async {
+    final expense = await _provider.get(_id);
+    if (expense != null) {
+      _categoryController.text = expense.category.name;
+      _costController.text = expense.cost.toString();
+      _noteController.text = expense.note;
+      setState(() {
+        _createdAt = expense.createdAt;
+      });
+    }
   }
 
   Future<void> _onProviderMutation() async {
@@ -299,7 +312,7 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
       note: _noteController.text,
     );
 
-    if (expense.id == 0) {
+    if (expense.id == Expense.UNSET_ID) {
       await _provider.add(expense);
     } else {
       await _provider.update(expense);
