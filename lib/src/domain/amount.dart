@@ -32,7 +32,11 @@ class Amount {
 
   @override
   String toString() {
-    return '$units.${cents.toString().padLeft(2, '0')}';
+    if (cents != 0) {
+      return '$units.${cents.toString().padLeft(2, '0')}';
+    } else {
+      return '$units';
+    }
   }
 }
 
