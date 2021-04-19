@@ -10,7 +10,8 @@ class Amount {
   Amount.fromTotalCents(this.totalCents);
 
   Amount([int unit = 0, int cents = 0])
-      : this.fromTotalCents(cents + (unit * _CENTS_PER_UNIT));
+      : assert(0 <= cents && cents <= 99),
+        totalCents = cents + (unit * _CENTS_PER_UNIT);
 
   Amount.parse(String text) : this.fromTotalCents(_textToTotalCents(text));
 
