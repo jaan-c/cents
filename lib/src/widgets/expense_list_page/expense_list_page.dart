@@ -12,17 +12,18 @@ class ExpenseListPage extends StatefulWidget {
 }
 
 class _ExpenseListPageState extends State<ExpenseListPage> {
-  late ExpenseProvider _provider;
-  var _allExpenses = <Expense>[];
+  late ExpenseProvider provider;
+  var allExpenses = <Expense>[];
+  var expenseSelection = <Expense>{};
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
     setState(() {
-      _provider = context.read<ExpenseProvider>();
+      provider = context.read<ExpenseProvider>();
       _onProviderMutation();
-      _provider.addListener(_onProviderMutation);
+      provider.addListener(_onProviderMutation);
     });
   }
 
@@ -35,18 +36,45 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
   }
 
   Future<void> _onProviderMutation() async {
-    final allExpenses = await _provider.getAllExpenses();
+    final newAllExpenses = await provider.getAllExpenses();
     setState(() {
-      _allExpenses = allExpenses;
+      allExpenses = newAllExpenses;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return ExpenseListPageScaffold(
-      allExpenses: _allExpenses,
+      allExpenses: allExpenses,
+      expenseSelection: expenseSelection,
+      onSelectExpense: _onSelectExpense,
+      onDeselectExpense: _onDeselectExpense,
+      onDeleteExpenses: _deleteExpenses,
       onOpenEditor: (expenseId) => _navigateToEditor(context, expenseId),
     );
+  }
+
+  void _onSelectExpense(Expense expense) {
+    setState(() {
+      expenseSelection = {...expenseSelection}..add(expense);
+    });
+  }
+
+  void _onDeselectExpense(Expense expense) {
+    setState(() {
+      expenseSelection = {...expenseSelection}
+        ..removeWhere((e) => e == expense);
+    });
+  }
+
+  Future<void> _deleteExpenses(List<int> expenseIds) async {
+    for (final i in expenseIds) {
+      await provider.delete(i);
+    }
+
+    setState(() {
+      expenseSelection = {};
+    });
   }
 
   void _navigateToEditor(BuildContext context, int expenseId) {

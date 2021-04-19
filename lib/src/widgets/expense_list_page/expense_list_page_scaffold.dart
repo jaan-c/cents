@@ -4,13 +4,25 @@ import 'package:flutter/material.dart';
 import 'expense_list.dart';
 
 typedef OpenEditorCallback = void Function(int expenseId);
+typedef SelectExpenseCallback = void Function(Expense);
+typedef DeselectExpenseCallback = void Function(Expense);
+typedef DeleteExpensesCallback = void Function(List<int> expenseIds);
 
 class ExpenseListPageScaffold extends StatelessWidget {
   final List<Expense> allExpenses;
+  final Set<Expense> expenseSelection;
+  final SelectExpenseCallback onSelectExpense;
+  final DeselectExpenseCallback onDeselectExpense;
+  final DeleteExpensesCallback onDeleteExpenses;
   final OpenEditorCallback onOpenEditor;
 
   ExpenseListPageScaffold(
-      {required this.allExpenses, required this.onOpenEditor});
+      {required this.allExpenses,
+      required this.expenseSelection,
+      required this.onSelectExpense,
+      required this.onDeselectExpense,
+      required this.onDeleteExpenses,
+      required this.onOpenEditor});
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +30,17 @@ class ExpenseListPageScaffold extends StatelessWidget {
       appBar: _appBar(context),
       body: ExpenseList(
         expenses: allExpenses,
+        expenseSelection: expenseSelection,
         onEditExpense: onOpenEditor,
+        onSelectExpense: onSelectExpense,
+        onDeselectExpense: onDeselectExpense,
       ),
-      floatingActionButton: _addExpenseFab(context),
+      floatingActionButton:
+          expenseSelection.isEmpty ? _addExpenseFab(context) : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _bottomBar(),
+      bottomNavigationBar: expenseSelection.isEmpty
+          ? _bottomBar()
+          : _selectionBottomBar(context),
     );
   }
 
@@ -52,10 +70,48 @@ class ExpenseListPageScaffold extends StatelessWidget {
   Widget _bottomBar() {
     return BottomAppBar(
       shape: CircularNotchedRectangle(),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [Spacer(), _overflowMenuButton()],
+      child: SizedBox(
+        height: kToolbarHeight,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [Spacer(), _overflowMenuButton()],
+        ),
+      ),
+    );
+  }
+
+  Widget _selectionBottomBar(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return BottomAppBar(
+      child: SizedBox(
+        height: kToolbarHeight,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  '${expenseSelection.length} selected',
+                  style: textTheme.headline6,
+                ),
+              ),
+            ),
+            Spacer(),
+            IconButton(
+              icon: Icon(Icons.delete_outline_rounded),
+              onPressed: () =>
+                  onDeleteExpenses(expenseSelection.map((e) => e.id).toList()),
+            ),
+            IconButton(
+              icon: Icon(Icons.close_rounded),
+              onPressed: () => expenseSelection.forEach(onDeselectExpense),
+            ),
+          ],
+        ),
       ),
     );
   }

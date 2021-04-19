@@ -1,9 +1,9 @@
 extension StringCondition on String {
-  bool isBlank() {
+  bool get isBlank {
     return trim().isEmpty;
   }
 
-  bool isNotBlank() {
-    return !isBlank();
+  bool get isNotBlank {
+    return !isBlank;
   }
 }

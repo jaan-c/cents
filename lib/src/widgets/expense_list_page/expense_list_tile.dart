@@ -3,36 +3,47 @@ import 'package:flutter/material.dart';
 
 import '../util/datetime.dart';
 import '../util/string.dart';
-import 'edit_expense_callback.dart';
 
 class ExpenseListTile extends StatelessWidget {
   final Expense expense;
-  final EditExpenseCallback onEditExpense;
+  final VoidCallback onTap;
+  final VoidCallback? onLongPress;
+  final bool isSelected;
 
-  ExpenseListTile({required this.expense, required this.onEditExpense});
+  ExpenseListTile(
+      {required this.expense,
+      required this.onTap,
+      this.onLongPress,
+      required this.isSelected});
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => onEditExpense(expense.id),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _createdAtText(context),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Expanded(child: _categoryText(context)),
-                _costText(context),
-              ],
-            ),
-            if (expense.note.isNotBlank()) _noteText(context),
-          ],
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Material(
+      color: isSelected ? colorScheme.primary.withAlpha(33) : null,
+      child: InkWell(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _createdAtText(context),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Expanded(child: _categoryText(context)),
+                  _costText(context),
+                ],
+              ),
+              if (expense.note.isNotBlank) _noteText(context),
+            ],
+          ),
         ),
       ),
     );
@@ -49,7 +60,11 @@ class ExpenseListTile extends StatelessWidget {
   Widget _categoryText(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Text(expense.category.name, style: textTheme.subtitle1);
+    return Text(
+        expense.category.name.isNotBlank
+            ? expense.category.name
+            : 'Uncategorized',
+        style: textTheme.subtitle1);
   }
 
   Widget _costText(BuildContext context) {
