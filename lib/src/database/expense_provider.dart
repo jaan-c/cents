@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'column_converter.dart';
+import 'database_opener.dart';
 import 'row_converter.dart';
 import 'utils.dart';
 
@@ -15,6 +16,16 @@ const COLUMN_CREATED_AT = 'createdAt';
 const COLUMN_NOTE = 'note';
 
 class ExpenseProvider with ChangeNotifier {
+  static Future<ExpenseProvider> open() async {
+    final database = await DatabaseOpener.open();
+    return ExpenseProvider(database);
+  }
+
+  static Future<ExpenseProvider> openInMemory() async {
+    final database = await DatabaseOpener.openInMemory();
+    return ExpenseProvider(database);
+  }
+
   final Database _database;
 
   ExpenseProvider(this._database);
