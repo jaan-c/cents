@@ -50,6 +50,8 @@ class ExpenseProvider with ChangeNotifier {
   }
 
   Future<void> add(Expense expense) async {
+    assert(expense.id == Expense.UNSET_ID);
+
     await _database.insert(TABLE_EXPENSES, expense.toRow());
 
     notifyListeners();
@@ -63,6 +65,8 @@ class ExpenseProvider with ChangeNotifier {
   }
 
   Future<void> update(Expense expense) async {
+    assert(expense.id != Expense.UNSET_ID);
+
     await _database.update(TABLE_EXPENSES, expense.toRow());
 
     notifyListeners();
