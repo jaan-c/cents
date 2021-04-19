@@ -44,12 +44,27 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Expenses')),
+      appBar: _appBar(context),
       body: ExpenseList(
         expenses: _allExpenses,
         onEditExpense: (expenseId) => _navigateToEditor(context, expenseId),
       ),
       floatingActionButton: _addExpenseFab(context),
+    );
+  }
+
+  AppBar _appBar(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+
+    return AppBar(
+      backgroundColor: colorScheme.surface,
+      elevation: 0,
+      title: Text(
+        'Expenses',
+        style: textTheme.headline6?.copyWith(color: colorScheme.onSurface),
+      ),
     );
   }
 

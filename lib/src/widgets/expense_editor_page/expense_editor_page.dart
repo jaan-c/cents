@@ -93,7 +93,7 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(),
+      appBar: _appBar(context),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: Column(
@@ -122,10 +122,19 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
     );
   }
 
-  AppBar _appBar() {
+  AppBar _appBar(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+
     return AppBar(
       automaticallyImplyLeading: false,
-      title: Text(_id == Expense.UNSET_ID ? 'Add Expense' : 'Edit Expense'),
+      backgroundColor: colorScheme.surface,
+      elevation: 0,
+      title: Text(
+        _id == Expense.UNSET_ID ? 'Add Expense' : 'Edit Expense',
+        style: textTheme.headline6?.copyWith(color: colorScheme.onSurface),
+      ),
     );
   }
 
