@@ -17,7 +17,7 @@ class ExpenseList extends StatelessWidget {
         expense: expenses[ix],
         onEditExpense: onEditExpense,
       ),
-      separatorBuilder: (_, __) => Divider(),
+      separatorBuilder: (_, __) => Divider(height: 1),
       itemCount: expenses.length,
     );
   }
