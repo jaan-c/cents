@@ -62,12 +62,13 @@ class ExpenseListTile extends StatelessWidget {
 
   Widget _noteText(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return Text(
       expense.note,
-      style: textTheme.subtitle2
-          ?.apply(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+      style: textTheme.bodyText2
+          ?.apply(color: colorScheme.onSurface.withOpacity(0.6)),
     );
   }
 }
