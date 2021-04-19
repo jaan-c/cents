@@ -155,7 +155,6 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
     return TextField(
       controller: _costController,
       keyboardType: TextInputType.numberWithOptions(decimal: true),
-      textAlign: TextAlign.end,
       decoration: InputDecoration(
         labelText: 'Cost',
         hintText: '0.00',
