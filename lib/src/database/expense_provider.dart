@@ -67,7 +67,8 @@ class ExpenseProvider with ChangeNotifier {
   Future<void> update(Expense expense) async {
     assert(expense.id != Expense.UNSET_ID);
 
-    await _database.update(TABLE_EXPENSES, expense.toRow());
+    await _database.update(TABLE_EXPENSES, expense.toRow(),
+        where: '$COLUMN_ID = ?', whereArgs: [expense.id]);
 
     notifyListeners();
   }
