@@ -20,7 +20,7 @@ class Expense {
       this.note = ''});
 
   Expense copyWith(
-      {int? id = 0,
+      {int? id,
       ExpenseCategory? category,
       Amount? cost,
       DateTime? createdAt,
