@@ -3,7 +3,7 @@ import 'package:path/path.dart' as pathlib;
 
 import 'expense_provider.dart';
 
-class DatabaseOpener {
+abstract class DatabaseOpener {
   static const DATABASE_NAME = 'expenses.sql';
   static const DATABASE_VERSION = 1;
 
