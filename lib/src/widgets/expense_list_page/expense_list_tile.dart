@@ -3,32 +3,37 @@ import 'package:flutter/material.dart';
 
 import '../util/datetime.dart';
 import '../util/string.dart';
+import 'edit_expense_callback.dart';
 
 class ExpenseListTile extends StatelessWidget {
   final Expense expense;
+  final EditExpenseCallback onEditExpense;
 
-  ExpenseListTile({required this.expense});
+  ExpenseListTile({required this.expense, required this.onEditExpense});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _createdAtText(context),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Expanded(child: _categoryText(context)),
-              _costText(context),
-            ],
-          ),
-          if (expense.note.isNotBlank()) _noteText(context),
-        ],
+    return InkWell(
+      onTap: () => onEditExpense(expense.id),
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _createdAtText(context),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Expanded(child: _categoryText(context)),
+                _costText(context),
+              ],
+            ),
+            if (expense.note.isNotBlank()) _noteText(context),
+          ],
+        ),
       ),
     );
   }

@@ -45,7 +45,10 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Expenses')),
-      body: ExpenseList(expenses: _allExpenses),
+      body: ExpenseList(
+        expenses: _allExpenses,
+        onEditExpense: (expenseId) => _navigateToEditor(context, expenseId),
+      ),
       floatingActionButton: _addExpenseFab(context),
     );
   }
