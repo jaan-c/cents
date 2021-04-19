@@ -1,6 +1,8 @@
 import 'package:cents/src/domain/expense.dart';
 import 'package:flutter/material.dart';
+
 import '../util/datetime.dart';
+import '../util/string.dart';
 
 class ExpenseListTile extends StatelessWidget {
   final Expense expense;
@@ -25,7 +27,7 @@ class ExpenseListTile extends StatelessWidget {
               _costText(context),
             ],
           ),
-          _noteText(context),
+          if (expense.note.isNotBlank()) _noteText(context),
         ],
       ),
     );
