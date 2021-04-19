@@ -6,7 +6,7 @@ import 'column_converter.dart';
 extension ExpenseToRow on Expense {
   Map<String, Object> toRow() {
     return {
-      COLUMN_ID: id,
+      if (id != Expense.UNSET_ID) COLUMN_ID: id,
       COLUMN_CATEGORY: category.toColumn(),
       COLUMN_COST: cost.toColumn(),
       COLUMN_CREATED_AT: createdAt.toColumn(),
@@ -18,7 +18,7 @@ extension ExpenseToRow on Expense {
 extension ExpenseFromRow on Map<String, Object> {
   Expense fromRow() {
     return Expense(
-        id: this[COLUMN_ID]! as int,
+        id: (this[COLUMN_ID] ?? Expense.UNSET_ID) as int,
         category: (this[COLUMN_CATEGORY]! as String).toCategory(),
         cost: (this[COLUMN_COST]! as int).toCost(),
         createdAt: (this[COLUMN_CREATED_AT]! as String).toDateTime(),
