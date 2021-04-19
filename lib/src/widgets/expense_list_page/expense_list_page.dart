@@ -1,10 +1,8 @@
-import 'dart:async';
-
-import 'package:cents/src/database/database_opener.dart';
-import 'package:cents/src/database/expense_repo.dart';
+import 'package:cents/src/database/expense_provider.dart';
 import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/widgets/expense_editor_page/expense_editor_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'expense_list.dart';
 
@@ -14,33 +12,32 @@ class ExpenseListPage extends StatefulWidget {
 }
 
 class _ExpenseListPageState extends State<ExpenseListPage> {
-  late final Future<ExpenseRepo> _repo;
-  late final StreamSubscription<List<Expense>> _allExpensesSubscription;
-
+  late ExpenseProvider _provider;
   var _allExpenses = <Expense>[];
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-    _repo = AppDatabase.getInstance().then((db) => ExpenseRepo(db));
-    _initStateAsync();
-  }
-
-  Future<void> _initStateAsync() async {
-    final repo = await _repo;
-
-    _allExpensesSubscription =
-        repo.expensesStream.listen((newAllExpenses) => setState(() {
-              _allExpenses = newAllExpenses;
-            }));
+    setState(() {
+      _provider = context.read<ExpenseProvider>();
+      _provider.addListener(_onProviderMutation);
+    });
   }
 
   @override
   void dispose() {
-    _allExpensesSubscription.cancel();
+    final provider = context.read<ExpenseProvider>();
+    provider.removeListener(_onProviderMutation);
 
     super.dispose();
+  }
+
+  Future<void> _onProviderMutation() async {
+    final allExpenses = await _provider.getAllExpenses();
+    setState(() {
+      _allExpenses = allExpenses;
+    });
   }
 
   @override

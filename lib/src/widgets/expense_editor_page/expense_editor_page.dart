@@ -1,11 +1,12 @@
 import 'dart:async';
 
-import 'package:cents/src/database/database_opener.dart';
-import 'package:cents/src/database/expense_repo.dart';
+import 'package:cents/src/database/expense_provider.dart';
 import 'package:cents/src/domain/amount.dart';
 import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/domain/expense_category.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import '../util/datetime.dart';
 
 class ExpenseEditorPage extends StatefulWidget {
@@ -19,9 +20,7 @@ class ExpenseEditorPage extends StatefulWidget {
 
 class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
   final int _id;
-  late final Future<ExpenseRepo> _repo;
-  late final StreamSubscription<List<ExpenseCategory>>
-      _allCategoriesSubscription;
+  late ExpenseProvider _provider;
 
   final _categoryController = TextEditingController();
   final _costController = TextEditingController();
@@ -38,9 +37,6 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
   void initState() {
     super.initState();
 
-    _repo = AppDatabase.getInstance().then((db) => ExpenseRepo(db));
-    _initStateAsync();
-
     _costController.addListener(() => setState(() {
           try {
             Amount.parse(_costController.text);
@@ -51,24 +47,13 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
         }));
   }
 
-  Future<void> _initStateAsync() async {
-    final repo = await _repo;
-
-    _allCategoriesSubscription =
-        repo.categoriesStream.listen((newAllCategories) => setState(() {
-              _allCategories = newAllCategories;
-            }));
-
-    final expense = await repo.get(_id);
-    if (expense != null) {
-      debugPrint('Restored expense $_id');
-    }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
     setState(() {
-      _categoryController.text = expense?.category.name ?? '';
-      _costController.text = expense?.cost.toString() ?? '';
-      _noteController.text = expense?.note ?? '';
-      _createdAt = expense?.createdAt ?? _createdAt;
+      _provider = context.read<ExpenseProvider>();
+      _provider.addListener(_onProviderMutation);
     });
   }
 
@@ -77,9 +62,16 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
     _categoryController.dispose();
     _costController.dispose();
     _noteController.dispose();
-    _allCategoriesSubscription.cancel();
+    _provider.removeListener(_onProviderMutation);
 
     super.dispose();
+  }
+
+  Future<void> _onProviderMutation() async {
+    final allCategories = await _provider.getAllCategories();
+    setState(() {
+      _allCategories = allCategories;
+    });
   }
 
   @override
@@ -282,8 +274,7 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
   }
 
   Future<void> _deleteExpense() async {
-    final repo = await _repo;
-    await repo.delete(_id);
+    await _provider.delete(_id);
   }
 
   Widget _saveExpenseFab(BuildContext context) {
@@ -307,11 +298,10 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
       note: _noteController.text,
     );
 
-    final repo = await _repo;
     if (expense.id == 0) {
-      await repo.add(expense);
+      await _provider.add(expense);
     } else {
-      await repo.update(expense);
+      await _provider.update(expense);
     }
   }
 }
