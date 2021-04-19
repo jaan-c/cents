@@ -135,19 +135,22 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
         labelText: 'Category',
         hintText: 'Uncategorized',
         border: OutlineInputBorder(),
-        suffix: _allCategories.isNotEmpty ? _categoryDropDown() : null,
+        suffixIcon: _allCategories.isNotEmpty ? _categoryPickerButton() : null,
       ),
     );
   }
 
-  Widget _categoryDropDown() {
-    return DropdownButton(
-      items: _allCategories
-          .map((c) => DropdownMenuItem(
-              value: c,
-              onTap: () => _categoryController.text = c.name,
-              child: Text(c.name)))
-          .toList(),
+  Widget _categoryPickerButton() {
+    return PopupMenuButton<ExpenseCategory>(
+      onSelected: (category) => setState(() {
+        _categoryController.text = category.name;
+      }),
+      icon: Icon(Icons.more_horiz_rounded),
+      itemBuilder: (_) {
+        return _allCategories
+            .map((c) => PopupMenuItem(value: c, child: Text(c.name)))
+            .toList();
+      },
     );
   }
 
