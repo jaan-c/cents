@@ -130,6 +130,7 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
   Widget _categoryField() {
     return TextField(
       controller: _categoryController,
+      textCapitalization: TextCapitalization.words,
       decoration: InputDecoration(
         labelText: 'Category',
         hintText: 'Uncategorized',
@@ -166,6 +167,7 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
   Widget _noteField() {
     return TextField(
       controller: _noteController,
+      textCapitalization: TextCapitalization.sentences,
       minLines: 3,
       maxLines: 5,
       decoration: InputDecoration(
