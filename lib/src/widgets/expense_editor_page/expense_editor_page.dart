@@ -74,6 +74,8 @@ class _ExpenseEditorPageState extends State<ExpenseEditorPage> {
     if (expense != null) {
       _categoryController.text = expense.category.name;
       _costController.text = expense.cost.toString();
+      _costController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _costController.text.length));
       _noteController.text = expense.note;
       setState(() {
         _createdAt = expense.createdAt;
