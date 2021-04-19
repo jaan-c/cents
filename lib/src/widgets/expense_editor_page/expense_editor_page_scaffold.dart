@@ -312,14 +312,17 @@ class _ExpenseEditorPageScaffoldState extends State<ExpenseEditorPageScaffold> {
   Widget _bottomActionsBar(BuildContext context) {
     return BottomAppBar(
       shape: CircularNotchedRectangle(),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _closeEditorButton(context),
-          Spacer(),
-          if (id != Expense.UNSET_ID) _deleteExpenseButton(context),
-        ],
+      child: SizedBox(
+        height: kToolbarHeight,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _closeEditorButton(context),
+            Spacer(),
+            if (id != Expense.UNSET_ID) _deleteExpenseButton(context),
+          ],
+        ),
       ),
     );
   }
