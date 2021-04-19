@@ -21,6 +21,7 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
 
     setState(() {
       _provider = context.read<ExpenseProvider>();
+      _onProviderMutation();
       _provider.addListener(_onProviderMutation);
     });
   }
