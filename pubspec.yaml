@@ -23,6 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  collection: ^1.15.0
   quiver: ^3.0.0
   intl: ^0.17.0
   provider: ^5.0.0
