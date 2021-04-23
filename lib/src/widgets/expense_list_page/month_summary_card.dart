@@ -43,7 +43,8 @@ class MonthSummaryCard extends StatelessWidget {
     return Table(
       defaultColumnWidth: FlexColumnWidth(1),
       defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
-      border: TableBorder.symmetric(inside: BorderSide(width: 1)),
+      border: TableBorder.symmetric(
+          inside: BorderSide(width: 1, color: Colors.grey.withAlpha(60))),
       textBaseline: TextBaseline.alphabetic,
       children: [
         _summaryTableHeader(context),
