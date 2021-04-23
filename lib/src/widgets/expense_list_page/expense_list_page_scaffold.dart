@@ -79,6 +79,7 @@ class ExpenseListPageScaffold extends StatelessWidget {
       onEditExpense: onOpenEditor,
       onSelectExpense: onSelectExpense,
       onDeselectExpense: onDeselectExpense,
+      subheader: Text('All Expenses'),
     );
   }
 
