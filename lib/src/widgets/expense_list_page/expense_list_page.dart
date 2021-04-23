@@ -13,6 +13,7 @@ class ExpenseListPage extends StatefulWidget {
 
 class _ExpenseListPageState extends State<ExpenseListPage> {
   late ExpenseProvider provider;
+  final DateTime currentDate = DateTime.now();
   var allExpenses = <Expense>[];
   var expenseSelection = <Expense>{};
 
@@ -45,6 +46,7 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
   @override
   Widget build(BuildContext context) {
     return ExpenseListPageScaffold(
+      currentDate: currentDate,
       allExpenses: allExpenses,
       expenseSelection: expenseSelection,
       onSelectExpense: _onSelectExpense,

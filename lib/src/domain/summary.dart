@@ -1,71 +1,67 @@
-import 'amount.dart';
+import 'package:cents/src/domain/amount.dart';
+
 import 'expense.dart';
 import 'expense_category.dart';
-import 'expense_list.dart';
+import 'expense_list_ext.dart';
+import 'date_ext.dart';
 
 class Summary {
   final Map<int, YearSummary> yearSummaries;
 
   Summary._internal(this.yearSummaries);
 
-  factory Summary.fromExpenses(List<Expense> expenses) {
-    final yearSummaries = expenses
-        .groupByYear()
-        .map((y, es) => MapEntry(y, YearSummary.fromExpenses(es)));
+  factory Summary(List<Expense> expenses) {
+    final yearSummaries =
+        expenses.groupByYear().map((y, es) => MapEntry(y, YearSummary(y, es)));
 
     return Summary._internal(yearSummaries);
+  }
+
+  MonthSummary? getMonth(int year, int month) {
+    return yearSummaries[year]?.monthSummaries[month];
   }
 }
 
 class YearSummary {
+  final int year;
   final Map<int, MonthSummary> monthSummaries;
 
-  YearSummary._internal(this.monthSummaries);
+  YearSummary._internal(this.year, this.monthSummaries);
 
-  factory YearSummary.fromExpenses(List<Expense> expenses) {
+  factory YearSummary(int year, List<Expense> expenses) {
     final monthSummaries = expenses
         .groupByMonth()
-        .map((m, es) => MapEntry(m, MonthSummary.fromExpenses(es)));
+        .map((m, es) => MapEntry(m, MonthSummary(year, m, es)));
 
-    return YearSummary._internal(monthSummaries);
+    return YearSummary._internal(year, monthSummaries);
   }
 }
 
 class MonthSummary {
-  final Map<int, WeekSummary> weekSummaries;
-
-  MonthSummary._internal(this.weekSummaries);
-
-  factory MonthSummary.fromExpenses(List<Expense> expenses) {
-    final weekSummaries = expenses
-        .groupByWeekOfMonth()
-        .map((w, es) => MapEntry(w, WeekSummary.fromExpenses(es)));
-
-    return MonthSummary._internal(weekSummaries);
-  }
-}
-
-class WeekSummary {
-  final Map<ExpenseCategory, CategorySummary> categorySummaries;
-
-  WeekSummary._internal(this.categorySummaries);
-
-  factory WeekSummary.fromExpenses(List<Expense> expenses) {
-    final categorySummaries = expenses
-        .groupByCategory()
-        .map((c, es) => MapEntry(c, CategorySummary.fromExpenses(es)));
-
-    return WeekSummary._internal(categorySummaries);
-  }
-}
-
-class CategorySummary {
+  final int year;
+  final int month;
   final List<Expense> expenses;
-  final Amount costSum;
 
-  CategorySummary._internal(this.expenses, this.costSum);
+  List<ExpenseCategory> get categories {
+    return expenses.map((e) => e.category).toSet().toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
+  }
 
-  factory CategorySummary.fromExpenses(List<Expense> expenses) {
-    return CategorySummary._internal(expenses, expenses.sum());
+  bool get has5thWeek =>
+      DateTime(year, month, DateTime(year, month).lastDayOfMonth).weekOfMonth ==
+      5;
+
+  MonthSummary(this.year, this.month, this.expenses);
+
+  List<Expense> getBy({ExpenseCategory? category, int? weekOfMonth}) {
+    return expenses
+        .where((e) =>
+            (category == null || e.category == category) &&
+            (weekOfMonth == null || e.createdAt.weekOfMonth == weekOfMonth))
+        .toList();
+  }
+
+  Amount totalCostBy({ExpenseCategory? category, int? weekOfMonth}) {
+    return getBy(category: category, weekOfMonth: weekOfMonth).totalCost();
   }
 }

@@ -3,9 +3,9 @@ import 'package:collection/collection.dart';
 import 'amount.dart';
 import 'expense.dart';
 import 'expense_category.dart';
-import 'utils.dart';
+import 'date_ext.dart';
 
-extension ExpenseList on List<Expense> {
+extension ExpenseListExt on List<Expense> {
   Map<int, List<Expense>> groupByYear() {
     return groupBy(this, (e) => e.createdAt.year);
   }
@@ -22,7 +22,7 @@ extension ExpenseList on List<Expense> {
     return groupBy(this, (e) => e.category);
   }
 
-  Amount sum() {
+  Amount totalCost() {
     return fold(Amount(), (a, e) => a.add(e.cost));
   }
 

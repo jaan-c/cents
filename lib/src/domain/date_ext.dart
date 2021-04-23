@@ -1,16 +1,27 @@
 import 'package:quiver/time.dart';
 
-extension WeekOf on DateTime {
+extension DateExt on DateTime {
   int get weekOfMonth {
     final startOfMonth = DateTime(year, month, 1);
 
-    return _dateRange(startOfMonth, this, aWeek).length + 1;
+    return _dateRange(startOfMonth, this, aWeek).length;
   }
 
   int get weekOfYear {
     final startOfYear = DateTime(year, DateTime.january, 1);
 
-    return _dateRange(startOfYear, this, aWeek).length + 1;
+    return _dateRange(startOfYear, this, aWeek).length;
+  }
+
+  int get lastDayOfMonth {
+    late final DateTime nextMonth;
+    if (month == 12) {
+      nextMonth = DateTime(year + 1, DateTime.january);
+    } else {
+      nextMonth = DateTime(year, month + 1);
+    }
+
+    return nextMonth.subtract(aDay).day;
   }
 }
 
@@ -21,13 +32,9 @@ Iterable<DateTime> _dateRange(
   end = DateTime(end.year, end.month, end.day);
 
   var current = start;
-  while (true) {
+  while (current == end || current.isBefore(end)) {
     yield current;
 
-    if (current.isBefore(end)) {
-      current = current.add(interval);
-    } else {
-      break;
-    }
+    current = current.add(interval);
   }
 }

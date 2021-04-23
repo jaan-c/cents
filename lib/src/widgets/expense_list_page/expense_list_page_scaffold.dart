@@ -1,7 +1,9 @@
 import 'package:cents/src/domain/expense.dart';
+import 'package:cents/src/domain/summary.dart';
 import 'package:flutter/material.dart';
 
 import 'expense_list.dart';
+import 'month_summary_card.dart';
 
 typedef OpenEditorCallback = void Function(int expenseId);
 typedef SelectExpenseCallback = void Function(Expense);
@@ -9,6 +11,7 @@ typedef DeselectExpenseCallback = void Function(Expense);
 typedef DeleteExpensesCallback = void Function(List<int> expenseIds);
 
 class ExpenseListPageScaffold extends StatelessWidget {
+  final DateTime currentDate;
   final List<Expense> allExpenses;
   final Set<Expense> expenseSelection;
   final SelectExpenseCallback onSelectExpense;
@@ -16,24 +19,29 @@ class ExpenseListPageScaffold extends StatelessWidget {
   final DeleteExpensesCallback onDeleteExpenses;
   final OpenEditorCallback onOpenEditor;
 
+  final MonthSummary? currentMonthSummary;
+
   ExpenseListPageScaffold(
-      {required this.allExpenses,
+      {required this.currentDate,
+      required this.allExpenses,
       required this.expenseSelection,
       required this.onSelectExpense,
       required this.onDeselectExpense,
       required this.onDeleteExpenses,
-      required this.onOpenEditor});
+      required this.onOpenEditor})
+      : currentMonthSummary =
+            Summary(allExpenses).getMonth(currentDate.year, currentDate.month);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(context),
-      body: ExpenseList(
-        expenses: allExpenses,
-        expenseSelection: expenseSelection,
-        onEditExpense: onOpenEditor,
-        onSelectExpense: onSelectExpense,
-        onDeselectExpense: onDeselectExpense,
+      body: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          if (currentMonthSummary != null) _currentMonthSummaryCard(),
+          Expanded(child: _expenseList()),
+        ],
       ),
       floatingActionButton:
           expenseSelection.isEmpty ? _addExpenseFab(context) : null,
@@ -57,6 +65,20 @@ class ExpenseListPageScaffold extends StatelessWidget {
         'Expenses',
         style: textTheme.headline6?.copyWith(color: colorScheme.onSurface),
       ),
+    );
+  }
+
+  Widget _currentMonthSummaryCard() {
+    return MonthSummaryCard(monthSummary: currentMonthSummary!);
+  }
+
+  Widget _expenseList() {
+    return ExpenseList(
+      expenses: allExpenses,
+      expenseSelection: expenseSelection,
+      onEditExpense: onOpenEditor,
+      onSelectExpense: onSelectExpense,
+      onDeselectExpense: onDeselectExpense,
     );
   }
 

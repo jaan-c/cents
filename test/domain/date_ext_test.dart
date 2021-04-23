@@ -1,0 +1,22 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:cents/src/domain/date_ext.dart';
+
+void main() {
+  test('lastDayOfMonth must be 30 for April 2021', () {
+    final april = DateTime(2021, DateTime.april);
+
+    expect(april.lastDayOfMonth, 30);
+  });
+
+  test('weekOfMonth must be 1 for April 1, 2021', () {
+    final april = DateTime(2021, DateTime.april, 1);
+
+    expect(april.weekOfMonth, 1);
+  });
+
+  test('weekOfMonth must be 5 for April 30, 2021', () {
+    final april = DateTime(2021, DateTime.april, 30);
+
+    expect(april.weekOfMonth, 5);
+  });
+}
