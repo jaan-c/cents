@@ -40,6 +40,7 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
     final newAllExpenses = await provider.getAllExpenses();
     setState(() {
       allExpenses = newAllExpenses;
+      expenseSelection = {};
     });
   }
 
