@@ -66,14 +66,17 @@ class MonthSummaryCard extends StatelessWidget {
           inside: BorderSide(width: 1, color: Colors.grey.withAlpha(60))),
       children: [
         TableRow(
-          children: [Text('', style: textTheme.subtitle2)],
+          children: [Text('', style: textTheme.subtitle2)]
+              .padAll(padding: EdgeInsets.all(4)),
         ),
         for (final category in monthSummary.categories)
           TableRow(
-            children: [Text(category.name, style: textTheme.subtitle2)],
+            children: [Text(category.name, style: textTheme.subtitle2)]
+                .padAll(padding: EdgeInsets.all(4)),
           ),
         TableRow(
-          children: [Text('Total', style: textTheme.subtitle2)],
+          children: [Text('Total', style: textTheme.subtitle2)]
+              .padAll(padding: EdgeInsets.all(4)),
         )
       ],
     );
@@ -107,7 +110,7 @@ class MonthSummaryCard extends StatelessWidget {
         if (monthSummary.has5thWeek)
           Text('5th', style: textTheme.subtitle2, textAlign: TextAlign.center),
         Text('Total', style: textTheme.subtitle2, textAlign: TextAlign.center),
-      ],
+      ].padAll(padding: EdgeInsets.all(4)),
     );
   }
 
@@ -132,7 +135,7 @@ class MonthSummaryCard extends StatelessWidget {
           style: textTheme.bodyText2,
           textAlign: TextAlign.center,
         ),
-      ],
+      ].padAll(padding: EdgeInsets.all(4)),
     );
   }
 
@@ -156,7 +159,7 @@ class MonthSummaryCard extends StatelessWidget {
           style: textTheme.bodyText2,
           textAlign: TextAlign.center,
         ),
-      ],
+      ].padAll(padding: EdgeInsets.all(4)),
     );
   }
 
@@ -201,5 +204,11 @@ class _ExpandedChildScrollView extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+extension PadAll on List<Widget> {
+  List<Widget> padAll({required EdgeInsetsGeometry padding}) {
+    return map((w) => Padding(padding: padding, child: w)).toList();
   }
 }
