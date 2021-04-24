@@ -1,4 +1,4 @@
-extension StringCondition on String {
+extension StringExt on String {
   bool get isBlank {
     return trim().isEmpty;
   }
