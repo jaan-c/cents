@@ -1,9 +1,9 @@
 import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/domain/summary.dart';
+import 'package:cents/src/widgets/shared/month_summary_card.dart';
 import 'package:flutter/material.dart';
 
 import 'expense_list.dart';
-import 'month_summary_card.dart';
 
 typedef OpenEditorCallback = void Function(int expenseId);
 typedef SelectExpenseCallback = void Function(Expense);
