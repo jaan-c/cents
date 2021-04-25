@@ -65,7 +65,7 @@ class ExpenseListPageScaffold extends StatelessWidget {
       foregroundColor: colorScheme.onSurface,
       elevation: 0,
       title: Text(
-        'Expenses',
+        'Cents',
         style: textTheme.headline6?.copyWith(color: colorScheme.onSurface),
       ),
     );
