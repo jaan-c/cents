@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 
 import 'expense_list.dart';
 
-typedef OpenEditorCallback = void Function(int expenseId);
 typedef SelectExpenseCallback = void Function(Expense);
 typedef DeselectExpenseCallback = void Function(Expense);
 typedef DeleteExpensesCallback = void Function(List<int> expenseIds);
+typedef OpenEditorCallback = void Function(int expenseId);
+typedef OpenStatsCallback = void Function();
 
 class ExpenseListPageScaffold extends StatelessWidget {
   final DateTime currentDate;
@@ -18,6 +19,7 @@ class ExpenseListPageScaffold extends StatelessWidget {
   final DeselectExpenseCallback onDeselectExpense;
   final DeleteExpensesCallback onDeleteExpenses;
   final OpenEditorCallback onOpenEditor;
+  final OpenStatsCallback onOpenStats;
 
   final MonthSummary? currentMonthSummary;
 
@@ -28,7 +30,8 @@ class ExpenseListPageScaffold extends StatelessWidget {
       required this.onSelectExpense,
       required this.onDeselectExpense,
       required this.onDeleteExpenses,
-      required this.onOpenEditor})
+      required this.onOpenEditor,
+      required this.onOpenStats})
       : currentMonthSummary =
             Summary(allExpenses).getMonth(currentDate.year, currentDate.month);
 
@@ -141,8 +144,13 @@ class ExpenseListPageScaffold extends StatelessWidget {
 
   Widget _overflowMenuButton() {
     return PopupMenuButton(
+      onSelected: (item) {
+        if (item == 'Stats') {
+          onOpenStats();
+        }
+      },
       itemBuilder: (_) {
-        return ['Settings', 'About']
+        return ['Stats', 'Settings', 'About']
             .map((x) => PopupMenuItem(value: x, child: Text(x)))
             .toList();
       },

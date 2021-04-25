@@ -1,6 +1,7 @@
 import 'package:cents/src/database/expense_provider.dart';
 import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/widgets/expense_editor_page/expense_editor_page.dart';
+import 'package:cents/src/widgets/expense_stats_page/expense_stats_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -53,7 +54,8 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
       onSelectExpense: _onSelectExpense,
       onDeselectExpense: _onDeselectExpense,
       onDeleteExpenses: _deleteExpenses,
-      onOpenEditor: (expenseId) => _navigateToEditor(context, expenseId),
+      onOpenEditor: (expenseId) => _navigateToEditorPage(context, expenseId),
+      onOpenStats: () => _navigateToStatsPage(context),
     );
   }
 
@@ -80,10 +82,17 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
     });
   }
 
-  void _navigateToEditor(BuildContext context, int expenseId) {
+  void _navigateToEditorPage(BuildContext context, int expenseId) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => ExpenseEditorPage(id: expenseId)),
+    );
+  }
+
+  void _navigateToStatsPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => ExpenseStatsPage()),
     );
   }
 }
