@@ -35,7 +35,6 @@ class _ExpenseStatsPageState extends State<ExpenseStatsPage> {
 
   @override
   void dispose() {
-    final provider = context.read<ExpenseProvider>();
     provider.removeListener(_onProviderMutation);
 
     super.dispose();
