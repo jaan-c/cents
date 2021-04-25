@@ -42,7 +42,11 @@ class ExpenseListPageScaffold extends StatelessWidget {
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
-          if (currentMonthSummary != null) _currentMonthSummaryCard(),
+          if (currentMonthSummary != null)
+            ...[
+              _currentMonthSummaryCard(),
+              SizedBox(height: 8),
+            ],
           Expanded(child: _expenseList()),
         ],
       ),
@@ -60,7 +64,10 @@ class ExpenseListPageScaffold extends StatelessWidget {
   }
 
   Widget _currentMonthSummaryCard() {
-    return MonthSummaryCard(monthSummary: currentMonthSummary!);
+    return MonthSummaryCard(
+      monthSummary: currentMonthSummary!,
+      margin: EdgeInsets.all(8),
+    );
   }
 
   Widget _expenseList() {
