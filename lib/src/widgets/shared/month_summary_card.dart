@@ -45,7 +45,7 @@ class MonthSummaryCard extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        _categoryTable(context),
+        _categoryColumn(context),
         Expanded(
           child: _ExpandedChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -56,46 +56,70 @@ class MonthSummaryCard extends StatelessWidget {
     );
   }
 
-  Widget _categoryTable(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+  Widget _categoryColumn(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
 
-    return Table(
-      defaultColumnWidth: IntrinsicColumnWidth(flex: 1),
-      defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
-      textBaseline: TextBaseline.alphabetic,
-      border: TableBorder.symmetric(
-          inside: BorderSide(width: 1, color: Colors.grey.withAlpha(60))),
-      children: [
-        TableRow(
-          children: [Text('', style: textTheme.subtitle2)]
-              .padAll(padding: EdgeInsets.all(4)),
-        ),
-        for (final category in monthSummary.categories)
+    return DefaultTextStyle(
+      style: textTheme.subtitle2!,
+      child: Table(
+        defaultColumnWidth: IntrinsicColumnWidth(flex: 1),
+        defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        border: TableBorder(
+            horizontalInside: BorderSide(
+                width: 1, color: colorScheme.onSurface.withAlpha(33))),
+        children: [
           TableRow(
-            children: [Text(category.name, style: textTheme.subtitle2)]
-                .padAll(padding: EdgeInsets.all(4)),
+            children: [
+              Text(''),
+            ].containEach(
+                constraints: BoxConstraints(minWidth: 60),
+                padding: EdgeInsets.all(8)),
           ),
-        TableRow(
-          children: [Text('Total', style: textTheme.subtitle2)]
-              .padAll(padding: EdgeInsets.all(4)),
-        )
-      ],
+          for (final category in monthSummary.categories)
+            TableRow(
+              children: [
+                Text(category.name),
+              ].containEach(
+                  constraints: BoxConstraints(minWidth: 60),
+                  padding: EdgeInsets.all(8)),
+            ),
+          TableRow(
+            children: [
+              Text('Total'),
+            ].containEach(
+                constraints: BoxConstraints(minWidth: 60),
+                padding: EdgeInsets.all(8)),
+          )
+        ],
+      ),
     );
   }
 
   Widget _totalsTable(BuildContext context) {
-    return Table(
-      defaultColumnWidth: IntrinsicColumnWidth(flex: 1),
-      defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
-      textBaseline: TextBaseline.alphabetic,
-      border: TableBorder.symmetric(
-          inside: BorderSide(width: 1, color: Colors.grey.withAlpha(60))),
-      children: [
-        _totalsTableHeader(context),
-        for (final category in monthSummary.categories)
-          _categoryWeekTotalRow(context, category),
-        _weekTotalRow(context),
-      ],
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+
+    return DefaultTextStyle(
+      style: textTheme.bodyText2!,
+      textAlign: TextAlign.center,
+      child: Table(
+        defaultColumnWidth: IntrinsicColumnWidth(flex: 1),
+        defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        border: TableBorder(
+            horizontalInside: BorderSide(
+                width: 1, color: colorScheme.onSurface.withAlpha(33))),
+        children: [
+          _totalsTableHeader(context),
+          for (final category in monthSummary.categories)
+            _categoryWeekTotalRow(category),
+          _weekTotalRow(),
+        ],
+      ),
     );
   }
 
@@ -104,21 +128,19 @@ class MonthSummaryCard extends StatelessWidget {
 
     return TableRow(
       children: [
-        Text('1st', style: textTheme.subtitle2, textAlign: TextAlign.center),
-        Text('2nd', style: textTheme.subtitle2, textAlign: TextAlign.center),
-        Text('3rd', style: textTheme.subtitle2, textAlign: TextAlign.center),
-        Text('4th', style: textTheme.subtitle2, textAlign: TextAlign.center),
-        if (monthSummary.has5thWeek)
-          Text('5th', style: textTheme.subtitle2, textAlign: TextAlign.center),
-        Text('Total', style: textTheme.subtitle2, textAlign: TextAlign.center),
-      ].padAll(padding: EdgeInsets.all(4)),
+        Text('1st', style: textTheme.subtitle2),
+        Text('2nd', style: textTheme.subtitle2),
+        Text('3rd', style: textTheme.subtitle2),
+        Text('4th', style: textTheme.subtitle2),
+        if (monthSummary.has5thWeek) Text('5th', style: textTheme.subtitle2),
+        Text('Total', style: textTheme.subtitle2),
+      ].containEach(
+          constraints: BoxConstraints(minWidth: 60),
+          padding: EdgeInsets.all(8)),
     );
   }
 
-  TableRow _categoryWeekTotalRow(
-      BuildContext context, ExpenseCategory category) {
-    final textTheme = Theme.of(context).textTheme;
-
+  TableRow _categoryWeekTotalRow(ExpenseCategory category) {
     final categoryWeekTotals = _weekRange().map(
         (w) => monthSummary.totalCostBy(category: category, weekOfMonth: w));
     final categoryTotal = monthSummary.totalCostBy(category: category);
@@ -126,41 +148,26 @@ class MonthSummaryCard extends StatelessWidget {
     return TableRow(
       children: [
         for (final total in categoryWeekTotals)
-          Text(
-            _amountToStringOrBlank(total),
-            style: textTheme.bodyText2,
-            textAlign: TextAlign.center,
-          ),
-        Text(
-          _amountToStringOrBlank(categoryTotal),
-          style: textTheme.bodyText2,
-          textAlign: TextAlign.center,
-        ),
-      ].padAll(padding: EdgeInsets.all(4)),
+          Text(_amountToStringOrBlank(total)),
+        Text(_amountToStringOrBlank(categoryTotal)),
+      ].containEach(
+          constraints: BoxConstraints(minWidth: 60),
+          padding: EdgeInsets.all(8)),
     );
   }
 
-  TableRow _weekTotalRow(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
+  TableRow _weekTotalRow() {
     final weekTotals =
         _weekRange().map((w) => monthSummary.totalCostBy(weekOfMonth: w));
     final grandTotal = monthSummary.totalCostBy();
 
     return TableRow(
       children: [
-        for (final total in weekTotals)
-          Text(
-            _amountToStringOrBlank(total),
-            style: textTheme.bodyText2,
-            textAlign: TextAlign.center,
-          ),
-        Text(
-          _amountToStringOrBlank(grandTotal),
-          style: textTheme.bodyText2,
-          textAlign: TextAlign.center,
-        ),
-      ].padAll(padding: EdgeInsets.all(4)),
+        for (final total in weekTotals) Text(_amountToStringOrBlank(total)),
+        Text(_amountToStringOrBlank(grandTotal)),
+      ].containEach(
+          constraints: BoxConstraints(minWidth: 60),
+          padding: EdgeInsets.all(8)),
     );
   }
 
@@ -208,8 +215,16 @@ class _ExpandedChildScrollView extends StatelessWidget {
   }
 }
 
-extension PadAll on List<Widget> {
-  List<Widget> padAll({required EdgeInsetsGeometry padding}) {
-    return map((w) => Padding(padding: padding, child: w)).toList();
+extension _PadEach on List<Widget> {
+  List<Widget> containEach(
+      {required BoxConstraints constraints,
+      required EdgeInsetsGeometry padding}) {
+    return map((w) => ConstrainedBox(
+          constraints: constraints,
+          child: Padding(
+            padding: padding,
+            child: w,
+          ),
+        )).toList();
   }
 }
