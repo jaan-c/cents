@@ -38,7 +38,7 @@ class ExpenseListPageScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(context),
+      appBar: _appBar(),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
@@ -55,20 +55,8 @@ class ExpenseListPageScaffold extends StatelessWidget {
     );
   }
 
-  AppBar _appBar(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final colorScheme = theme.colorScheme;
-
-    return AppBar(
-      backgroundColor: colorScheme.surface,
-      foregroundColor: colorScheme.onSurface,
-      elevation: 0,
-      title: Text(
-        'Cents',
-        style: textTheme.headline6?.copyWith(color: colorScheme.onSurface),
-      ),
-    );
+  AppBar _appBar() {
+    return AppBar(title: Text('Cents'));
   }
 
   Widget _currentMonthSummaryCard() {
