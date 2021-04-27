@@ -1,9 +1,11 @@
 import 'package:cents/src/domain/expense.dart';
 import 'package:flutter/material.dart';
 
-import 'expense_list_page_scaffold.dart';
 import 'expense_list_tile.dart';
-import 'edit_expense_callback.dart';
+
+typedef SelectExpenseCallback = void Function(Expense);
+typedef DeselectExpenseCallback = void Function(Expense);
+typedef EditExpenseCallback = void Function(int expenseId);
 
 class ExpenseList extends StatelessWidget {
   final List<Expense> expenses;
@@ -25,6 +27,10 @@ class ExpenseList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (expenses.isEmpty) {
+      return SizedBox.shrink();
+    }
+
     final headerOffset = 1;
 
     return ListView.separated(
@@ -75,7 +81,7 @@ class ExpenseList extends StatelessWidget {
     final textTheme = theme.textTheme;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: DefaultTextStyle(
         style: textTheme.subtitle2!.copyWith(color: colorScheme.primary),
         child: subheader!,

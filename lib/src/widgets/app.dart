@@ -1,5 +1,5 @@
 import 'package:cents/src/database/expense_provider.dart';
-import 'package:cents/src/widgets/expense_list_page/expense_list_page.dart';
+import 'package:cents/src/widgets/main_page/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +28,7 @@ class _AppState extends State<App> {
     return _expenseProvider(
       child: MaterialApp(
         title: 'Cents',
-        home: ExpenseListPage(),
+        home: MainPage(),
       ),
     );
   }
