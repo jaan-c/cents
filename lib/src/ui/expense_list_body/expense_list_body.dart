@@ -1,4 +1,4 @@
-import 'package:cents/src/widgets/shared/month_summary_card.dart';
+import 'package:cents/src/ui/widgets/month_summary_card.dart';
 import 'package:flutter/material.dart';
 
 import 'expense_list.dart';

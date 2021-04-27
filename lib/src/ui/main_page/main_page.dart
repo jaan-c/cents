@@ -1,10 +1,10 @@
 import 'package:cents/src/database/expense_provider.dart';
 import 'package:cents/src/domain/expense.dart';
-import 'package:cents/src/widgets/expense_editor_page/expense_editor_page.dart';
-import 'package:cents/src/widgets/expense_list_body/expense_list_body.dart';
-import 'package:cents/src/widgets/expense_list_body/expense_list_body_controller.dart';
-import 'package:cents/src/widgets/expense_stats_page/expense_stats_body.dart';
-import 'package:cents/src/widgets/expense_stats_page/expense_stats_body_controller.dart';
+import 'package:cents/src/ui/expense_editor_page/expense_editor_page.dart';
+import 'package:cents/src/ui/expense_list_body/expense_list_body.dart';
+import 'package:cents/src/ui/expense_list_body/expense_list_body_controller.dart';
+import 'package:cents/src/ui/expense_stats_page/expense_stats_body.dart';
+import 'package:cents/src/ui/expense_stats_page/expense_stats_body_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

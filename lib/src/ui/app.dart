@@ -1,5 +1,5 @@
 import 'package:cents/src/database/expense_provider.dart';
-import 'package:cents/src/widgets/main_page/main_page.dart';
+import 'package:cents/src/ui/main_page/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
