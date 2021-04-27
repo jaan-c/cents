@@ -1,11 +1,11 @@
 import 'package:cents/src/database/expense_provider.dart';
 import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/domain/summary.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' hide Summary;
 
 typedef OpenEditorCallback = void Function(int expenseId);
 
-class ExpenseListBodyController extends ChangeNotifier {
+class ExpenseListBodyController with ChangeNotifier {
   final ExpenseProvider provider;
   final DateTime currentDate;
   final OpenEditorCallback onOpenEditor;
