@@ -25,15 +25,6 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return _expenseProvider(
-      child: MaterialApp(
-        title: 'Cents',
-        home: MainPage(),
-      ),
-    );
-  }
-
-  Widget _expenseProvider({required Widget child}) {
     return FutureBuilder<ExpenseProvider>(
       future: _futureProvider,
       builder: (_, snapshot) {
@@ -42,14 +33,32 @@ class _AppState extends State<App> {
         }
 
         if (!snapshot.hasData) {
-          return SizedBox.expand();
+          return _placeholderApp();
         }
 
         return ChangeNotifierProvider.value(
           value: snapshot.data!,
-          child: child,
+          child: _app(),
         );
       },
+    );
+  }
+
+  Widget _app() {
+    return MaterialApp(
+      title: 'Cents',
+      home: MainPage(),
+    );
+  }
+
+  Widget _placeholderApp() {
+    return MaterialApp(
+      title: 'Cents',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Cents'),
+        ),
+      ),
     );
   }
 }
