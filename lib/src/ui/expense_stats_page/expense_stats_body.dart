@@ -77,13 +77,13 @@ class _ExpenseStatsBodyState extends State<ExpenseStatsBody> {
 
   Widget _monthSummaryCards() {
     final yearSummary = controller.selectedYearSummary!;
-    final months = yearSummary.monthSummaries.keys.toList()..sort();
+    final months = yearSummary.getAllMonths();
 
     return ListView.builder(
       itemCount: months.length,
       itemBuilder: (context, ix) {
         final month = months[ix];
-        final monthSummary = yearSummary.monthSummaries[month]!;
+        final monthSummary = yearSummary.getMonthSummary(month)!;
 
         return MonthSummaryCard(
           margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),

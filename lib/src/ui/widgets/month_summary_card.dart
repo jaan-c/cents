@@ -78,7 +78,7 @@ class MonthSummaryCard extends StatelessWidget {
                 constraints: BoxConstraints(minWidth: 60),
                 padding: EdgeInsets.all(8)),
           ),
-          for (final category in monthSummary.categories)
+          for (final category in monthSummary.getAllCategories())
             TableRow(
               children: [
                 Text(category.name),
@@ -115,7 +115,7 @@ class MonthSummaryCard extends StatelessWidget {
                 width: 1, color: colorScheme.onSurface.withAlpha(33))),
         children: [
           _totalsTableHeader(context),
-          for (final category in monthSummary.categories)
+          for (final category in monthSummary.getAllCategories())
             _categoryWeekTotalRow(category),
           _weekTotalRow(),
         ],
@@ -128,11 +128,8 @@ class MonthSummaryCard extends StatelessWidget {
 
     return TableRow(
       children: [
-        Text('1st', style: textTheme.subtitle2),
-        Text('2nd', style: textTheme.subtitle2),
-        Text('3rd', style: textTheme.subtitle2),
-        Text('4th', style: textTheme.subtitle2),
-        if (monthSummary.has5thWeek) Text('5th', style: textTheme.subtitle2),
+        for (final week in monthSummary.getAllWeeks())
+          Text(week.asOrdinal, style: textTheme.subtitle2),
         Text('Total', style: textTheme.subtitle2),
       ].containEach(
           constraints: BoxConstraints(minWidth: 60),
@@ -141,7 +138,7 @@ class MonthSummaryCard extends StatelessWidget {
   }
 
   TableRow _categoryWeekTotalRow(ExpenseCategory category) {
-    final categoryWeekTotals = _weekRange().map(
+    final categoryWeekTotals = monthSummary.getAllWeeks().map(
         (w) => monthSummary.totalCostBy(category: category, weekOfMonth: w));
     final categoryTotal = monthSummary.totalCostBy(category: category);
 
@@ -157,8 +154,9 @@ class MonthSummaryCard extends StatelessWidget {
   }
 
   TableRow _weekTotalRow() {
-    final weekTotals =
-        _weekRange().map((w) => monthSummary.totalCostBy(weekOfMonth: w));
+    final weekTotals = monthSummary
+        .getAllWeeks()
+        .map((w) => monthSummary.totalCostBy(weekOfMonth: w));
     final grandTotal = monthSummary.totalCostBy();
 
     return TableRow(
@@ -169,14 +167,6 @@ class MonthSummaryCard extends StatelessWidget {
           constraints: BoxConstraints(minWidth: 60),
           padding: EdgeInsets.all(8)),
     );
-  }
-
-  Iterable<int> _weekRange() sync* {
-    final lastWeek = monthSummary.has5thWeek ? 5 : 4;
-
-    for (var i = 1; i <= lastWeek; i++) {
-      yield i;
-    }
   }
 
   String _amountToStringOrBlank(Amount amount) {

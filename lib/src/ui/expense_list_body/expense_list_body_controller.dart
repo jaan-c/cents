@@ -15,7 +15,7 @@ class ExpenseListBodyController with ChangeNotifier {
   Set<Expense> get expenseSelection => _expenseSelection.toSet();
 
   MonthSummary? get currentMonthSummary =>
-      Summary(allExpenses).getMonth(currentDate.year, currentDate.month);
+      Summary(allExpenses).getMonthSummary(currentDate.year, currentDate.month);
 
   var _allExpenses = <Expense>[];
   var _expenseSelection = <Expense>{};

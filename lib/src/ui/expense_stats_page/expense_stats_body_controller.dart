@@ -12,12 +12,11 @@ class ExpenseStatsBodyController with ChangeNotifier {
 
   Summary get summary => Summary(allExpenses);
 
-  YearSummary? get selectedYearSummary => summary.yearSummaries[selectedYear];
+  YearSummary? get selectedYearSummary => summary.getYearSummary(selectedYear);
 
-  bool get hasPreviousYear =>
-      summary.yearSummaries.containsKey(selectedYear - 1);
+  bool get hasPreviousYear => summary.hasYear(selectedYear - 1);
 
-  bool get hasNextYear => summary.yearSummaries.containsKey(selectedYear + 1);
+  bool get hasNextYear => summary.hasYear(selectedYear + 1);
 
   int _selectedYear;
   var _allExpenses = <Expense>[];
