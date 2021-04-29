@@ -137,7 +137,7 @@ class _MainPageState extends State<MainPage> {
       }),
       items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.list_rounded),
+          icon: Icon(Icons.table_rows_rounded),
           label: 'All Expenses',
         ),
         BottomNavigationBarItem(
