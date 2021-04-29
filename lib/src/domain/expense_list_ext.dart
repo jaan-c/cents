@@ -25,16 +25,4 @@ extension ExpenseListExt on List<Expense> {
   Amount totalCost() {
     return fold(Amount(), (a, e) => a.add(e.cost));
   }
-
-  List<Expense> byMonth(DateTime monthSource) {
-    return where((e) =>
-        e.createdAt.year == monthSource.year &&
-        e.createdAt.month == monthSource.month).toList();
-  }
-
-  List<Expense> byWeek(DateTime weekSource) {
-    return where((e) =>
-        e.createdAt.year == weekSource.year &&
-        e.createdAt.weekOfYear == weekSource.weekOfYear).toList();
-  }
 }
