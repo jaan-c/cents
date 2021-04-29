@@ -4,6 +4,7 @@ import 'amount.dart';
 import 'expense.dart';
 import 'expense_category.dart';
 import 'date_ext.dart';
+import 'week_of_month.dart';
 
 extension ExpenseListExt on List<Expense> {
   Map<int, List<Expense>> groupByYear() {
@@ -14,7 +15,7 @@ extension ExpenseListExt on List<Expense> {
     return groupBy(this, (e) => e.createdAt.month);
   }
 
-  Map<int, List<Expense>> groupByWeekOfMonth() {
+  Map<WeekOfMonth, List<Expense>> groupByWeekOfMonth() {
     return groupBy(this, (e) => e.createdAt.weekOfMonth);
   }
 

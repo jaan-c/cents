@@ -1,11 +1,13 @@
 import 'package:intl/intl.dart';
 import 'package:quiver/time.dart';
 
+import 'week_of_month.dart';
+
 extension DateExt on DateTime {
-  int get weekOfMonth {
+  WeekOfMonth get weekOfMonth {
     final startOfMonth = DateTime(year, month, 1);
 
-    return _dateRange(startOfMonth, this, aWeek).length;
+    return WeekOfMonth.fromInt(_dateRange(startOfMonth, this, aWeek).length);
   }
 
   int get weekOfYear {
