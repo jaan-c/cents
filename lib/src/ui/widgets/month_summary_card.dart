@@ -11,7 +11,7 @@ class MonthSummaryCard extends StatelessWidget {
   final EdgeInsetsGeometry margin;
 
   MonthSummaryCard({required this.monthSummary, EdgeInsetsGeometry? margin})
-      : margin = EdgeInsets.symmetric(horizontal: 8, vertical: 4);
+      : margin = margin ?? EdgeInsets.symmetric(horizontal: 8, vertical: 4);
 
   @override
   Widget build(BuildContext context) {
