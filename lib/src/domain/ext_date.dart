@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:quiver/time.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 import 'week_of_month.dart';
 
@@ -35,25 +36,6 @@ extension ExtDate on DateTime {
     return DateFormat.yMMMd().format(this);
   }
 
-  String relativeDateDisplay([DateTime? now]) {
-    now ??= DateTime.now();
-    final yesterday = now.subtract(Duration(days: 1));
-
-    if (_onTheSameDay(this, now)) {
-      return 'Today';
-    } else if (_onTheSameDay(this, yesterday)) {
-      return 'Yesterday';
-    } else if (weekOfYear == now.weekOfYear) {
-      // Fri, Mar 12
-      return DateFormat('E, MMM d').format(this);
-    } else if (year == now.year) {
-      // Mar 12
-      return DateFormat.MMMd().format(this);
-    } else {
-      return dateDisplay();
-    }
-  }
-
   String display() {
     return '${dateDisplay()}, ${time12Display()}';
   }
@@ -61,7 +43,11 @@ extension ExtDate on DateTime {
   String relativeDisplay([DateTime? now]) {
     now ??= DateTime.now();
 
-    return '${relativeDateDisplay(now)}, ${time12Display()}';
+    if (!now.difference(this).isNegative) {
+      return timeago.format(this, clock: now);
+    } else {
+      return display();
+    }
   }
 }
 
@@ -77,11 +63,4 @@ Iterable<DateTime> _dateRange(
 
     current = current.add(interval);
   }
-}
-
-bool _onTheSameDay(DateTime a, DateTime b) {
-  return a.timeZoneOffset == b.timeZoneOffset &&
-      a.year == b.year &&
-      a.month == b.month &&
-      a.day == b.day;
 }
