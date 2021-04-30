@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 
 class MonthSummaryCard extends StatelessWidget {
   final MonthSummary monthSummary;
-  final EdgeInsets margin;
+  final EdgeInsetsGeometry margin;
 
   MonthSummaryCard(
       {required this.monthSummary,
