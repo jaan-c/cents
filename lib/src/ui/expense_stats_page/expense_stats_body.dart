@@ -1,8 +1,12 @@
+import 'package:cents/src/domain/summary.dart';
 import 'package:cents/src/ui/widgets/month_summary_card.dart';
 import 'package:flutter/material.dart';
 import 'package:cents/src/ui/widgets/ext_widget_list.dart';
 
 import 'expense_stats_body_controller.dart';
+
+const _FAB_SIZE = 56.0;
+const _FAB_PADDING = 16;
 
 class ExpenseStatsBody extends StatefulWidget {
   final ExpenseStatsBodyController controller;
@@ -37,26 +41,27 @@ class _ExpenseStatsBodyState extends State<ExpenseStatsBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-          child: _yearChoiceChips(
-            context: context,
-            selectedYear: controller.selectedYear,
-            allYears: controller.allYears,
-            onSelectYear: controller.selectYear,
-          ),
-        ),
-        if (controller.selectedYearSummary != null)
-          Expanded(
-            child: _monthSummaryCards(
-              eachMargin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    return SingleChildScrollView(
+      primary: true,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _yearChoiceChips(
+              context: context,
+              selectedYear: controller.selectedYear,
+              allYears: controller.allYears,
+              onSelectYear: controller.selectYear,
             ),
-          ),
-      ],
+            SizedBox(height: 8),
+            if (controller.selectedYearSummary != null)
+              _monthSummaryCards(yearSummary: controller.selectedYearSummary!),
+            SizedBox(height: _FAB_SIZE + _FAB_PADDING),
+          ],
+        ),
+      ),
     );
   }
 
@@ -102,21 +107,17 @@ class _ExpenseStatsBodyState extends State<ExpenseStatsBody> {
     );
   }
 
-  Widget _monthSummaryCards({EdgeInsetsGeometry? eachMargin}) {
-    final yearSummary = controller.selectedYearSummary!;
-    final months = yearSummary.getAllMonths();
-
-    return ListView.builder(
-      itemCount: months.length,
-      itemBuilder: (context, ix) {
-        final month = months[ix];
-        final monthSummary = yearSummary.getMonthSummary(month)!;
-
-        return MonthSummaryCard(
-          margin: eachMargin,
-          monthSummary: monthSummary,
-        );
-      },
+  Widget _monthSummaryCards({required YearSummary yearSummary}) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final monthSummary in yearSummary.getAllMonthSummaries())
+          MonthSummaryCard(
+            margin: EdgeInsets.zero,
+            monthSummary: monthSummary,
+          ),
+      ].intersperse(builder: () => SizedBox(height: 8)),
     );
   }
 }
