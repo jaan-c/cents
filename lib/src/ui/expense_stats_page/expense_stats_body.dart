@@ -1,5 +1,6 @@
 import 'package:cents/src/ui/widgets/month_summary_card.dart';
 import 'package:flutter/material.dart';
+import 'package:cents/src/ui/widgets/ext_widget_list.dart';
 
 import 'expense_stats_body_controller.dart';
 
@@ -38,44 +39,70 @@ class _ExpenseStatsBodyState extends State<ExpenseStatsBody> {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.all(16),
-          child: _header(context),
-        ),
-        if (controller.selectedYearSummary != null)
-          Expanded(child: _monthSummaryCards()),
-      ],
-    );
-  }
-
-  Widget _header(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Text(
-            '${controller.selectedYear} Summary',
-            style: textTheme.headline5,
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+          child: _yearChoiceChips(
+            context: context,
+            selectedYear: controller.selectedYear,
+            allYears: controller.allYears,
+            onSelectYear: controller.selectYear,
           ),
         ),
-        IconButton(
-          icon: Icon(Icons.navigate_before_outlined),
-          onPressed:
-              controller.hasPreviousYear ? controller.selectPreviousYear : null,
-        ),
-        IconButton(
-          icon: Icon(Icons.navigate_next_rounded),
-          onPressed: controller.hasNextYear ? controller.selectNextYear : null,
-        ),
+        if (controller.selectedYearSummary != null)
+          Expanded(
+            child: _monthSummaryCards(
+              eachMargin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            ),
+          ),
       ],
     );
   }
 
-  Widget _monthSummaryCards() {
+  Widget _yearChoiceChips({
+    required BuildContext context,
+    required int? selectedYear,
+    required List<int> allYears,
+    required void Function(int) onSelectYear,
+  }) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final year in allYears)
+            _choiceChip(
+              context: context,
+              selected: year == selectedYear,
+              onSelected: () => onSelectYear(year),
+              label: Text(year.toString()),
+            ),
+        ].intersperse(builder: () => SizedBox(width: 8)),
+      ),
+    );
+  }
+
+  Widget _choiceChip({
+    required BuildContext context,
+    required bool selected,
+    required VoidCallback onSelected,
+    required Widget label,
+  }) {
+    final chipTheme = ChipTheme.of(context);
+    final labelStyle =
+        (selected ? chipTheme.secondaryLabelStyle : chipTheme.labelStyle)
+            .copyWith(fontWeight: FontWeight.bold);
+
+    return ChoiceChip(
+      selected: selected,
+      onSelected: (_) => onSelected(),
+      labelStyle: labelStyle,
+      label: label,
+    );
+  }
+
+  Widget _monthSummaryCards({EdgeInsetsGeometry? eachMargin}) {
     final yearSummary = controller.selectedYearSummary!;
     final months = yearSummary.getAllMonths();
 
@@ -86,7 +113,7 @@ class _ExpenseStatsBodyState extends State<ExpenseStatsBody> {
         final monthSummary = yearSummary.getMonthSummary(month)!;
 
         return MonthSummaryCard(
-          margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          margin: eachMargin,
           monthSummary: monthSummary,
         );
       },

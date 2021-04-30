@@ -6,23 +6,21 @@ import 'package:flutter/foundation.dart' hide Summary;
 class ExpenseStatsBodyController with ChangeNotifier {
   final ExpenseProvider provider;
 
-  int get selectedYear => _selectedYear;
+  int? get selectedYear => _selectedYear;
 
   List<Expense> get allExpenses => _allExpenses;
 
   Summary get summary => Summary(allExpenses);
 
-  YearSummary? get selectedYearSummary => summary.getYearSummary(selectedYear);
+  List<int> get allYears => summary.getAllYears().reversed.toList();
 
-  bool get hasPreviousYear => summary.hasYear(selectedYear - 1);
+  YearSummary? get selectedYearSummary =>
+      selectedYear != null ? summary.getYearSummary(selectedYear!) : null;
 
-  bool get hasNextYear => summary.hasYear(selectedYear + 1);
-
-  int _selectedYear;
+  int? _selectedYear;
   var _allExpenses = <Expense>[];
 
-  ExpenseStatsBodyController({required this.provider, int? selectedYear})
-      : _selectedYear = selectedYear ?? DateTime.now().year;
+  ExpenseStatsBodyController({required this.provider});
 
   void initState() {
     provider.addListener(_onProviderMutation);
@@ -37,20 +35,14 @@ class ExpenseStatsBodyController with ChangeNotifier {
 
   Future<void> _onProviderMutation() async {
     _allExpenses = await provider.getAllExpenses();
+    _selectedYear = summary.getClosestOldestYear(DateTime.now().year);
     notifyListeners();
   }
 
-  void selectPreviousYear() {
-    assert(hasPreviousYear);
+  void selectYear(int year) {
+    assert(allYears.contains(year));
 
-    _selectedYear--;
-    notifyListeners();
-  }
-
-  void selectNextYear() {
-    assert(hasNextYear);
-
-    _selectedYear++;
+    _selectedYear = year;
     notifyListeners();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:cents/src/domain/amount.dart';
+import 'package:quiver/iterables.dart';
 
 import 'expense.dart';
 import 'expense_category.dart';
@@ -32,6 +33,24 @@ class Summary {
 
   bool hasMonth(int year, int month) {
     return getMonthSummary(year, month) != null;
+  }
+
+  int? getClosestOldestYear(int fromYear) {
+    final years = getAllYears();
+    final distances = years.map((y) => (y - fromYear).abs());
+    final yearDistances = Map.fromEntries(
+        zip([years, distances]).map((yd) => MapEntry(yd[0], yd[1])));
+
+    if (yearDistances.isEmpty) {
+      return null;
+    }
+
+    final lowestDistance = min(yearDistances.values)!;
+    final closestYears = yearDistances.entries
+        .where((e) => e.value == lowestDistance)
+        .map((e) => e.key);
+
+    return min(closestYears)!;
   }
 
   YearSummary? getYearSummary(int year) {
