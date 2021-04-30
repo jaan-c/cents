@@ -1,4 +1,4 @@
-extension StringExt on String {
+extension ExtString on String {
   bool get isBlank {
     return trim().isEmpty;
   }

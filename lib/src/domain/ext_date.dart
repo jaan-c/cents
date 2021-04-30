@@ -3,7 +3,7 @@ import 'package:quiver/time.dart';
 
 import 'week_of_month.dart';
 
-extension DateExt on DateTime {
+extension ExtDate on DateTime {
   WeekOfMonth get weekOfMonth {
     final startOfMonth = DateTime(year, month, 1);
 

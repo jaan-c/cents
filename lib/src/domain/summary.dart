@@ -4,7 +4,7 @@ import 'package:quiver/iterables.dart';
 import 'expense.dart';
 import 'expense_category.dart';
 import 'expense_list_ext.dart';
-import 'date_ext.dart';
+import 'ext_date.dart';
 import 'week_of_month.dart';
 
 class Summary {

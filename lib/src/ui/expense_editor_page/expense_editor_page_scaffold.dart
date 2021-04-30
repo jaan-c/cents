@@ -1,7 +1,7 @@
 import 'package:cents/src/domain/amount.dart';
 import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/domain/expense_category.dart';
-import 'package:cents/src/domain/date_ext.dart';
+import 'package:cents/src/domain/ext_date.dart';
 import 'package:flutter/material.dart';
 
 typedef SaveExpenseCallback = void Function(Expense);

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cents/src/domain/date_ext.dart';
+import 'package:cents/src/domain/ext_date.dart';
 
 void main() {
   test('lastDayOfMonth must be 30 for April 2021', () {

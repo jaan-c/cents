@@ -1,6 +1,6 @@
 import 'package:cents/src/domain/expense.dart';
-import 'package:cents/src/domain/date_ext.dart';
-import 'package:cents/src/domain/string_ext.dart';
+import 'package:cents/src/domain/ext_date.dart';
+import 'package:cents/src/domain/ext_string.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseListTile extends StatelessWidget {
