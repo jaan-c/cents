@@ -4,6 +4,8 @@ import 'package:cents/src/domain/summary.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'ext_widget_list.dart';
+
 class MonthSummaryCard extends StatelessWidget {
   final MonthSummary monthSummary;
   final EdgeInsetsGeometry margin;
@@ -62,6 +64,9 @@ class MonthSummaryCard extends StatelessWidget {
 
     return DefaultTextStyle(
       style: textTheme.subtitle2!,
+      maxLines: 1,
+      softWrap: false,
+      overflow: TextOverflow.fade,
       child: Table(
         defaultColumnWidth: IntrinsicColumnWidth(flex: 1),
         defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
@@ -73,24 +78,24 @@ class MonthSummaryCard extends StatelessWidget {
           TableRow(
             children: [
               Text(''),
-            ].containEach(
-                constraints: BoxConstraints(minWidth: 60),
-                padding: EdgeInsets.all(8)),
+            ]
+                .padEach(padding: EdgeInsets.all(8))
+                .constrainEach(constraints: BoxConstraints(maxWidth: 80)),
           ),
           for (final category in monthSummary.getAllCategories())
             TableRow(
               children: [
                 Text(category.name),
-              ].containEach(
-                  constraints: BoxConstraints(minWidth: 60),
-                  padding: EdgeInsets.all(8)),
+              ]
+                  .padEach(padding: EdgeInsets.all(8))
+                  .constrainEach(constraints: BoxConstraints(maxWidth: 80)),
             ),
           TableRow(
             children: [
               Text('Total'),
-            ].containEach(
-                constraints: BoxConstraints(minWidth: 60),
-                padding: EdgeInsets.all(8)),
+            ]
+                .padEach(padding: EdgeInsets.all(8))
+                .constrainEach(constraints: BoxConstraints(maxWidth: 80)),
           )
         ],
       ),
@@ -130,9 +135,9 @@ class MonthSummaryCard extends StatelessWidget {
         for (final week in monthSummary.getAllWeeks())
           Text(week.asOrdinal, style: textTheme.subtitle2),
         Text('Total', style: textTheme.subtitle2),
-      ].containEach(
-          constraints: BoxConstraints(minWidth: 60),
-          padding: EdgeInsets.all(8)),
+      ]
+          .padEach(padding: EdgeInsets.all(8))
+          .constrainEach(constraints: BoxConstraints(minWidth: 60)),
     );
   }
 
@@ -146,9 +151,9 @@ class MonthSummaryCard extends StatelessWidget {
         for (final total in categoryWeekTotals)
           Text(_amountToStringOrBlank(total)),
         Text(_amountToStringOrBlank(categoryTotal)),
-      ].containEach(
-          constraints: BoxConstraints(minWidth: 60),
-          padding: EdgeInsets.all(8)),
+      ]
+          .padEach(padding: EdgeInsets.all(8))
+          .constrainEach(constraints: BoxConstraints(minWidth: 60)),
     );
   }
 
@@ -162,9 +167,9 @@ class MonthSummaryCard extends StatelessWidget {
       children: [
         for (final total in weekTotals) Text(_amountToStringOrBlank(total)),
         Text(_amountToStringOrBlank(grandTotal)),
-      ].containEach(
-          constraints: BoxConstraints(minWidth: 60),
-          padding: EdgeInsets.all(8)),
+      ]
+          .padEach(padding: EdgeInsets.all(8))
+          .constrainEach(constraints: BoxConstraints(minWidth: 60)),
     );
   }
 
@@ -201,19 +206,5 @@ class _ExpandedChildScrollView extends StatelessWidget {
         );
       },
     );
-  }
-}
-
-extension _PadEach on List<Widget> {
-  List<Widget> containEach(
-      {required BoxConstraints constraints,
-      required EdgeInsetsGeometry padding}) {
-    return map((w) => ConstrainedBox(
-          constraints: constraints,
-          child: Padding(
-            padding: padding,
-            child: w,
-          ),
-        )).toList();
   }
 }
