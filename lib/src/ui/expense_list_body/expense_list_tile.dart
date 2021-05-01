@@ -20,7 +20,7 @@ class ExpenseListTile extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Material(
-      color: isSelected ? colorScheme.primary.withAlpha(33) : null,
+      color: isSelected ? colorScheme.onSurface.withAlpha(33) : null,
       child: InkWell(
         onTap: onTap,
         onLongPress: onLongPress,
