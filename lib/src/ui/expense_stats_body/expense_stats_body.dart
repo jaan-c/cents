@@ -96,8 +96,8 @@ class _ExpenseStatsBodyState extends State<ExpenseStatsBody> {
   }) {
     final chipTheme = ChipTheme.of(context);
     final labelStyle =
-        (selected ? chipTheme.secondaryLabelStyle : chipTheme.labelStyle)
-            .copyWith(fontWeight: FontWeight.bold);
+        (!selected ? chipTheme.labelStyle : chipTheme.secondaryLabelStyle)
+            .copyWith(fontWeight: FontWeight.w500);
 
     return ChoiceChip(
       selected: selected,
