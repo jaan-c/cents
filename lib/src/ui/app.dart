@@ -46,6 +46,8 @@ class _AppState extends State<App> {
 
   Widget _app() {
     return MaterialApp(
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
       title: 'Cents',
       home: MainPage(),
     );
@@ -53,6 +55,8 @@ class _AppState extends State<App> {
 
   Widget _placeholderApp() {
     return MaterialApp(
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
       title: 'Cents',
       home: Scaffold(
         appBar: AppBar(
