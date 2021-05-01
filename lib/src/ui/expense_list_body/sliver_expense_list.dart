@@ -23,12 +23,16 @@ class SliverExpenseList extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-        (_, ix) => _expenseListTile(
-          expense: expenses[ix],
-          expenseSelection: expenseSelection,
-          onToggleExpense: onToggleExpense,
-          onEditExpense: onEditExpense,
-        ),
+        (_, ix) {
+          final expense = expenses[ix];
+          return _expenseListTile(
+            expense: expense,
+            expenseSelection: expenseSelection,
+            onToggleExpense: onToggleExpense,
+            onEditExpense: onEditExpense,
+            hasDivider: expense != expenses.last,
+          );
+        },
         childCount: expenses.length,
       ),
     );
@@ -39,19 +43,34 @@ class SliverExpenseList extends StatelessWidget {
     required Set<Expense> expenseSelection,
     required ToggleExpenseCallback onToggleExpense,
     required EditExpenseCallback onEditExpense,
+    required bool hasDivider,
   }) {
+    late final Widget tile;
     if (expenseSelection.isEmpty) {
-      return ExpenseListTile(
+      tile = ExpenseListTile(
         expense: expense,
         onTap: () => onEditExpense(expense.id),
         onLongPress: () => onToggleExpense(expense),
         isSelected: false,
       );
     } else {
-      return ExpenseListTile(
+      tile = ExpenseListTile(
         expense: expense,
         onTap: () => onToggleExpense(expense),
         isSelected: expenseSelection.contains(expense),
+      );
+    }
+
+    if (!hasDivider) {
+      return tile;
+    } else {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          tile,
+          Divider(height: 1),
+        ],
       );
     }
   }
