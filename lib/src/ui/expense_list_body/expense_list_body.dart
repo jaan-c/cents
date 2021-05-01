@@ -1,8 +1,11 @@
 import 'package:cents/src/ui/widgets/month_summary_card.dart';
 import 'package:flutter/material.dart';
 
-import 'expense_list.dart';
 import 'expense_list_body_controller.dart';
+import 'sliver_expense_list.dart';
+
+const _FAB_SIZE = 56.0;
+const _FAB_PADDING = 16.0;
 
 class ExpenseListBody extends StatefulWidget {
   final ExpenseListBodyController controller;
@@ -39,33 +42,54 @@ class _ExpenseListBodyState extends State<ExpenseListBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        if (controller.currentMonthSummary != null) ...[
-          _currentMonthSummaryCard(),
-          SizedBox(height: 8),
+    return CustomScrollView(
+      slivers: [
+        if (controller.currentMonthSummary != null)
+          SliverToBoxAdapter(
+            child: MonthSummaryCard(
+              monthSummary: controller.currentMonthSummary!,
+              margin: EdgeInsets.all(8),
+            ),
+          ),
+        if (controller.allExpenses.isNotEmpty) ...[
+          _sliverSubheader(
+            context: context,
+            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+          ),
+          SliverExpenseList(
+            expenses: controller.allExpenses,
+            expenseSelection: controller.expenseSelection,
+            onToggleExpense: (expense) => controller.toggleExpense(expense),
+            onEditExpense: (expenseId) => controller.openEditor(expenseId),
+          ),
         ],
-        Expanded(child: _expenseList()),
+        _sliverFabPadding(),
       ],
     );
   }
 
-  Widget _currentMonthSummaryCard() {
-    return MonthSummaryCard(
-      monthSummary: controller.currentMonthSummary!,
-      margin: EdgeInsets.all(8),
+  Widget _sliverSubheader({
+    required BuildContext context,
+    required EdgeInsetsGeometry padding,
+  }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: padding,
+        child: Text(
+          'Recent Expenses',
+          style: textTheme.subtitle2!.copyWith(color: colorScheme.secondary),
+        ),
+      ),
     );
   }
 
-  Widget _expenseList() {
-    return ExpenseList(
-      expenses: controller.allExpenses,
-      expenseSelection: controller.expenseSelection,
-      onEditExpense: controller.openEditor,
-      onSelectExpense: controller.selectExpense,
-      onDeselectExpense: controller.deselectExpense,
-      subheader: Text('All Expenses'),
+  Widget _sliverFabPadding() {
+    return SliverToBoxAdapter(
+      child: SizedBox(height: _FAB_SIZE + _FAB_PADDING),
     );
   }
 }

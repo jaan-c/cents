@@ -45,16 +45,16 @@ class ExpenseListBodyController with ChangeNotifier {
     notifyListeners();
   }
 
-  void selectExpense(Expense expense) {
-    _expenseSelection = expenseSelection.toSet()..add(expense);
+  void toggleExpense(Expense expense) {
+    final newSelection = _expenseSelection.toSet();
 
-    notifyListeners();
-  }
+    if (newSelection.contains(expense)) {
+      newSelection.remove(expense);
+    } else {
+      newSelection.add(expense);
+    }
 
-  void deselectExpense(Expense expense) {
-    _expenseSelection = expenseSelection.toSet()
-      ..removeWhere((e) => e == expense);
-
+    _expenseSelection = newSelection;
     notifyListeners();
   }
 
@@ -65,8 +65,10 @@ class ExpenseListBodyController with ChangeNotifier {
   }
 
   Future<void> deleteSelection() async {
-    await Future.wait(_expenseSelection.map((e) => provider.delete(e.id)),
-        eagerError: true);
+    final results = _expenseSelection.map((e) => provider.delete(e.id));
+    await Future.wait(results, eagerError: true);
+
+    clearSelection();
   }
 
   void openEditor(int expenseId) {
