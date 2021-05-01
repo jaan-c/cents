@@ -38,7 +38,7 @@ class MonthSummaryCard extends StatelessWidget {
     final monthName = DateFormat.MMMM()
         .format(DateTime(monthSummary.year, monthSummary.month));
 
-    return Text(monthName, style: textTheme.subtitle1);
+    return Text(monthName, style: textTheme.headline5);
   }
 
   Widget _summaryTable(BuildContext context) {
