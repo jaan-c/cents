@@ -46,7 +46,10 @@ class MonthSummaryCard extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        _categoryColumn(context),
+        SizedBox(
+          width: 80,
+          child: _categoryColumn(context),
+        ),
         Expanded(
           child: _ExpandedChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -78,24 +81,18 @@ class MonthSummaryCard extends StatelessWidget {
           TableRow(
             children: [
               Text(''),
-            ]
-                .padEach(padding: EdgeInsets.all(8))
-                .constrainEach(constraints: BoxConstraints(maxWidth: 80)),
+            ].padEach(padding: EdgeInsets.all(8)),
           ),
           for (final category in monthSummary.getAllCategories())
             TableRow(
               children: [
                 Text(category.name),
-              ]
-                  .padEach(padding: EdgeInsets.all(8))
-                  .constrainEach(constraints: BoxConstraints(maxWidth: 80)),
+              ].padEach(padding: EdgeInsets.all(8)),
             ),
           TableRow(
             children: [
               Text('Total'),
-            ]
-                .padEach(padding: EdgeInsets.all(8))
-                .constrainEach(constraints: BoxConstraints(maxWidth: 80)),
+            ].padEach(padding: EdgeInsets.all(8)),
           )
         ],
       ),
