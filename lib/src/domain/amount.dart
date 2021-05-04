@@ -1,5 +1,7 @@
+import 'comparable_operators.dart';
+
 /// A monetary amount not tied to any currency.
-class Amount {
+class Amount with ComparableOperators<Amount> implements Comparable<Amount> {
   static const _CENTS_PER_UNIT = 100;
 
   final int totalCents;
@@ -24,12 +26,9 @@ class Amount {
   }
 
   @override
-  bool operator ==(dynamic other) {
-    return other is Amount && hashCode == other.hashCode;
+  int compareTo(Amount other) {
+    return totalCents.compareTo(other.totalCents);
   }
-
-  @override
-  int get hashCode => totalCents.hashCode;
 
   @override
   String toString() {
