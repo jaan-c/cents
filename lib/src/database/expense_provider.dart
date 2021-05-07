@@ -74,8 +74,10 @@ class ExpenseProvider with ChangeNotifier {
   }
 
   Future<List<ExpenseCategory>> getAllCategories() async {
-    final rows = await _database
-        .query(TABLE_EXPENSES, distinct: true, columns: [COLUMN_CATEGORY]);
+    final rows = await _database.query(TABLE_EXPENSES,
+        distinct: true,
+        columns: [COLUMN_CATEGORY],
+        orderBy: '$COLUMN_CATEGORY ASC');
 
     final categories =
         rows.map((r) => (r[COLUMN_CATEGORY]! as String).toCategory()).toList();
