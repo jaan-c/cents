@@ -1,7 +1,10 @@
+import 'package:intl/intl.dart';
+
 import 'comparable_operators.dart';
 
 /// A monetary amount not tied to any currency.
 class Amount with ComparableOperators<Amount> implements Comparable<Amount> {
+  static const _PESOS = '₱';
   static const _CENTS_PER_UNIT = 100;
 
   final int totalCents;
@@ -32,10 +35,29 @@ class Amount with ComparableOperators<Amount> implements Comparable<Amount> {
 
   @override
   String toString() {
-    if (cents != 0) {
-      return '$units.${cents.toString().padLeft(2, '0')}';
+    final asDecimal = double.parse('$units.$cents');
+
+    if (cents == 0) {
+      return units.toString();
     } else {
-      return '$units';
+      return NumberFormat('#.00').format(asDecimal);
+    }
+  }
+
+  String toLocalString({
+    String currencySymbol = _PESOS,
+    bool compact = false,
+  }) {
+    final asDecimal = double.parse('$units.$cents');
+
+    if (compact) {
+      return NumberFormat.compactCurrency(
+              symbol: currencySymbol, decimalDigits: 1)
+          .format(asDecimal);
+    } else {
+      return NumberFormat.currency(
+              symbol: currencySymbol, decimalDigits: cents == 0 ? 0 : 2)
+          .format(asDecimal);
     }
   }
 }
