@@ -27,58 +27,33 @@ class MonthSummaryChart extends StatelessWidget {
       return BarChartData();
     }
 
-    final colorScheme = Theme.of(context).colorScheme;
-    final lineColor = colorScheme.onSurface.withAlpha(33);
-
-    final weekOfMonths = monthSummary.getAllWeeks();
-    final bars = [
-      for (final weekOfMonth in weekOfMonths)
-        _weekToBarData(monthSummary, weekOfMonth)
-    ];
-    final maxWeekCostInUnits = max<int>(
-      weekOfMonths.map((w) => monthSummary.totalCostBy(weekOfMonth: w).units),
-      (a, b) => a.compareTo(b),
-    )!;
-    final ceilingCostInUnits =
-        math.max(10, _ceilingByPlaceValue(maxWeekCostInUnits));
-    final verticalInterval = ceilingCostInUnits / 3;
+    final weeks = monthSummary.getAllWeeks();
+    final weekCostsAsDouble =
+        weeks.map((w) => monthSummary.totalCostBy(weekOfMonth: w).toDouble());
+    final maxWeekCostAsDouble = max(weekCostsAsDouble)!;
+    final ceilingCostAsDouble =
+        math.max(10.0, _ceilingByPlaceValue(maxWeekCostAsDouble));
+    final costInterval = ceilingCostAsDouble / 3;
 
     return BarChartData(
+      barGroups: [
+        for (final weekOfMonth in weeks)
+          _weekToBarData(monthSummary, weekOfMonth)
+      ],
       // For some reason the top most horizontal line won't render sometimes if
       // verticalInterval * 3 == maxY so make sure maxY will always be bigger.
-      maxY: ceilingCostInUnits.toDouble() + 1,
+      maxY: ceilingCostAsDouble + 1,
       groupsSpace: 8,
       alignment: BarChartAlignment.spaceEvenly,
-      barGroups: bars,
-      gridData: FlGridData(
-        drawHorizontalLine: true,
-        horizontalInterval: verticalInterval,
-        getDrawingHorizontalLine: (_) =>
-            FlLine(color: lineColor, strokeWidth: 1),
+      gridData: _gridData(
+        context: context,
+        horizontalLineInterval: costInterval,
       ),
-      titlesData: FlTitlesData(
-        leftTitles: SideTitles(showTitles: false),
-        topTitles: SideTitles(showTitles: false),
-        rightTitles: SideTitles(
-          showTitles: true,
-          interval: verticalInterval,
-          getTitles: (cost) =>
-              Amount(cost.toInt()).toLocalString(compact: true),
-          reservedSize: 32,
-        ),
-        bottomTitles: SideTitles(
-          showTitles: true,
-          interval: 1,
-          getTitles: (weekOfMonth) => _weekOfMonthToLabel(weekOfMonth.toInt()),
-        ),
+      titlesData: _titlesData(
+        context: context,
+        verticalTitleInterval: costInterval,
       ),
-      borderData: FlBorderData(
-        show: true,
-        border: Border(
-          top: BorderSide(color: lineColor),
-          bottom: BorderSide(color: lineColor),
-        ),
-      ),
+      borderData: _borderData(context: context),
       barTouchData: _barTouchData(context: context),
     );
   }
@@ -87,23 +62,39 @@ class MonthSummaryChart extends StatelessWidget {
     MonthSummary monthSummary,
     WeekOfMonth weekOfMonth,
   ) {
-    final weekTotal = monthSummary.totalCostBy(weekOfMonth: weekOfMonth);
-    final categories = monthSummary.getAllCategories();
+    final weekTotalCost = monthSummary.totalCostBy(weekOfMonth: weekOfMonth);
 
+    return BarChartGroupData(
+      x: weekOfMonth.toInt(),
+      barRods: [
+        BarChartRodData(
+          y: weekTotalCost.toDouble(),
+          width: 32,
+          borderRadius: BorderRadius.circular(2),
+          rodStackItems: _weekToBarStackData(monthSummary, weekOfMonth),
+        ),
+      ],
+    );
+  }
+
+  List<BarChartRodStackItem> _weekToBarStackData(
+    MonthSummary monthSummary,
+    WeekOfMonth weekOfMonth,
+  ) {
     var acc = Amount();
     final stackData = <BarChartRodStackItem>[];
 
     // Reverse categories so ascending alphabetical arrangment of categories
     // is preserved since stack is built from bottom up.
-    for (final category in categories.reversed) {
+    for (final category in monthSummary.getAllCategories().reversed) {
       final weekCategoryCost = monthSummary.totalCostBy(
           weekOfMonth: weekOfMonth, category: category);
       final start = acc;
       final end = start.add(weekCategoryCost);
 
       final stack = BarChartRodStackItem(
-        start.units.toDouble(),
-        end.units.toDouble(),
+        start.toDouble(),
+        end.toDouble(),
         textToColor(category.name),
       );
 
@@ -111,16 +102,67 @@ class MonthSummaryChart extends StatelessWidget {
       stackData.add(stack);
     }
 
-    return BarChartGroupData(
-      x: weekOfMonth.asInt,
-      barRods: [
-        BarChartRodData(
-          y: weekTotal.units.toDouble(),
-          width: 32,
-          borderRadius: BorderRadius.circular(2),
-          rodStackItems: stackData,
-        ),
-      ],
+    return stackData;
+  }
+
+  FlGridData _gridData({
+    required BuildContext context,
+    required double horizontalLineInterval,
+  }) {
+    final brightness = Theme.of(context).brightness;
+    final lineColor =
+        brightness == Brightness.light ? Colors.black38 : Colors.white38;
+
+    return FlGridData(
+      drawHorizontalLine: true,
+      horizontalInterval: horizontalLineInterval,
+      getDrawingHorizontalLine: (_) => FlLine(strokeWidth: 1, color: lineColor),
+    );
+  }
+
+  FlTitlesData _titlesData({
+    required BuildContext context,
+    required double verticalTitleInterval,
+  }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+    final textStyle = textTheme.bodyText2!.copyWith(
+        fontSize: 10,
+        fontWeight: FontWeight.w500,
+        color: colorScheme.onSurface);
+
+    return FlTitlesData(
+      leftTitles: SideTitles(showTitles: false),
+      topTitles: SideTitles(showTitles: false),
+      rightTitles: SideTitles(
+        showTitles: true,
+        interval: verticalTitleInterval,
+        reservedSize: 32,
+        getTitles: (costAsDouble) =>
+            Amount.fromDouble(costAsDouble).toLocalString(compact: true),
+        getTextStyles: (_) => textStyle,
+      ),
+      bottomTitles: SideTitles(
+        showTitles: true,
+        interval: 1,
+        getTitles: (weekOfMonth) =>
+            WeekOfMonth.fromInt(weekOfMonth.toInt()).toOrdinalString(),
+        getTextStyles: (_) => textStyle,
+      ),
+    );
+  }
+
+  FlBorderData _borderData({required BuildContext context}) {
+    final brightness = Theme.of(context).brightness;
+    final lineColor =
+        brightness == Brightness.light ? Colors.black38 : Colors.white38;
+
+    return FlBorderData(
+      show: true,
+      border: Border(
+        bottom: BorderSide(color: lineColor),
+      ),
     );
   }
 
@@ -128,11 +170,16 @@ class MonthSummaryChart extends StatelessWidget {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
     final brightness = theme.brightness;
-    final backgroundColor = brightness == Brightness.light
-        ? Colors.grey[850]
-        : Colors.grey.shade200;
-    final textColor =
-        brightness == Brightness.light ? Colors.white : Colors.black;
+
+    late final Color backgroundColor;
+    late final Color textColor;
+    if (brightness == Brightness.light) {
+      backgroundColor = Colors.grey[850]!;
+      textColor = Colors.white;
+    } else {
+      backgroundColor = Colors.grey.shade200;
+      textColor = Colors.black;
+    }
 
     return BarTouchData(
       touchTooltipData: BarTouchTooltipData(
@@ -141,7 +188,7 @@ class MonthSummaryChart extends StatelessWidget {
         tooltipPadding: EdgeInsets.all(8),
         getTooltipItem: (_, __, barRod, ___) {
           return BarTooltipItem(
-            Amount(barRod.y.toInt()).toLocalString(),
+            Amount.fromDouble(barRod.y).toLocalString(),
             textTheme.subtitle2!.copyWith(color: textColor),
           );
         },
@@ -151,16 +198,12 @@ class MonthSummaryChart extends StatelessWidget {
     );
   }
 
-  String _weekOfMonthToLabel(int weekOfMonth) {
-    return WeekOfMonth.fromInt(weekOfMonth).asOrdinal;
-  }
-
-  int _ceilingByPlaceValue(int n) {
+  double _ceilingByPlaceValue(double n) {
     assert(n >= 0);
 
     final placeValue = math.min(4, n.toString().length);
     final placeValueFloor = int.parse('1'.padRight(placeValue, '0'));
 
-    return (n / placeValueFloor).ceil() * placeValueFloor;
+    return (n / placeValueFloor).ceilToDouble() * placeValueFloor;
   }
 }
