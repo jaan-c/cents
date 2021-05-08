@@ -98,6 +98,14 @@ class MonthSummary {
 
   MonthSummary(this.year, this.month, this._expenses);
 
+  bool isEmpty() {
+    return _expenses.isEmpty;
+  }
+
+  bool isNotEmpty() {
+    return !isEmpty();
+  }
+
   bool has5thWeek() {
     final lastDayOfMonth =
         DateTime(year, month, DateTime(year, month).lastDayOfMonth);
