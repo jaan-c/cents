@@ -6,7 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:quiver/iterables.dart';
 
-typedef TextToColor = Color Function(String);
+typedef TextToColor = Color Function(Brightness, String);
 
 class MonthSummaryChart extends StatelessWidget {
   final MonthSummary monthSummary;
@@ -38,7 +38,7 @@ class MonthSummaryChart extends StatelessWidget {
     return BarChartData(
       barGroups: [
         for (final weekOfMonth in weeks)
-          _weekToBarData(monthSummary, weekOfMonth)
+          _weekToBarData(context, monthSummary, weekOfMonth)
       ],
       // For some reason the top most horizontal line won't render sometimes if
       // verticalInterval * 3 == maxY so make sure maxY will always be bigger.
@@ -59,6 +59,7 @@ class MonthSummaryChart extends StatelessWidget {
   }
 
   BarChartGroupData _weekToBarData(
+    BuildContext context,
     MonthSummary monthSummary,
     WeekOfMonth weekOfMonth,
   ) {
@@ -71,13 +72,15 @@ class MonthSummaryChart extends StatelessWidget {
           y: weekTotalCost.toDouble(),
           width: 32,
           borderRadius: BorderRadius.circular(2),
-          rodStackItems: _weekToBarStackData(monthSummary, weekOfMonth),
+          rodStackItems:
+              _weekToBarStackData(context, monthSummary, weekOfMonth),
         ),
       ],
     );
   }
 
   List<BarChartRodStackItem> _weekToBarStackData(
+    BuildContext context,
     MonthSummary monthSummary,
     WeekOfMonth weekOfMonth,
   ) {
@@ -95,7 +98,7 @@ class MonthSummaryChart extends StatelessWidget {
       final stack = BarChartRodStackItem(
         start.toDouble(),
         end.toDouble(),
-        textToColor(category.name),
+        textToColor(Theme.of(context).brightness, category.name),
       );
 
       acc = end;

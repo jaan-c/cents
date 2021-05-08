@@ -93,14 +93,15 @@ class MonthSummaryCard extends StatelessWidget {
     required ExpenseCategory category,
     required Amount cost,
   }) {
-    final textTheme = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
           Icons.circle,
-          color: _textToColor(category.name),
+          color: _textToColor(theme.brightness, category.name),
           size: 12,
         ),
         SizedBox(width: 8),
@@ -121,8 +122,8 @@ class MonthSummaryCard extends StatelessWidget {
     );
   }
 
-  Color _textToColor(String text) {
-    final colors = [
+  Color _textToColor(Brightness brightness, String text) {
+    final swatches = [
       Colors.pink,
       Colors.red,
       Colors.deepOrange,
@@ -141,10 +142,13 @@ class MonthSummaryCard extends StatelessWidget {
       Colors.deepPurple,
       Colors.blueGrey,
       Colors.brown,
-    ].map((c) => c.shade500).toList();
+    ];
 
-    final ix = math.Random(text.hashCode).nextInt(colors.length);
-    return colors[ix];
+    final ix = math.Random(text.hashCode).nextInt(swatches.length);
+    final swatch = swatches[ix];
+    final shade = brightness == Brightness.light ? 400 : 300;
+
+    return swatch[shade]!;
   }
 }
 
