@@ -1,9 +1,11 @@
+import 'dart:math' as math;
 import 'package:cents/src/domain/amount.dart';
 import 'package:cents/src/domain/expense_category.dart';
 import 'package:cents/src/domain/summary.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'month_summary_chart.dart';
 import 'ext_widget_list.dart';
 
 class MonthSummaryCard extends StatelessWidget {
@@ -21,187 +23,179 @@ class MonthSummaryCard extends StatelessWidget {
         padding: EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _title(context),
-            SizedBox(height: 8),
-            _summaryTable(context),
+            _header(context: context, monthSummary: monthSummary),
+            SizedBox(height: 24),
+            SizedBox(
+              height: 150,
+              child: MonthSummaryChart(
+                monthSummary: monthSummary,
+                textToColor: _textToColor,
+              ),
+            ),
+            SizedBox(height: 16),
+            _footer(context: context, monthSummary: monthSummary),
           ],
         ),
       ),
     );
   }
 
-  Widget _title(BuildContext context) {
+  Widget _header({
+    required BuildContext context,
+    required MonthSummary monthSummary,
+  }) {
     final textTheme = Theme.of(context).textTheme;
 
+    final grandTotal = monthSummary.totalCostBy();
     final monthName = DateFormat.MMMM()
         .format(DateTime(monthSummary.year, monthSummary.month));
 
-    return Text(monthName, style: textTheme.headline5);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(grandTotal.toLocalString(), style: textTheme.headline5),
+        Text(
+          monthName,
+          style: textTheme.bodyText2,
+        ),
+      ],
+    );
   }
 
-  Widget _summaryTable(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.start,
+  Widget _footer({
+    required BuildContext context,
+    required MonthSummary monthSummary,
+  }) {
+    final categories = monthSummary.getAllCategories();
+    final categoryCosts = Map.fromEntries(categories
+        .map((c) => MapEntry(c, monthSummary.totalCostBy(category: c))));
+
+    return _FixedGrid(
+      crossAxisCount: 3,
+      mainAxisSpacing: 8,
+      crossAxisSpacing: 8,
       children: [
-        SizedBox(
-          width: 80,
-          child: _categoryColumn(context),
+        for (final category in categories)
+          _footerTile(
+            context: context,
+            category: category,
+            cost: categoryCosts[category]!,
+          )
+      ],
+    );
+  }
+
+  Widget _footerTile({
+    required BuildContext context,
+    required ExpenseCategory category,
+    required Amount cost,
+  }) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          Icons.circle,
+          color: _textToColor(category.name),
+          size: 12,
         ),
-        Expanded(
-          child: _ExpandedChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: _totalsTable(context),
+        SizedBox(width: 8),
+        DefaultTextStyle(
+          style: textTheme.bodyText2!,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(category.name),
+              Text(cost.toLocalString()),
+            ],
           ),
         ),
       ],
     );
   }
 
-  Widget _categoryColumn(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
+  Color _textToColor(String text) {
+    final colors = [
+      Colors.pink,
+      Colors.red,
+      Colors.deepOrange,
+      Colors.orange,
+      Colors.amber,
+      Colors.yellow,
+      Colors.lime,
+      Colors.lightGreen,
+      Colors.green,
+      Colors.teal,
+      Colors.cyan,
+      Colors.lightBlue,
+      Colors.blue,
+      Colors.indigo,
+      Colors.purple,
+      Colors.deepPurple,
+      Colors.blueGrey,
+      Colors.brown,
+    ].map((c) => c.shade500).toList();
 
-    return DefaultTextStyle(
-      style: textTheme.subtitle2!,
-      maxLines: 1,
-      softWrap: false,
-      overflow: TextOverflow.fade,
-      child: Table(
-        defaultColumnWidth: IntrinsicColumnWidth(flex: 1),
-        defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
-        textBaseline: TextBaseline.alphabetic,
-        border: TableBorder(
-            horizontalInside: BorderSide(
-                width: 1, color: colorScheme.onSurface.withAlpha(33))),
-        children: [
-          TableRow(
-            children: [
-              Text(''),
-            ].padEach(padding: EdgeInsets.all(8)),
-          ),
-          for (final category in monthSummary.getAllCategories())
-            TableRow(
-              children: [
-                Text(category.name),
-              ].padEach(padding: EdgeInsets.all(8)),
-            ),
-          TableRow(
-            children: [
-              Text('Total'),
-            ].padEach(padding: EdgeInsets.all(8)),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _totalsTable(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final colorScheme = theme.colorScheme;
-
-    return DefaultTextStyle(
-      style: textTheme.bodyText2!,
-      textAlign: TextAlign.center,
-      child: Table(
-        defaultColumnWidth: IntrinsicColumnWidth(flex: 1),
-        defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
-        textBaseline: TextBaseline.alphabetic,
-        border: TableBorder(
-            horizontalInside: BorderSide(
-                width: 1, color: colorScheme.onSurface.withAlpha(33))),
-        children: [
-          _totalsTableHeader(context),
-          for (final category in monthSummary.getAllCategories())
-            _categoryWeekTotalRow(category),
-          _weekTotalRow(),
-        ],
-      ),
-    );
-  }
-
-  TableRow _totalsTableHeader(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return TableRow(
-      children: [
-        for (final week in monthSummary.getAllWeeks())
-          Text(week.asOrdinal, style: textTheme.subtitle2),
-        Text('Total', style: textTheme.subtitle2),
-      ]
-          .padEach(padding: EdgeInsets.all(8))
-          .constrainEach(constraints: BoxConstraints(minWidth: 60)),
-    );
-  }
-
-  TableRow _categoryWeekTotalRow(ExpenseCategory category) {
-    final categoryWeekTotals = monthSummary.getAllWeeks().map(
-        (w) => monthSummary.totalCostBy(category: category, weekOfMonth: w));
-    final categoryTotal = monthSummary.totalCostBy(category: category);
-
-    return TableRow(
-      children: [
-        for (final total in categoryWeekTotals)
-          Text(_amountToStringOrBlank(total)),
-        Text(_amountToStringOrBlank(categoryTotal)),
-      ]
-          .padEach(padding: EdgeInsets.all(8))
-          .constrainEach(constraints: BoxConstraints(minWidth: 60)),
-    );
-  }
-
-  TableRow _weekTotalRow() {
-    final weekTotals = monthSummary
-        .getAllWeeks()
-        .map((w) => monthSummary.totalCostBy(weekOfMonth: w));
-    final grandTotal = monthSummary.totalCostBy();
-
-    return TableRow(
-      children: [
-        for (final total in weekTotals) Text(_amountToStringOrBlank(total)),
-        Text(_amountToStringOrBlank(grandTotal)),
-      ]
-          .padEach(padding: EdgeInsets.all(8))
-          .constrainEach(constraints: BoxConstraints(minWidth: 60)),
-    );
-  }
-
-  String _amountToStringOrBlank(Amount amount) {
-    return amount != Amount() ? '\u20B1${amount.toString()}' : '';
+    final ix = math.Random(text.hashCode).nextInt(colors.length);
+    return colors[ix];
   }
 }
 
-/// A container for a scrollable [child] that is forced to take up the entire
-/// [scrollDirection] [Axis] if smaller.
-class _ExpandedChildScrollView extends StatelessWidget {
-  final Axis scrollDirection;
-  final Widget child;
+class _FixedGrid extends StatelessWidget {
+  final int crossAxisCount;
+  final double mainAxisSpacing;
+  final double crossAxisSpacing;
+  final List<Widget> children;
 
-  _ExpandedChildScrollView(
-      {required this.scrollDirection, required this.child});
+  _FixedGrid({
+    this.crossAxisCount = 2,
+    this.mainAxisSpacing = 0,
+    this.crossAxisSpacing = 0,
+    this.children = const [],
+  }) : assert(crossAxisCount >= 2);
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return SingleChildScrollView(
-          scrollDirection: scrollDirection,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-                minWidth: scrollDirection == Axis.horizontal
-                    ? constraints.maxWidth
-                    : 0,
-                minHeight: scrollDirection == Axis.vertical
-                    ? constraints.maxHeight
-                    : 0),
-            child: child,
-          ),
-        );
-      },
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (final rowChildren in _groupByCount(children, crossAxisCount))
+          _row(children: rowChildren),
+      ].intersperse(builder: () => SizedBox(height: mainAxisSpacing)),
     );
   }
+
+  Widget _row({required List<Widget> children}) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: children.intersperse(
+          builder: () => SizedBox(width: crossAxisSpacing)),
+    );
+  }
+}
+
+List<List<T>> _groupByCount<T>(List<T> items, int count) {
+  assert(count >= 1);
+
+  final acc = <List<T>>[];
+  var remaining = items;
+
+  while (remaining.isNotEmpty) {
+    final head = remaining.take(count).toList();
+    final tail = remaining.skip(count).toList();
+
+    acc.add(head);
+    remaining = tail;
+  }
+
+  return acc;
 }
