@@ -7,10 +7,26 @@ class WeekOfMonth {
   static const fourth = WeekOfMonth.fromInt(4);
   static const fifth = WeekOfMonth.fromInt(5);
 
-  final int asInt;
+  final int _asInt;
 
-  String get asOrdinal {
-    switch (asInt) {
+  const WeekOfMonth.fromInt(int weekOfMonth)
+      : assert(1 <= weekOfMonth && weekOfMonth <= 5),
+        _asInt = weekOfMonth;
+
+  @override
+  bool operator ==(dynamic other) {
+    return other is WeekOfMonth && hashCode == other.hashCode;
+  }
+
+  @override
+  int get hashCode => _asInt.hashCode;
+
+  int toInt() {
+    return _asInt;
+  }
+
+  String toOrdinalString() {
+    switch (toInt()) {
       case 1:
         return '1st';
       case 2:
@@ -22,19 +38,7 @@ class WeekOfMonth {
       case 5:
         return '5th';
       default:
-        throw StateError('Invalid week of month $asInt');
+        throw StateError('Invalid week of month ${toInt()}');
     }
   }
-
-  const WeekOfMonth.fromInt(int weekOfMonth)
-      : assert(1 <= weekOfMonth && weekOfMonth <= 5),
-        asInt = weekOfMonth;
-
-  @override
-  bool operator ==(dynamic other) {
-    return other is WeekOfMonth && asInt == other.asInt;
-  }
-
-  @override
-  int get hashCode => asInt.hashCode;
 }
