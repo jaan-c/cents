@@ -8,11 +8,11 @@ import 'package:quiver/iterables.dart';
 
 typedef TextToColor = Color Function(Brightness, String);
 
-class MonthSummaryChart extends StatelessWidget {
+class MonthSummaryBarChart extends StatelessWidget {
   final MonthSummary monthSummary;
   final TextToColor textToColor;
 
-  MonthSummaryChart({required this.monthSummary, required this.textToColor});
+  MonthSummaryBarChart({required this.monthSummary, required this.textToColor});
 
   @override
   Widget build(BuildContext context) {

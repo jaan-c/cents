@@ -5,7 +5,7 @@ import 'package:cents/src/domain/summary.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'month_summary_chart.dart';
+import 'month_summary_bar_chart.dart';
 import 'ext_widget_list.dart';
 
 class MonthSummaryCard extends StatelessWidget {
@@ -29,7 +29,7 @@ class MonthSummaryCard extends StatelessWidget {
             SizedBox(height: 24),
             SizedBox(
               height: 150,
-              child: MonthSummaryChart(
+              child: MonthSummaryBarChart(
                 monthSummary: monthSummary,
                 textToColor: _textToColor,
               ),
