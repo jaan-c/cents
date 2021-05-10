@@ -5,8 +5,8 @@ import 'package:cents/src/domain/summary.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'fixed_grid.dart';
 import 'month_summary_bar_chart.dart';
-import 'ext_widget_list.dart';
 
 class MonthSummaryCard extends StatelessWidget {
   final MonthSummary monthSummary;
@@ -73,7 +73,7 @@ class MonthSummaryCard extends StatelessWidget {
     final categoryCosts = Map.fromEntries(categories
         .map((c) => MapEntry(c, monthSummary.totalCostBy(category: c))));
 
-    return _FixedGrid(
+    return FixedGrid(
       crossAxisCount: 3,
       mainAxisSpacing: 8,
       crossAxisSpacing: 8,
@@ -150,56 +150,4 @@ class MonthSummaryCard extends StatelessWidget {
 
     return swatch[shade]!;
   }
-}
-
-class _FixedGrid extends StatelessWidget {
-  final int crossAxisCount;
-  final double mainAxisSpacing;
-  final double crossAxisSpacing;
-  final List<Widget> children;
-
-  _FixedGrid({
-    this.crossAxisCount = 2,
-    this.mainAxisSpacing = 0,
-    this.crossAxisSpacing = 0,
-    this.children = const [],
-  }) : assert(crossAxisCount >= 2);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (final rowChildren in _groupByCount(children, crossAxisCount))
-          _row(children: rowChildren),
-      ].intersperse(builder: () => SizedBox(height: mainAxisSpacing)),
-    );
-  }
-
-  Widget _row({required List<Widget> children}) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: children.intersperse(
-          builder: () => SizedBox(width: crossAxisSpacing)),
-    );
-  }
-}
-
-List<List<T>> _groupByCount<T>(List<T> items, int count) {
-  assert(count >= 1);
-
-  final acc = <List<T>>[];
-  var remaining = items;
-
-  while (remaining.isNotEmpty) {
-    final head = remaining.take(count).toList();
-    final tail = remaining.skip(count).toList();
-
-    acc.add(head);
-    remaining = tail;
-  }
-
-  return acc;
 }
