@@ -19,11 +19,13 @@ class MonthSummaryCardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final monthCost = monthSummary.totalCostBy();
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _header(context: context, monthSummary: monthSummary),
+        _header(context: context, monthCost: monthCost),
         SizedBox(height: 24),
         SizedBox(
           height: 150,
@@ -44,11 +46,10 @@ class MonthSummaryCardContent extends StatelessWidget {
 
   Widget _header({
     required BuildContext context,
-    required MonthSummary monthSummary,
+    required Amount monthCost,
   }) {
     final textTheme = Theme.of(context).textTheme;
 
-    final grandTotal = monthSummary.totalCostBy();
     final monthName = DateFormat.MMMM()
         .format(DateTime(monthSummary.year, monthSummary.month));
 
@@ -56,7 +57,7 @@ class MonthSummaryCardContent extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(grandTotal.toLocalString(), style: textTheme.headline5),
+        Text(monthCost.toLocalString(), style: textTheme.headline5),
         Text(
           monthName,
           style: textTheme.bodyText2,
