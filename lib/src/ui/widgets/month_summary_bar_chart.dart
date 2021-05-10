@@ -37,15 +37,15 @@ class MonthSummaryBarChart extends StatelessWidget {
     final costInterval = ceilingCostAsDouble / 3;
 
     return BarChartData(
-      barGroups: [
-        for (final weekOfMonth in weeks)
-          _weekToBarData(context, monthSummary, weekOfMonth, textToColor)
-      ],
       // For some reason the top most horizontal line won't render sometimes if
       // verticalInterval * 3 == maxY so make sure maxY will always be bigger.
       maxY: ceilingCostAsDouble + 1,
       groupsSpace: 8,
       alignment: BarChartAlignment.spaceEvenly,
+      barGroups: [
+        for (final weekOfMonth in weeks)
+          _weekToBarData(context, monthSummary, weekOfMonth, textToColor)
+      ],
       gridData: _gridData(
         context: context,
         horizontalLineInterval: costInterval,
