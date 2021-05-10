@@ -6,7 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:quiver/iterables.dart';
 
-typedef TextToColor = Color Function(Brightness, String);
+import 'month_summary_card.dart';
 
 class MonthSummaryBarChart extends StatelessWidget {
   final MonthSummary monthSummary;
