@@ -16,12 +16,13 @@ class MonthSummaryBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BarChart(_monthToChartData(context, monthSummary));
+    return BarChart(_monthToChartData(context, monthSummary, textToColor));
   }
 
   BarChartData _monthToChartData(
     BuildContext context,
     MonthSummary monthSummary,
+    TextToColor textToColor,
   ) {
     if (monthSummary.isEmpty()) {
       return BarChartData();
@@ -38,7 +39,7 @@ class MonthSummaryBarChart extends StatelessWidget {
     return BarChartData(
       barGroups: [
         for (final weekOfMonth in weeks)
-          _weekToBarData(context, monthSummary, weekOfMonth)
+          _weekToBarData(context, monthSummary, weekOfMonth, textToColor)
       ],
       // For some reason the top most horizontal line won't render sometimes if
       // verticalInterval * 3 == maxY so make sure maxY will always be bigger.
@@ -62,6 +63,7 @@ class MonthSummaryBarChart extends StatelessWidget {
     BuildContext context,
     MonthSummary monthSummary,
     WeekOfMonth weekOfMonth,
+    TextToColor textToColor,
   ) {
     final weekTotalCost = monthSummary.totalCostBy(weekOfMonth: weekOfMonth);
 
@@ -72,8 +74,8 @@ class MonthSummaryBarChart extends StatelessWidget {
           y: weekTotalCost.toDouble(),
           width: 32,
           borderRadius: BorderRadius.circular(2),
-          rodStackItems:
-              _weekToBarStackData(context, monthSummary, weekOfMonth),
+          rodStackItems: _weekToBarStackData(
+              context, monthSummary, weekOfMonth, textToColor),
         ),
       ],
     );
@@ -83,6 +85,7 @@ class MonthSummaryBarChart extends StatelessWidget {
     BuildContext context,
     MonthSummary monthSummary,
     WeekOfMonth weekOfMonth,
+    TextToColor textToColor,
   ) {
     var acc = Amount();
     final stackData = <BarChartRodStackItem>[];
