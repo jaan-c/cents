@@ -17,4 +17,9 @@ class ExpenseCategory implements Comparable<ExpenseCategory> {
   int compareTo(ExpenseCategory other) {
     return name.compareTo(other.name);
   }
+
+  @override
+  String toString() {
+    return name;
+  }
 }

@@ -15,4 +15,9 @@ class Pair<F, S> {
 
   @override
   int get hashCode => hash2(first, second);
+
+  @override
+  String toString() {
+    return '($first, $second)';
+  }
 }
