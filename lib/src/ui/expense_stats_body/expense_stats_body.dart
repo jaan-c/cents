@@ -1,5 +1,5 @@
 import 'package:cents/src/domain/summary.dart';
-import 'package:cents/src/ui/widgets/month_summary_card.dart';
+import 'package:cents/src/ui/widgets/month_summary_card/month_summary_card.dart';
 import 'package:flutter/material.dart';
 import 'package:cents/src/ui/widgets/ext_widget_list.dart';
 

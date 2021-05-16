@@ -1,12 +1,12 @@
 import 'dart:math' as math;
 import 'package:cents/src/domain/amount.dart';
 import 'package:cents/src/domain/summary.dart';
+import 'package:cents/src/ui/widgets/partitioned_bar_chart/partitioned_bar_chart.dart';
+import 'package:cents/src/ui/widgets/partitioned_bar_chart/partitioned_bar_data.dart';
 import 'package:flutter/material.dart';
 import 'package:quiver/iterables.dart';
 
 import 'month_summary_card.dart';
-import 'partitioned_bar_chart/partitioned_bar_chart.dart';
-import 'partitioned_bar_chart/partitioned_bar_data.dart';
 
 class MonthSummaryChart extends StatelessWidget {
   final MonthSummary monthSummary;
