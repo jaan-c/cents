@@ -69,7 +69,7 @@ class WeekSummaryCardContent extends StatelessWidget {
       children: [
         Text(weekCost.toLocalString(), style: textTheme.headline5),
         Text(
-          '$weekOfMonthOrdinal of $monthName',
+          '$weekOfMonthOrdinal week of $monthName',
           style: textTheme.bodyText2,
         ),
       ],
