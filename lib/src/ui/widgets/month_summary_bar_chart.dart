@@ -31,7 +31,8 @@ class MonthSummaryBarChart extends StatelessWidget {
         textToColor: textToColor,
       ),
       magnitudePartitionCount: 4,
-      magnitudeToLabel: _magnitudeToLabel,
+      magnitudeToLabel: (m) =>
+          Amount.fromDouble(m).toLocalString(compact: true),
     );
   }
 
@@ -74,10 +75,6 @@ class MonthSummaryBarChart extends StatelessWidget {
     }
 
     return barDatas;
-  }
-
-  String _magnitudeToLabel(double magnitude) {
-    return Amount.fromDouble(magnitude).toLocalString(compact: true);
   }
 
   double _ceilingByPlaceValue(double n) {
