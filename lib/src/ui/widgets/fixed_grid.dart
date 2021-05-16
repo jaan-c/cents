@@ -1,39 +1,33 @@
 import 'package:flutter/material.dart';
 
-import 'ext_widget_list.dart';
-
 class FixedGrid extends StatelessWidget {
   final int crossAxisCount;
-  final double mainAxisSpacing;
-  final double crossAxisSpacing;
   final List<Widget> children;
 
   FixedGrid({
     this.crossAxisCount = 2,
-    this.mainAxisSpacing = 0,
-    this.crossAxisSpacing = 0,
     this.children = const [],
   }) : assert(crossAxisCount >= 2);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
+    return Table(
       children: [
-        for (final rowChildren in _groupByCount(children, crossAxisCount))
-          _row(children: rowChildren),
-      ].intersperse(builder: () => SizedBox(height: mainAxisSpacing)),
+        for (final group in _groupByCount(children, crossAxisCount))
+          _row(children: group, count: crossAxisCount),
+      ],
     );
   }
 
-  Widget _row({required List<Widget> children}) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: children.intersperse(
-          builder: () => SizedBox(width: crossAxisSpacing)),
-    );
+  TableRow _row({required List<Widget> children, required int count}) {
+    assert(children.length <= count);
+
+    children = [
+      ...children,
+      for (var i = 0; i < count - children.length; i++) SizedBox.shrink()
+    ];
+
+    return TableRow(children: children);
   }
 }
 

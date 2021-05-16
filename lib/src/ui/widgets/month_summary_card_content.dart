@@ -77,8 +77,6 @@ class MonthSummaryCardContent extends StatelessWidget {
 
     return FixedGrid(
       crossAxisCount: 3,
-      mainAxisSpacing: 8,
-      crossAxisSpacing: 8,
       children: [
         for (final category in categories)
           _footerTile(
