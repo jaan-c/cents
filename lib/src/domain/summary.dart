@@ -106,13 +106,6 @@ class MonthSummary {
     return !isEmpty();
   }
 
-  bool has5thWeek() {
-    final lastDayOfMonth =
-        DateTime(year, month, DateTime(year, month).lastDayOfMonth);
-
-    return lastDayOfMonth.weekOfMonth == WeekOfMonth.fifth;
-  }
-
   List<Expense> getAllExpenses() {
     return List.of(_expenses);
   }
@@ -123,13 +116,10 @@ class MonthSummary {
   }
 
   List<WeekOfMonth> getAllWeeks() {
-    return [
-      WeekOfMonth.first,
-      WeekOfMonth.second,
-      WeekOfMonth.third,
-      WeekOfMonth.fourth,
-      if (has5thWeek()) WeekOfMonth.fifth,
-    ];
+    final lastDayOfMonth = DateTime(year, month).lastDayOfMonth;
+    final lastWeekOfMonth = DateTime(year, month, lastDayOfMonth).weekOfMonth;
+
+    return WeekOfMonth.values.take(lastWeekOfMonth.toInt()).toList();
   }
 
   List<Expense> getBy({ExpenseCategory? category, WeekOfMonth? weekOfMonth}) {
