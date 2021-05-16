@@ -55,25 +55,18 @@ class MonthSummaryBarChart extends StatelessWidget {
       final value = weekCosts[i];
 
       final label = week.toOrdinalString();
-      final categoryCosts = categories.map((c) =>
-          monthSummary.totalCostBy(weekOfMonth: week, category: c).toDouble());
-
-      late final List<double> partitionFactors;
-      late final List<Color> partitionColors;
-      if (value == 0) {
-        partitionFactors = [1.0];
-        partitionColors = [Colors.blue];
-      } else {
-        partitionFactors = categoryCosts.map((c) => c / value).toList();
-        partitionColors =
-            categories.map((c) => textToColor(brightness, c.name)).toList();
-      }
+      final categoryCosts = categories
+          .map((c) => monthSummary
+              .totalCostBy(weekOfMonth: week, category: c)
+              .toDouble())
+          .toList();
 
       final data = PartitionedBarData(
         value: value,
         label: label,
-        partitionFactors: partitionFactors,
-        partitionColors: partitionColors,
+        partitionValues: categoryCosts,
+        partitionColors:
+            categories.map((c) => textToColor(brightness, c.name)).toList(),
         tooltipText: '$label Week\n${Amount.fromDouble(value).toLocalString()}',
       );
 

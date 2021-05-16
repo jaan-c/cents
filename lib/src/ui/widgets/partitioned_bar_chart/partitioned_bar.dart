@@ -25,7 +25,7 @@ class PartitionedBar extends StatelessWidget {
   })   : assert(0 <= heightFactor && heightFactor <= 1),
         assert(partitionFactors.isNotEmpty),
         assert(partitionFactors.reduce((a, b) => a + b).roundToDouble() == 1.0),
-        assert(partitionColors.length == partitionFactors.length),
+        assert(partitionFactors.length == partitionColors.length),
         assert(barThickness >= 0),
         assert(labelSize >= Size.zero);
 

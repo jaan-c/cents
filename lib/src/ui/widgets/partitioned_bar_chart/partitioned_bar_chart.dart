@@ -92,8 +92,11 @@ class PartitionedBarChart extends StatelessWidget {
           PartitionedBar(
             heightFactor: data.value / maxValue,
             label: data.label,
-            partitionFactors: data.partitionFactors,
-            partitionColors: data.partitionColors,
+            partitionFactors: data.value != 0
+                ? data.partitionValues.map((v) => v / data.value).toList()
+                : [1.0],
+            partitionColors:
+                data.value != 0 ? data.partitionColors : [Colors.blue],
             tooltipText: data.tooltipText,
             barThickness: barThickness,
             labelSize: barLabelSize,
