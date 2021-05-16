@@ -9,7 +9,7 @@ import 'package:quiver/iterables.dart';
 
 import 'month_summary_card.dart';
 
-class WeekSummaryBarChart extends StatelessWidget {
+class WeekSummaryChart extends StatelessWidget {
   static const _dayOfWeeks = [
     DateTime.monday,
     DateTime.tuesday,
@@ -24,7 +24,7 @@ class WeekSummaryBarChart extends StatelessWidget {
   final WeekOfMonth weekOfMonth;
   final TextToColor textToColor;
 
-  WeekSummaryBarChart({
+  WeekSummaryChart({
     required this.monthSummary,
     required this.weekOfMonth,
     required this.textToColor,

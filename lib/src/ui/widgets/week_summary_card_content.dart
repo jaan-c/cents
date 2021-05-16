@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'month_summary_card.dart';
-import 'week_summary_bar_chart.dart';
+import 'week_summary_chart.dart';
 
 class WeekSummaryCardContent extends StatelessWidget {
   final MonthSummary monthSummary;
@@ -35,7 +35,7 @@ class WeekSummaryCardContent extends StatelessWidget {
         SizedBox(height: 24),
         SizedBox(
           height: 150,
-          child: WeekSummaryBarChart(
+          child: WeekSummaryChart(
             monthSummary: monthSummary,
             weekOfMonth: weekOfMonth,
             textToColor: textToColor,

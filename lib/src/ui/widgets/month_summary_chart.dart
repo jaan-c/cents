@@ -8,11 +8,11 @@ import 'month_summary_card.dart';
 import 'partitioned_bar_chart/partitioned_bar_chart.dart';
 import 'partitioned_bar_chart/partitioned_bar_data.dart';
 
-class MonthSummaryBarChart extends StatelessWidget {
+class MonthSummaryChart extends StatelessWidget {
   final MonthSummary monthSummary;
   final TextToColor textToColor;
 
-  MonthSummaryBarChart({required this.monthSummary, required this.textToColor});
+  MonthSummaryChart({required this.monthSummary, required this.textToColor});
 
   @override
   Widget build(BuildContext context) {
