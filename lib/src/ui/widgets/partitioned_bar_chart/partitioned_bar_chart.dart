@@ -28,7 +28,7 @@ class PartitionedBarChart extends StatelessWidget {
     this.magnitudePartitionCount = 2,
     this.magnitudeToLabel = _doubleToString,
     this.height = 150,
-    this.barThickness = 32,
+    this.barThickness = 24,
     this.barBorderRadius = const BorderRadius.vertical(
         top: Radius.circular(2), bottom: Radius.zero),
     this.barLabelSize = const Size(32, 16),
