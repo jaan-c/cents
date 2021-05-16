@@ -1,7 +1,4 @@
 import 'dart:math' as math;
-import 'package:cents/src/domain/amount.dart';
-import 'package:cents/src/domain/expense_category.dart';
-import 'package:cents/src/domain/pair.dart';
 import 'package:cents/src/domain/summary.dart';
 import 'package:cents/src/domain/week_of_month.dart';
 import 'package:flutter/material.dart';
@@ -11,21 +8,7 @@ import 'week_summary_card_content.dart';
 
 typedef TextToColor = Color Function(Brightness, String);
 
-class MonthSummaryCardMode {
-  final WeekOfMonth? _mode;
-
-  MonthSummaryCardMode.week(WeekOfMonth weekOfMonth) : _mode = weekOfMonth;
-
-  MonthSummaryCardMode.month() : _mode = null;
-
-  bool isMonth() {
-    return _mode == null;
-  }
-
-  WeekOfMonth? toWeek() {
-    return _mode;
-  }
-}
+enum MonthSummaryCardMode { week, month }
 
 class MonthSummaryCard extends StatefulWidget {
   final MonthSummary monthSummary;
@@ -43,7 +26,7 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
   final MonthSummary monthSummary;
   final EdgeInsetsGeometry margin;
 
-  var _selectedMode = MonthSummaryCardMode.month();
+  var _selectedMode = MonthSummaryCardMode.week;
 
   _MonthSummaryCardState({
     required this.monthSummary,
@@ -52,33 +35,6 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
 
   @override
   Widget build(BuildContext context) {
-    late final Widget content;
-    if (_selectedMode.isMonth()) {
-      content = MonthSummaryCardContent(
-        monthSummary: monthSummary,
-        textToColor: _textToColor,
-      );
-    } else {
-      final weekOfMonth = _selectedMode.toWeek()!;
-      final categories = monthSummary.getAllCategories();
-      final costs = categories
-          .map((c) =>
-              monthSummary.totalCostBy(category: c, weekOfMonth: weekOfMonth))
-          .toList();
-      final categoryCosts = <Pair<ExpenseCategory, Amount>>[];
-      for (var i = 0; i < categories.length; i++) {
-        final category = categories[i];
-        final cost = costs[i];
-        categoryCosts.add(Pair(category, cost));
-      }
-
-      content = WeekSummaryCardContent(
-        monthSummary: monthSummary,
-        weekOfMonth: weekOfMonth,
-        textToColor: _textToColor,
-      );
-    }
-
     return Card(
       margin: margin,
       child: Padding(
@@ -94,7 +50,16 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
               }),
               weekOfMonths: monthSummary.getAllWeeks(),
             ),
-            content,
+            if (_selectedMode == MonthSummaryCardMode.week)
+              WeekSummaryCardContent(
+                monthSummary: monthSummary,
+                textToColor: _textToColor,
+              )
+            else
+              MonthSummaryCardContent(
+                monthSummary: monthSummary,
+                textToColor: _textToColor,
+              ),
           ],
         ),
       ),
@@ -106,26 +71,23 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
     required void Function(MonthSummaryCardMode) onSelectMode,
     required List<WeekOfMonth> weekOfMonths,
   }) {
-    return PopupMenuButton<MonthSummaryCardMode>(
-      itemBuilder: (_) {
-        return [
-          for (final week in weekOfMonths)
-            PopupMenuItem(
-              value: MonthSummaryCardMode.week(week),
-              child: Text('${week.toOrdinalString()} Week'),
-            ),
-          PopupMenuItem(
-            value: MonthSummaryCardMode.month(),
-            child: Text('Month'),
-          ),
-        ];
-      },
-      onSelected: onSelectMode,
-      child: Chip(
-        label: Text(selectedMode.isMonth()
-            ? 'Month'
-            : '${selectedMode.toWeek()!.toOrdinalString()} Week'),
-      ),
+    late final String label;
+    late final VoidCallback onPressed;
+    if (_selectedMode == MonthSummaryCardMode.week) {
+      label = 'Week Summary';
+      onPressed = () => setState(() {
+            _selectedMode = MonthSummaryCardMode.month;
+          });
+    } else {
+      label = 'Month Summary';
+      onPressed = () => setState(() {
+            _selectedMode = MonthSummaryCardMode.week;
+          });
+    }
+
+    return ActionChip(
+      label: Text(label),
+      onPressed: onPressed,
     );
   }
 
