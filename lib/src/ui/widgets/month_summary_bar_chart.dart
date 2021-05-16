@@ -17,9 +17,8 @@ class MonthSummaryBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final weeks = monthSummary.getAllWeeks();
-    final weekCosts = weeks
-        .map((w) => monthSummary.totalCostBy(weekOfMonth: w).toDouble())
-        .toList();
+    final weekCosts =
+        weeks.map((w) => monthSummary.totalCostBy(weekOfMonth: w).toDouble());
     final maxWeekCost = max(weekCosts)!;
     final ceilingCost = _ceilingByPlaceValue(maxWeekCost);
 
