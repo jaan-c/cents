@@ -85,23 +85,24 @@ class PartitionedBarChart extends StatelessWidget {
   }) {
     return Row(
       mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (final data in barDatas)
-          PartitionedBar(
-            heightFactor: data.value / maxValue,
-            label: data.label,
-            partitionFactors: data.value != 0
-                ? data.partitionValues.map((v) => v / data.value).toList()
-                : [1.0],
-            partitionColors:
-                data.value != 0 ? data.partitionColors : [Colors.blue],
-            tooltipText: data.tooltipText,
-            barThickness: barThickness,
-            labelSize: barLabelSize,
-            labelOffset: barLabelOffset,
-            barBorderRadius: barBorderRadius,
+          Expanded(
+            child: PartitionedBar(
+              heightFactor: data.value / maxValue,
+              label: data.label,
+              partitionFactors: data.value != 0
+                  ? data.partitionValues.map((v) => v / data.value).toList()
+                  : [1.0],
+              partitionColors:
+                  data.value != 0 ? data.partitionColors : [Colors.blue],
+              tooltipText: data.tooltipText,
+              barThickness: barThickness,
+              labelSize: barLabelSize,
+              labelOffset: barLabelOffset,
+              barBorderRadius: barBorderRadius,
+            ),
           ),
       ],
     );
