@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../ext_widget_list.dart';
+
 class FixedGrid extends StatelessWidget {
   final int crossAxisCount;
   final List<Widget> children;
+  final EdgeInsetsGeometry tilePadding;
 
   FixedGrid({
     this.crossAxisCount = 2,
     this.children = const [],
+    this.tilePadding = const EdgeInsets.all(4),
   }) : assert(crossAxisCount >= 2);
 
   @override
@@ -27,7 +31,9 @@ class FixedGrid extends StatelessWidget {
       for (var i = 0; i < count - children.length; i++) SizedBox.shrink()
     ];
 
-    return TableRow(children: children);
+    return TableRow(
+      children: children.padEach(padding: tilePadding),
+    );
   }
 }
 
