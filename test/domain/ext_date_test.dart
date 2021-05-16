@@ -20,4 +20,10 @@ void main() {
 
     expect(april.weekOfMonth, WeekOfMonth.fifth);
   });
+
+  test('weekOfMonth must be 6th for May 31, 2021', () {
+    final may = DateTime(2021, DateTime.may, 31);
+
+    expect(may.weekOfMonth, WeekOfMonth.sixth);
+  });
 }

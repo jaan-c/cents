@@ -1,5 +1,5 @@
 class WeekOfMonth {
-  static const values = [first, second, third, fourth, fifth];
+  static const values = [first, second, third, fourth, fifth, sixth];
 
   static const first = WeekOfMonth.fromInt(1);
   static const second = WeekOfMonth.fromInt(2);
