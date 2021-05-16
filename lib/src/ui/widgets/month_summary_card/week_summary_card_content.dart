@@ -4,6 +4,7 @@ import 'package:cents/src/domain/week_of_month.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'category_cost_grid.dart';
 import 'month_summary_card.dart';
 import 'week_summary_chart.dart';
 
@@ -41,6 +42,12 @@ class WeekSummaryCardContent extends StatelessWidget {
             textToColor: textToColor,
           ),
         ),
+        SizedBox(height: 16),
+        _footer(
+          monthSummary: monthSummary,
+          weekofMonth: weekOfMonth,
+          textToColor: textToColor,
+        ),
       ],
     );
   }
@@ -66,6 +73,21 @@ class WeekSummaryCardContent extends StatelessWidget {
           style: textTheme.bodyText2,
         ),
       ],
+    );
+  }
+
+  Widget _footer({
+    required MonthSummary monthSummary,
+    required WeekOfMonth weekofMonth,
+    required TextToColor textToColor,
+  }) {
+    final categories = monthSummary.getAllCategories();
+    final categoryCosts = Map.fromEntries(categories.map((c) => MapEntry(
+        c, monthSummary.totalCostBy(category: c, weekOfMonth: weekofMonth))));
+
+    return CategoryCostGrid(
+      categoryCosts: categoryCosts,
+      textToColor: textToColor,
     );
   }
 }
