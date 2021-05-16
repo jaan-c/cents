@@ -13,12 +13,21 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage>
+    with SingleTickerProviderStateMixin<MainPage> {
   late final ExpenseProvider provider;
   late final ExpenseListBodyController expenseListController;
   late final ExpenseStatsBodyController expenseStatsController;
 
-  var _selectedTabIndex = 0;
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() => setState(() {}));
+  }
 
   @override
   void didChangeDependencies() {
@@ -39,6 +48,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void dispose() {
+    _tabController.dispose();
     expenseListController.dispose();
     expenseStatsController.dispose();
 
@@ -61,7 +71,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   AppBar _appBar() {
-    switch (_selectedTabIndex) {
+    switch (_tabController.index) {
       case 0:
         return expenseListController.expenseSelection.isEmpty
             ? _defaultAppBar()
@@ -71,7 +81,7 @@ class _MainPageState extends State<MainPage> {
         return _defaultAppBar();
 
       default:
-        throw StateError('Invalid selected tab index $_selectedTabIndex');
+        throw StateError('Invalid selected tab index ${_tabController.index}');
     }
   }
 
@@ -107,9 +117,8 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget _body() {
-    return IndexedStack(
-      index: _selectedTabIndex,
-      sizing: StackFit.expand,
+    return TabBarView(
+      controller: _tabController,
       children: [
         ExpenseListBody(controller: expenseListController),
         ExpenseStatsBody(controller: expenseStatsController),
@@ -130,11 +139,8 @@ class _MainPageState extends State<MainPage> {
 
   Widget _bottomNavBar() {
     return BottomNavigationBar(
-      currentIndex: _selectedTabIndex,
-      onTap: (ix) => setState(() {
-        _selectedTabIndex = ix;
-        expenseListController.clearSelection();
-      }),
+      currentIndex: _tabController.index,
+      onTap: (ix) => _tabController.animateTo(ix),
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.table_rows_rounded),
