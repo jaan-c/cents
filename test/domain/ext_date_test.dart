@@ -1,3 +1,4 @@
+import 'package:cents/src/domain/week_of_month.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cents/src/domain/ext_date.dart';
 
@@ -11,12 +12,12 @@ void main() {
   test('weekOfMonth must be 1 for April 1, 2021', () {
     final april = DateTime(2021, DateTime.april, 1);
 
-    expect(april.weekOfMonth, 1);
+    expect(april.weekOfMonth, WeekOfMonth.first);
   });
 
   test('weekOfMonth must be 5 for April 30, 2021', () {
     final april = DateTime(2021, DateTime.april, 30);
 
-    expect(april.weekOfMonth, 5);
+    expect(april.weekOfMonth, WeekOfMonth.fifth);
   });
 }
