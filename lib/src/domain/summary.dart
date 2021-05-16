@@ -122,15 +122,26 @@ class MonthSummary {
     return WeekOfMonth.values.take(lastWeekOfMonth.toInt()).toList();
   }
 
-  List<Expense> getBy({ExpenseCategory? category, WeekOfMonth? weekOfMonth}) {
+  List<Expense> getBy({
+    ExpenseCategory? category,
+    WeekOfMonth? weekOfMonth,
+    int? dayOfWeek,
+  }) {
     return getAllExpenses()
         .where((e) =>
             (category == null || e.category == category) &&
-            (weekOfMonth == null || e.createdAt.weekOfMonth == weekOfMonth))
+            (weekOfMonth == null || e.createdAt.weekOfMonth == weekOfMonth) &&
+            (dayOfWeek == null || e.createdAt.weekday == dayOfWeek))
         .toList();
   }
 
-  Amount totalCostBy({ExpenseCategory? category, WeekOfMonth? weekOfMonth}) {
-    return getBy(category: category, weekOfMonth: weekOfMonth).totalCost();
+  Amount totalCostBy({
+    ExpenseCategory? category,
+    WeekOfMonth? weekOfMonth,
+    int? dayOfWeek,
+  }) {
+    return getBy(
+            category: category, weekOfMonth: weekOfMonth, dayOfWeek: dayOfWeek)
+        .totalCost();
   }
 }
