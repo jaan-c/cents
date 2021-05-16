@@ -1,6 +1,5 @@
 import 'package:cents/src/domain/amount.dart';
-import 'package:cents/src/domain/expense_category.dart';
-import 'package:cents/src/domain/pair.dart';
+import 'package:cents/src/domain/summary.dart';
 import 'package:cents/src/domain/week_of_month.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -9,23 +8,19 @@ import 'month_summary_card.dart';
 import 'week_summary_bar_chart.dart';
 
 class WeekSummaryCardContent extends StatelessWidget {
-  final int month;
+  final MonthSummary monthSummary;
   final WeekOfMonth weekOfMonth;
-  final List<Pair<ExpenseCategory, Amount>> categoryCosts;
   final TextToColor textToColor;
 
   WeekSummaryCardContent({
-    required this.month,
+    required this.monthSummary,
     required this.weekOfMonth,
-    required this.categoryCosts,
     required this.textToColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    final weekCost = categoryCosts
-        .map((pair) => pair.second)
-        .fold<Amount>(Amount(), (acc, cost) => acc.add(cost));
+    final weekCost = monthSummary.totalCostBy(weekOfMonth: weekOfMonth);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -33,7 +28,7 @@ class WeekSummaryCardContent extends StatelessWidget {
       children: [
         _header(
           context: context,
-          month: month,
+          month: monthSummary.month,
           weekOfMonth: weekOfMonth,
           weekCost: weekCost,
         ),
@@ -41,7 +36,8 @@ class WeekSummaryCardContent extends StatelessWidget {
         SizedBox(
           height: 150,
           child: WeekSummaryBarChart(
-            categoryCosts: categoryCosts,
+            monthSummary: monthSummary,
+            weekOfMonth: weekOfMonth,
             textToColor: textToColor,
           ),
         ),

@@ -1,200 +1,120 @@
 import 'dart:math' as math;
 import 'package:cents/src/domain/amount.dart';
-import 'package:cents/src/domain/expense_category.dart';
-import 'package:cents/src/domain/pair.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:cents/src/domain/summary.dart';
+import 'package:cents/src/domain/week_of_month.dart';
+import 'package:cents/src/ui/widgets/partitioned_bar_chart/partitioned_bar_chart.dart';
+import 'package:cents/src/ui/widgets/partitioned_bar_chart/partitioned_bar_data.dart';
 import 'package:flutter/material.dart';
 import 'package:quiver/iterables.dart';
 
 import 'month_summary_card.dart';
 
 class WeekSummaryBarChart extends StatelessWidget {
-  final List<Pair<ExpenseCategory, Amount>> categoryCosts;
+  static const _dayOfWeeks = [
+    DateTime.monday,
+    DateTime.tuesday,
+    DateTime.wednesday,
+    DateTime.thursday,
+    DateTime.friday,
+    DateTime.saturday,
+    DateTime.sunday,
+  ];
+
+  final MonthSummary monthSummary;
+  final WeekOfMonth weekOfMonth;
   final TextToColor textToColor;
 
   WeekSummaryBarChart({
-    required this.categoryCosts,
+    required this.monthSummary,
+    required this.weekOfMonth,
     required this.textToColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    return BarChart(
-      _categoryCostsToChartData(
+    final dayOfWeekCosts = _dayOfWeeks.map((d) => monthSummary
+        .totalCostBy(weekOfMonth: weekOfMonth, dayOfWeek: d)
+        .toDouble());
+    final maxCost = max(dayOfWeekCosts)!;
+    final ceilingCost = _ceilingByPlaceValue(maxCost);
+
+    return PartitionedBarChart(
+      maxValue: ceilingCost,
+      barDatas: _barDatas(
         context: context,
-        categoryCosts: categoryCosts,
+        monthSummary: monthSummary,
+        weekOfMonth: weekOfMonth,
         textToColor: textToColor,
       ),
+      magnitudePartitionCount: 4,
+      magnitudeToLabel: (m) =>
+          Amount.fromDouble(m).toLocalString(compact: true),
     );
   }
 
-  BarChartData _categoryCostsToChartData({
+  List<PartitionedBarData> _barDatas({
     required BuildContext context,
-    required List<Pair<ExpenseCategory, Amount>> categoryCosts,
+    required MonthSummary monthSummary,
+    required WeekOfMonth weekOfMonth,
     required TextToColor textToColor,
   }) {
-    if (categoryCosts.isEmpty) {
-      return BarChartData();
+    final brightness = Theme.of(context).brightness;
+
+    final dayOfWeekCosts = _dayOfWeeks
+        .map((d) => monthSummary
+            .totalCostBy(weekOfMonth: weekOfMonth, dayOfWeek: d)
+            .toDouble())
+        .toList();
+    final categories = monthSummary.getAllCategories();
+
+    final barDatas = <PartitionedBarData>[];
+
+    for (var i = 0; i < _dayOfWeeks.length; i++) {
+      final dayOfWeek = _dayOfWeeks[i];
+      final cost = dayOfWeekCosts[i];
+
+      final label = _intToDayOfWeekAbbreviation(dayOfWeek);
+      final categoryCosts = categories
+          .map((c) => monthSummary
+              .totalCostBy(
+                  weekOfMonth: weekOfMonth, dayOfWeek: dayOfWeek, category: c)
+              .toDouble())
+          .toList();
+
+      final data = PartitionedBarData(
+        value: cost,
+        label: label,
+        partitionValues: categoryCosts,
+        partitionColors:
+            categories.map((c) => textToColor(brightness, c.name)).toList(),
+        tooltipText: '$label\n${Amount.fromDouble(cost).toLocalString()}',
+      );
+
+      barDatas.add(data);
     }
 
-    final maxCostAsDouble =
-        max(categoryCosts.map((pair) => pair.second.toDouble()))!;
-    // FIXME: ceilingCostAsDouble becomes 100 instead of 10 on 0 maxCostAsDouble.
-    final ceilingCostAsDouble =
-        math.max(10, _ceilingByPlaceValue(maxCostAsDouble));
-    final costInterval = ceilingCostAsDouble / 3;
-
-    debugPrint('$categoryCosts');
-    debugPrint('maxCost: $maxCostAsDouble');
-    debugPrint('ceilingCost: $ceilingCostAsDouble');
-
-    return BarChartData(
-      maxY: ceilingCostAsDouble + 1,
-      alignment: BarChartAlignment.spaceEvenly,
-      barGroups: [
-        for (final indexedPair in enumerate(categoryCosts))
-          _categoryCostToBarData(
-            context: context,
-            index: indexedPair.index,
-            category: indexedPair.value.first,
-            cost: indexedPair.value.second,
-            textToColor: textToColor,
-          ),
-      ],
-      gridData: _gridData(
-        context: context,
-        horizontalLineInterval: costInterval,
-      ),
-      titlesData: _titlesData(
-        context: context,
-        categoryCosts: categoryCosts,
-        verticalTitleInterval: costInterval,
-      ),
-      borderData: _borderData(context: context),
-      barTouchData: _barTouchData(context: context),
-    );
+    return barDatas;
   }
 
-  BarChartGroupData _categoryCostToBarData({
-    required BuildContext context,
-    required int index,
-    required ExpenseCategory category,
-    required Amount cost,
-    required TextToColor textToColor,
-  }) {
-    final theme = Theme.of(context);
-
-    return BarChartGroupData(
-      x: index,
-      barRods: [
-        BarChartRodData(
-          y: cost.toDouble(),
-          width: 32,
-          borderRadius: BorderRadius.circular(2),
-          rodStackItems: [
-            BarChartRodStackItem(
-              0,
-              cost.toDouble(),
-              textToColor(theme.brightness, category.name),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  FlGridData _gridData({
-    required BuildContext context,
-    required double horizontalLineInterval,
-  }) {
-    final brightness = Theme.of(context).brightness;
-    final lineColor =
-        brightness == Brightness.light ? Colors.black38 : Colors.white38;
-
-    return FlGridData(
-      drawHorizontalLine: true,
-      horizontalInterval: horizontalLineInterval,
-      getDrawingHorizontalLine: (_) => FlLine(strokeWidth: 1, color: lineColor),
-    );
-  }
-
-  FlTitlesData _titlesData({
-    required BuildContext context,
-    required List<Pair<ExpenseCategory, Amount>> categoryCosts,
-    required double verticalTitleInterval,
-  }) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
-    final textStyle = textTheme.bodyText2!.copyWith(
-        fontSize: 10,
-        fontWeight: FontWeight.w500,
-        color: colorScheme.onSurface);
-
-    return FlTitlesData(
-      leftTitles: SideTitles(showTitles: false),
-      topTitles: SideTitles(showTitles: false),
-      rightTitles: SideTitles(
-        showTitles: true,
-        interval: verticalTitleInterval,
-        reservedSize: 32,
-        getTitles: (costAsDouble) =>
-            Amount.fromDouble(costAsDouble).toLocalString(compact: true),
-        getTextStyles: (_) => textStyle,
-      ),
-      bottomTitles: SideTitles(
-        showTitles: true,
-        interval: 1,
-        reservedSize: 32,
-        getTitles: (index) => categoryCosts[index.toInt()].first.name,
-        getTextStyles: (_) => textStyle,
-      ),
-    );
-  }
-
-  FlBorderData _borderData({required BuildContext context}) {
-    final brightness = Theme.of(context).brightness;
-    final lineColor =
-        brightness == Brightness.light ? Colors.black38 : Colors.white38;
-
-    return FlBorderData(
-      show: true,
-      border: Border(
-        bottom: BorderSide(color: lineColor),
-      ),
-    );
-  }
-
-  BarTouchData _barTouchData({required BuildContext context}) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final brightness = theme.brightness;
-
-    late final Color backgroundColor;
-    late final Color textColor;
-    if (brightness == Brightness.light) {
-      backgroundColor = Colors.grey[850]!;
-      textColor = Colors.white;
-    } else {
-      backgroundColor = Colors.grey.shade200;
-      textColor = Colors.black;
+  String _intToDayOfWeekAbbreviation(int dayOfWeek) {
+    switch (dayOfWeek) {
+      case 1:
+        return 'Mon';
+      case 2:
+        return 'Tue';
+      case 3:
+        return 'Wed';
+      case 4:
+        return 'Thu';
+      case 5:
+        return 'Fri';
+      case 6:
+        return 'Sat';
+      case 7:
+        return 'Sun';
+      default:
+        throw StateError('Invalid day of week $dayOfWeek.');
     }
-
-    return BarTouchData(
-      touchTooltipData: BarTouchTooltipData(
-        tooltipBgColor: backgroundColor,
-        tooltipRoundedRadius: 4,
-        tooltipPadding: EdgeInsets.all(8),
-        getTooltipItem: (_, __, barRod, ___) {
-          return BarTooltipItem(
-            Amount.fromDouble(barRod.y).toLocalString(),
-            textTheme.subtitle2!.copyWith(color: textColor),
-          );
-        },
-        fitInsideHorizontally: false,
-        fitInsideVertically: false,
-      ),
-    );
   }
 
   double _ceilingByPlaceValue(double n) {

@@ -73,9 +73,8 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
       }
 
       content = WeekSummaryCardContent(
-        month: monthSummary.month,
+        monthSummary: monthSummary,
         weekOfMonth: weekOfMonth,
-        categoryCosts: categoryCosts,
         textToColor: _textToColor,
       );
     }
