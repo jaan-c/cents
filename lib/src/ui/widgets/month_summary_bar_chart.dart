@@ -25,7 +25,7 @@ class MonthSummaryBarChart extends StatelessWidget {
 
     return PartitionedBarChart(
       maxValue: ceilingCost,
-      barDatas: _monthSummaryToBarData(
+      barDatas: _barDatas(
         context: context,
         monthSummary: monthSummary,
         textToColor: textToColor,
@@ -36,7 +36,7 @@ class MonthSummaryBarChart extends StatelessWidget {
     );
   }
 
-  List<PartitionedBarData> _monthSummaryToBarData({
+  List<PartitionedBarData> _barDatas({
     required BuildContext context,
     required MonthSummary monthSummary,
     required TextToColor textToColor,
