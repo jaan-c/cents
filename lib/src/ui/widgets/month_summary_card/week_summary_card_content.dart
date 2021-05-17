@@ -9,6 +9,7 @@ import 'category_cost_grid.dart';
 import 'month_summary_card.dart';
 import 'week_summary_chart.dart';
 
+// FIXME: Hoist state up MonthSummaryCard to simplify widget configuration changes.
 class WeekSummaryCardContent extends StatefulWidget {
   final MonthSummary monthSummary;
   final WeekOfMonth? weekOfMonth;
@@ -28,16 +29,15 @@ class WeekSummaryCardContent extends StatefulWidget {
 }
 
 class _WeekSummaryCardContentState extends State<WeekSummaryCardContent> {
-  final MonthSummary monthSummary;
-  final TextToColor textToColor;
-
-  var _weekOfMonth;
+  MonthSummary monthSummary;
+  WeekOfMonth weekOfMonth;
+  TextToColor textToColor;
 
   _WeekSummaryCardContentState._internal({
     required this.monthSummary,
     required WeekOfMonth weekOfMonth,
     required this.textToColor,
-  }) : _weekOfMonth = weekOfMonth;
+  }) : weekOfMonth = weekOfMonth;
 
   factory _WeekSummaryCardContentState({
     required MonthSummary monthSummary,
@@ -63,6 +63,17 @@ class _WeekSummaryCardContentState extends State<WeekSummaryCardContent> {
   }
 
   @override
+  void didUpdateWidget(covariant WeekSummaryCardContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    setState(() {
+      monthSummary = widget.monthSummary;
+      weekOfMonth = widget.weekOfMonth ?? WeekOfMonth.first;
+      textToColor = widget.textToColor;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -71,9 +82,9 @@ class _WeekSummaryCardContentState extends State<WeekSummaryCardContent> {
         _header(
           context: context,
           monthSummary: monthSummary,
-          weekOfMonth: _weekOfMonth,
+          weekOfMonth: weekOfMonth,
           onChangeWeekOfMonth: (w) => setState(() {
-            _weekOfMonth = w;
+            weekOfMonth = w;
           }),
         ),
         SizedBox(height: 24),
@@ -81,14 +92,14 @@ class _WeekSummaryCardContentState extends State<WeekSummaryCardContent> {
           height: 150,
           child: WeekSummaryChart(
             monthSummary: monthSummary,
-            weekOfMonth: _weekOfMonth,
+            weekOfMonth: weekOfMonth,
             textToColor: textToColor,
           ),
         ),
         SizedBox(height: 16),
         _footer(
           monthSummary: monthSummary,
-          weekofMonth: _weekOfMonth,
+          weekofMonth: weekOfMonth,
           textToColor: textToColor,
         ),
       ],

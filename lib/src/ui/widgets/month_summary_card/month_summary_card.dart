@@ -27,16 +27,26 @@ class MonthSummaryCard extends StatefulWidget {
 }
 
 class _MonthSummaryCardState extends State<MonthSummaryCard> {
-  final MonthSummary monthSummary;
-  final EdgeInsetsGeometry margin;
-
-  var _selectedMode;
+  MonthSummary monthSummary;
+  EdgeInsetsGeometry margin;
+  MonthSummaryCardMode selectedMode;
 
   _MonthSummaryCardState({
     required this.monthSummary,
     required MonthSummaryCardMode mode,
     required this.margin,
-  }) : _selectedMode = mode;
+  }) : selectedMode = mode;
+
+  @override
+  void didUpdateWidget(covariant MonthSummaryCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    setState(() {
+      monthSummary = widget.monthSummary;
+      margin = widget.margin;
+      selectedMode = widget.mode;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,13 +59,13 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _modeSwitcher(
-              selectedMode: _selectedMode,
+              selectedMode: selectedMode,
               onSelectMode: (mode) => setState(() {
-                _selectedMode = mode;
+                selectedMode = mode;
               }),
               weekOfMonths: monthSummary.getAllWeeks(),
             ),
-            if (_selectedMode == MonthSummaryCardMode.week)
+            if (selectedMode == MonthSummaryCardMode.week)
               WeekSummaryCardContent(
                 monthSummary: monthSummary,
                 textToColor: _textToColor,
@@ -78,15 +88,15 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
   }) {
     late final String label;
     late final VoidCallback onPressed;
-    if (_selectedMode == MonthSummaryCardMode.month) {
+    if (selectedMode == MonthSummaryCardMode.month) {
       label = 'Month Summary';
       onPressed = () => setState(() {
-            _selectedMode = MonthSummaryCardMode.week;
+            selectedMode = MonthSummaryCardMode.week;
           });
     } else {
       label = 'Week Summary';
       onPressed = () => setState(() {
-            _selectedMode = MonthSummaryCardMode.month;
+            selectedMode = MonthSummaryCardMode.month;
           });
     }
 
