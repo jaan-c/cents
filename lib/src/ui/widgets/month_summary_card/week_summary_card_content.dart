@@ -11,40 +11,55 @@ import 'week_summary_chart.dart';
 
 class WeekSummaryCardContent extends StatefulWidget {
   final MonthSummary monthSummary;
+  final WeekOfMonth? weekOfMonth;
   final TextToColor textToColor;
 
   WeekSummaryCardContent({
     required this.monthSummary,
+    this.weekOfMonth,
     required this.textToColor,
   });
 
   @override
   _WeekSummaryCardContentState createState() => _WeekSummaryCardContentState(
-      monthSummary: monthSummary, textToColor: textToColor);
+      monthSummary: monthSummary,
+      weekOfMonth: weekOfMonth,
+      textToColor: textToColor);
 }
 
 class _WeekSummaryCardContentState extends State<WeekSummaryCardContent> {
   final MonthSummary monthSummary;
   final TextToColor textToColor;
 
-  var _weekOfMonth = WeekOfMonth.first;
+  var _weekOfMonth;
 
-  _WeekSummaryCardContentState({
+  _WeekSummaryCardContentState._internal({
     required this.monthSummary,
+    required WeekOfMonth weekOfMonth,
     required this.textToColor,
-  });
+  }) : _weekOfMonth = weekOfMonth;
 
-  @override
-  void initState() {
-    super.initState();
-
+  factory _WeekSummaryCardContentState({
+    required MonthSummary monthSummary,
+    WeekOfMonth? weekOfMonth,
+    required TextToColor textToColor,
+  }) {
     final now = DateTime.now();
-    if (monthSummary.year == now.year && monthSummary.month == now.month) {
-      final currentWeekOfMonth = now.weekOfMonth;
-      setState(() {
-        _weekOfMonth = currentWeekOfMonth;
-      });
+    if (weekOfMonth == null &&
+        monthSummary.year == now.year &&
+        monthSummary.month == now.month) {
+      return _WeekSummaryCardContentState._internal(
+        monthSummary: monthSummary,
+        weekOfMonth: now.weekOfMonth,
+        textToColor: textToColor,
+      );
     }
+
+    return _WeekSummaryCardContentState._internal(
+      monthSummary: monthSummary,
+      weekOfMonth: weekOfMonth ?? WeekOfMonth.first,
+      textToColor: textToColor,
+    );
   }
 
   @override
