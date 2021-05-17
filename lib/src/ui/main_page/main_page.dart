@@ -19,15 +19,7 @@ class _MainPageState extends State<MainPage>
   late final ExpenseListBodyController expenseListController;
   late final ExpenseStatsBodyController expenseStatsController;
 
-  late final TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(() => setState(() {}));
-  }
+  var _selectedTabIndex = 0;
 
   @override
   void didChangeDependencies() {
@@ -48,7 +40,6 @@ class _MainPageState extends State<MainPage>
 
   @override
   void dispose() {
-    _tabController.dispose();
     expenseListController.dispose();
     expenseStatsController.dispose();
 
@@ -71,7 +62,7 @@ class _MainPageState extends State<MainPage>
   }
 
   AppBar _appBar() {
-    switch (_tabController.index) {
+    switch (_selectedTabIndex) {
       case 0:
         return expenseListController.expenseSelection.isEmpty
             ? _defaultAppBar()
@@ -81,7 +72,7 @@ class _MainPageState extends State<MainPage>
         return _defaultAppBar();
 
       default:
-        throw StateError('Invalid selected tab index ${_tabController.index}');
+        throw StateError('Invalid selected tab index $_selectedTabIndex');
     }
   }
 
@@ -117,8 +108,8 @@ class _MainPageState extends State<MainPage>
   }
 
   Widget _body() {
-    return TabBarView(
-      controller: _tabController,
+    return IndexedStack(
+      index: _selectedTabIndex,
       children: [
         ExpenseListBody(controller: expenseListController),
         ExpenseStatsBody(controller: expenseStatsController),
@@ -139,8 +130,10 @@ class _MainPageState extends State<MainPage>
 
   Widget _bottomNavBar() {
     return BottomNavigationBar(
-      currentIndex: _tabController.index,
-      onTap: (ix) => _tabController.animateTo(ix),
+      currentIndex: _selectedTabIndex,
+      onTap: (ix) => setState(() {
+        _selectedTabIndex = ix;
+      }),
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.table_rows_rounded),
