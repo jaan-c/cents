@@ -120,7 +120,7 @@ class WeekSummaryChart extends StatelessWidget {
   double _ceilingByPlaceValue(double n) {
     assert(n >= 0);
 
-    final placeValue = math.min(4, n.toString().length);
+    final placeValue = math.min(4, n.toInt().toString().length);
     final placeValueFloor = int.parse('1'.padRight(placeValue, '0'));
 
     final ceiled = (n / placeValueFloor).ceilToDouble() * placeValueFloor;
