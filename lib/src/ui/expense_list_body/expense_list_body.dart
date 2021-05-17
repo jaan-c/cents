@@ -48,6 +48,7 @@ class _ExpenseListBodyState extends State<ExpenseListBody> {
           SliverToBoxAdapter(
             child: MonthSummaryCard(
               monthSummary: controller.currentMonthSummary!,
+              mode: MonthSummaryCardMode.week,
               margin: EdgeInsets.all(8),
             ),
           ),
