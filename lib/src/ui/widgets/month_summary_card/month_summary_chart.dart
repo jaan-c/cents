@@ -82,6 +82,11 @@ class MonthSummaryChart extends StatelessWidget {
     final placeValue = math.min(4, n.toString().length);
     final placeValueFloor = int.parse('1'.padRight(placeValue, '0'));
 
-    return (n / placeValueFloor).ceilToDouble() * placeValueFloor;
+    final ceiled = (n / placeValueFloor).ceilToDouble() * placeValueFloor;
+    if (ceiled != n) {
+      return ceiled;
+    } else {
+      return ceiled + placeValueFloor;
+    }
   }
 }
