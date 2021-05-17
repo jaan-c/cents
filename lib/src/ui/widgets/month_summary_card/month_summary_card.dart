@@ -8,30 +8,35 @@ import 'week_summary_card_content.dart';
 
 typedef TextToColor = Color Function(Brightness, String);
 
-enum MonthSummaryCardMode { week, month }
+enum MonthSummaryCardMode { month, week }
 
 class MonthSummaryCard extends StatefulWidget {
   final MonthSummary monthSummary;
+  final MonthSummaryCardMode mode;
   final EdgeInsetsGeometry margin;
 
-  MonthSummaryCard({required this.monthSummary, EdgeInsetsGeometry? margin})
-      : margin = margin ?? EdgeInsets.symmetric(horizontal: 8, vertical: 4);
+  MonthSummaryCard({
+    required this.monthSummary,
+    this.mode = MonthSummaryCardMode.month,
+    EdgeInsetsGeometry? margin,
+  }) : margin = margin ?? EdgeInsets.symmetric(horizontal: 8, vertical: 4);
 
   @override
-  _MonthSummaryCardState createState() =>
-      _MonthSummaryCardState(monthSummary: monthSummary, margin: margin);
+  _MonthSummaryCardState createState() => _MonthSummaryCardState(
+      monthSummary: monthSummary, mode: mode, margin: margin);
 }
 
 class _MonthSummaryCardState extends State<MonthSummaryCard> {
   final MonthSummary monthSummary;
   final EdgeInsetsGeometry margin;
 
-  var _selectedMode = MonthSummaryCardMode.week;
+  var _selectedMode;
 
   _MonthSummaryCardState({
     required this.monthSummary,
+    required MonthSummaryCardMode mode,
     required this.margin,
-  });
+  }) : _selectedMode = mode;
 
   @override
   Widget build(BuildContext context) {
@@ -73,15 +78,15 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
   }) {
     late final String label;
     late final VoidCallback onPressed;
-    if (_selectedMode == MonthSummaryCardMode.week) {
-      label = 'Week Summary';
-      onPressed = () => setState(() {
-            _selectedMode = MonthSummaryCardMode.month;
-          });
-    } else {
+    if (_selectedMode == MonthSummaryCardMode.month) {
       label = 'Month Summary';
       onPressed = () => setState(() {
             _selectedMode = MonthSummaryCardMode.week;
+          });
+    } else {
+      label = 'Week Summary';
+      onPressed = () => setState(() {
+            _selectedMode = MonthSummaryCardMode.month;
           });
     }
 
