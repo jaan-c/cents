@@ -184,7 +184,7 @@ class _ExpenseEditorPageScaffoldState extends State<ExpenseEditorPageScaffold> {
       onSelected: (category) => setState(() {
         categoryController.text = category;
       }),
-      icon: Icon(Icons.more_horiz_rounded),
+      icon: Icon(Icons.expand_more_rounded),
       itemBuilder: (_) {
         return categorySelection
             .map((c) => PopupMenuItem(value: c, child: Text(c)))
