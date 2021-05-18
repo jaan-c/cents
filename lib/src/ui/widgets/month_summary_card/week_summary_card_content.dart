@@ -1,7 +1,6 @@
 import 'package:cents/src/domain/amount.dart';
 import 'package:cents/src/domain/summary.dart';
 import 'package:cents/src/domain/week_of_month.dart';
-import 'package:cents/src/domain/ext_date.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -9,69 +8,20 @@ import 'category_cost_grid.dart';
 import 'month_summary_card.dart';
 import 'week_summary_chart.dart';
 
-// FIXME: Hoist state up MonthSummaryCard to simplify widget configuration changes.
-class WeekSummaryCardContent extends StatefulWidget {
+typedef ChangeWeekOfMonthCallback = void Function(WeekOfMonth);
+
+class WeekSummaryCardContent extends StatelessWidget {
   final MonthSummary monthSummary;
-  final WeekOfMonth? weekOfMonth;
+  final WeekOfMonth weekOfMonth;
+  final ChangeWeekOfMonthCallback onChangeWeekOfMonth;
   final TextToColor textToColor;
 
   WeekSummaryCardContent({
     required this.monthSummary,
-    this.weekOfMonth,
+    required this.weekOfMonth,
+    required this.onChangeWeekOfMonth,
     required this.textToColor,
   });
-
-  @override
-  _WeekSummaryCardContentState createState() => _WeekSummaryCardContentState(
-      monthSummary: monthSummary,
-      weekOfMonth: weekOfMonth,
-      textToColor: textToColor);
-}
-
-class _WeekSummaryCardContentState extends State<WeekSummaryCardContent> {
-  MonthSummary monthSummary;
-  WeekOfMonth weekOfMonth;
-  TextToColor textToColor;
-
-  _WeekSummaryCardContentState._internal({
-    required this.monthSummary,
-    required WeekOfMonth weekOfMonth,
-    required this.textToColor,
-  }) : weekOfMonth = weekOfMonth;
-
-  factory _WeekSummaryCardContentState({
-    required MonthSummary monthSummary,
-    WeekOfMonth? weekOfMonth,
-    required TextToColor textToColor,
-  }) {
-    final now = DateTime.now();
-    if (weekOfMonth == null &&
-        monthSummary.year == now.year &&
-        monthSummary.month == now.month) {
-      return _WeekSummaryCardContentState._internal(
-        monthSummary: monthSummary,
-        weekOfMonth: now.weekOfMonth,
-        textToColor: textToColor,
-      );
-    }
-
-    return _WeekSummaryCardContentState._internal(
-      monthSummary: monthSummary,
-      weekOfMonth: weekOfMonth ?? WeekOfMonth.first,
-      textToColor: textToColor,
-    );
-  }
-
-  @override
-  void didUpdateWidget(covariant WeekSummaryCardContent oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    setState(() {
-      monthSummary = widget.monthSummary;
-      weekOfMonth = widget.weekOfMonth ?? WeekOfMonth.first;
-      textToColor = widget.textToColor;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,9 +33,7 @@ class _WeekSummaryCardContentState extends State<WeekSummaryCardContent> {
           context: context,
           monthSummary: monthSummary,
           weekOfMonth: weekOfMonth,
-          onChangeWeekOfMonth: (w) => setState(() {
-            weekOfMonth = w;
-          }),
+          onChangeWeekOfMonth: onChangeWeekOfMonth,
         ),
         SizedBox(height: 24),
         SizedBox(
@@ -110,7 +58,7 @@ class _WeekSummaryCardContentState extends State<WeekSummaryCardContent> {
     required BuildContext context,
     required MonthSummary monthSummary,
     required WeekOfMonth weekOfMonth,
-    required void Function(WeekOfMonth) onChangeWeekOfMonth,
+    required ChangeWeekOfMonthCallback onChangeWeekOfMonth,
   }) {
     final weeks = monthSummary.getAllWeeks();
     final hasPreviousWeek = weekOfMonth != weeks.first;

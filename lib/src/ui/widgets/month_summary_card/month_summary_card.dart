@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:cents/src/domain/summary.dart';
 import 'package:cents/src/domain/week_of_month.dart';
+import 'package:cents/src/domain/ext_date.dart';
 import 'package:flutter/material.dart';
 
 import 'month_summary_card_content.dart';
@@ -13,39 +14,68 @@ enum MonthSummaryCardMode { month, week }
 class MonthSummaryCard extends StatefulWidget {
   final MonthSummary monthSummary;
   final MonthSummaryCardMode mode;
+  final WeekOfMonth weekOfMonth;
   final EdgeInsetsGeometry margin;
 
-  MonthSummaryCard({
+  MonthSummaryCard._internal({
     required this.monthSummary,
-    this.mode = MonthSummaryCardMode.month,
-    EdgeInsetsGeometry? margin,
-  }) : margin = margin ?? EdgeInsets.symmetric(horizontal: 8, vertical: 4);
+    required this.mode,
+    required this.weekOfMonth,
+    required this.margin,
+  });
+
+  factory MonthSummaryCard({
+    required MonthSummary monthSummary,
+    MonthSummaryCardMode mode = MonthSummaryCardMode.month,
+    WeekOfMonth? weekOfMonth,
+    EdgeInsetsGeometry margin =
+        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+  }) {
+    final now = DateTime.now();
+    if (weekOfMonth == null &&
+        monthSummary.year == now.year &&
+        monthSummary.month == now.month) {
+      weekOfMonth = now.weekOfMonth;
+    }
+
+    weekOfMonth ??= WeekOfMonth.first;
+
+    return MonthSummaryCard._internal(
+      monthSummary: monthSummary,
+      mode: mode,
+      weekOfMonth: weekOfMonth,
+      margin: margin,
+    );
+  }
 
   @override
-  _MonthSummaryCardState createState() => _MonthSummaryCardState(
-      monthSummary: monthSummary, mode: mode, margin: margin);
+  _MonthSummaryCardState createState() =>
+      _MonthSummaryCardState(mode: mode, weekOfMonth: weekOfMonth);
 }
 
 class _MonthSummaryCardState extends State<MonthSummaryCard> {
-  MonthSummary monthSummary;
-  EdgeInsetsGeometry margin;
-  MonthSummaryCardMode selectedMode;
+  MonthSummary get monthSummary => widget.monthSummary;
+  EdgeInsetsGeometry get margin => widget.margin;
+
+  MonthSummaryCardMode _mode;
+  WeekOfMonth _weekOfMonth;
 
   _MonthSummaryCardState({
-    required this.monthSummary,
     required MonthSummaryCardMode mode,
-    required this.margin,
-  }) : selectedMode = mode;
+    required WeekOfMonth weekOfMonth,
+  })   : _mode = mode,
+        _weekOfMonth = weekOfMonth;
 
   @override
   void didUpdateWidget(covariant MonthSummaryCard oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    setState(() {
-      monthSummary = widget.monthSummary;
-      margin = widget.margin;
-      selectedMode = widget.mode;
-    });
+    if (widget.monthSummary != oldWidget.monthSummary) {
+      final weeks = widget.monthSummary.getAllWeeks();
+      if (_weekOfMonth.toInt() > weeks.last.toInt()) {
+        _weekOfMonth = weeks.last;
+      }
+    }
   }
 
   @override
@@ -59,15 +89,19 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _modeSwitcher(
-              selectedMode: selectedMode,
-              onSelectMode: (mode) => setState(() {
-                selectedMode = mode;
+              mode: _mode,
+              onSelectMode: (m) => setState(() {
+                _mode = m;
               }),
               weekOfMonths: monthSummary.getAllWeeks(),
             ),
-            if (selectedMode == MonthSummaryCardMode.week)
+            if (_mode == MonthSummaryCardMode.week)
               WeekSummaryCardContent(
                 monthSummary: monthSummary,
+                weekOfMonth: _weekOfMonth,
+                onChangeWeekOfMonth: (w) => setState(() {
+                  _weekOfMonth = w;
+                }),
                 textToColor: _textToColor,
               )
             else
@@ -82,22 +116,18 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
   }
 
   Widget _modeSwitcher({
-    required MonthSummaryCardMode selectedMode,
+    required MonthSummaryCardMode mode,
     required void Function(MonthSummaryCardMode) onSelectMode,
     required List<WeekOfMonth> weekOfMonths,
   }) {
     late final String label;
     late final VoidCallback onPressed;
-    if (selectedMode == MonthSummaryCardMode.month) {
+    if (mode == MonthSummaryCardMode.month) {
       label = 'Month Summary';
-      onPressed = () => setState(() {
-            selectedMode = MonthSummaryCardMode.week;
-          });
+      onPressed = () => onSelectMode(MonthSummaryCardMode.week);
     } else {
       label = 'Week Summary';
-      onPressed = () => setState(() {
-            selectedMode = MonthSummaryCardMode.month;
-          });
+      onPressed = () => onSelectMode(MonthSummaryCardMode.month);
     }
 
     return ActionChip(
