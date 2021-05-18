@@ -1,6 +1,6 @@
-import 'dart:math' as math;
 import 'package:cents/src/domain/amount.dart';
 import 'package:cents/src/domain/summary.dart';
+import 'package:cents/src/domain/ext_double.dart';
 import 'package:cents/src/ui/widgets/partitioned_bar_chart/partitioned_bar_chart.dart';
 import 'package:cents/src/ui/widgets/partitioned_bar_chart/partitioned_bar_data.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,7 @@ class MonthSummaryChart extends StatelessWidget {
     final weekCosts =
         weeks.map((w) => monthSummary.totalCostBy(weekOfMonth: w).toDouble());
     final maxWeekCost = max(weekCosts)!;
-    final ceilingCost = _ceilingByPlaceValue(maxWeekCost);
+    final ceilingCost = maxWeekCost.ceilingByPlaceValue();
 
     return PartitionedBarChart(
       maxValue: ceilingCost,
@@ -74,19 +74,5 @@ class MonthSummaryChart extends StatelessWidget {
     }
 
     return barDatas;
-  }
-
-  double _ceilingByPlaceValue(double n) {
-    assert(n >= 0);
-
-    final placeValue = math.min(4, n.toInt().toString().length);
-    final placeValueFloor = int.parse('1'.padRight(placeValue, '0'));
-
-    final ceiled = (n / placeValueFloor).ceilToDouble() * placeValueFloor;
-    if (ceiled != n) {
-      return ceiled;
-    } else {
-      return ceiled + placeValueFloor;
-    }
   }
 }

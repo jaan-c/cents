@@ -1,7 +1,7 @@
-import 'dart:math' as math;
 import 'package:cents/src/domain/amount.dart';
 import 'package:cents/src/domain/summary.dart';
 import 'package:cents/src/domain/week_of_month.dart';
+import 'package:cents/src/domain/ext_double.dart';
 import 'package:cents/src/ui/widgets/partitioned_bar_chart/partitioned_bar_chart.dart';
 import 'package:cents/src/ui/widgets/partitioned_bar_chart/partitioned_bar_data.dart';
 import 'package:flutter/material.dart';
@@ -32,11 +32,11 @@ class WeekSummaryChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dayOfWeekCosts = _dayOfWeeks.map((d) => monthSummary
+    final weekCosts = _dayOfWeeks.map((d) => monthSummary
         .totalCostBy(weekOfMonth: weekOfMonth, dayOfWeek: d)
         .toDouble());
-    final maxCost = max(dayOfWeekCosts)!;
-    final ceilingCost = _ceilingByPlaceValue(maxCost);
+    final maxWeekCost = max(weekCosts)!;
+    final ceilingCost = maxWeekCost.ceilingByPlaceValue();
 
     return PartitionedBarChart(
       maxValue: ceilingCost,
@@ -114,20 +114,6 @@ class WeekSummaryChart extends StatelessWidget {
         return 'Sun';
       default:
         throw StateError('Invalid day of week $dayOfWeek.');
-    }
-  }
-
-  double _ceilingByPlaceValue(double n) {
-    assert(n >= 0);
-
-    final placeValue = math.min(4, n.toInt().toString().length);
-    final placeValueFloor = int.parse('1'.padRight(placeValue, '0'));
-
-    final ceiled = (n / placeValueFloor).ceilToDouble() * placeValueFloor;
-    if (ceiled != n) {
-      return ceiled;
-    } else {
-      return ceiled + placeValueFloor;
     }
   }
 }
