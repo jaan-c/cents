@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:cents/src/database/expense_provider.dart';
 import 'package:cents/src/database/expense_backup.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as pathlib;
 import 'package:share/share.dart';
@@ -20,7 +22,7 @@ class BackupSection extends StatelessWidget {
       children: [
         _subheader(context: context),
         _exportTile(onTap: _exportToDocuments),
-        _importTile(onTap: _importFromPickedFile),
+        _importTile(onTap: () => _importFromPickedFile(context)),
       ],
     );
   }
@@ -66,16 +68,22 @@ class BackupSection extends StatelessWidget {
     await Share.shareFiles([path]);
   }
 
-  Future<void> _importFromPickedFile() async {
-    final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['json'],
-        allowMultiple: false);
+  Future<void> _importFromPickedFile(BuildContext context) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['json'],
+          allowMultiple: false);
 
-    if (result != null) {
-      final pickedFile = result.files.first;
-      final json = await File(pickedFile.path!).readAsString();
-      await provider.importFromJson(json);
+      if (result != null) {
+        final pickedFile = result.files.first;
+        final json = await File(pickedFile.path!).readAsString();
+        await provider.importFromJson(json);
+      }
+    } on PlatformException catch (_) {
+      _showSnackbar(context,
+          'Failed to import expenses, please enable storage permission.');
+      return;
     }
   }
 
@@ -86,5 +94,18 @@ class BackupSection extends StatelessWidget {
         .map((p) => p.toString().padLeft(2, '0'));
 
     return [...dateParts, ...timeParts].join('-');
+  }
+
+  void _showSnackbar(BuildContext context, String message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      action: SnackBarAction(
+        label: 'OPEN',
+        onPressed: () => AppSettings.openAppSettings(asAnotherTask: true),
+      ),
+      behavior: SnackBarBehavior.floating,
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
