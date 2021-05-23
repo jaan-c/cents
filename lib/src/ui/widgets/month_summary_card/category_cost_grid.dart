@@ -58,7 +58,7 @@ class CategoryCostGrid extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(category.name),
+              Text(category.name.isNotEmpty ? category.name : 'Uncategorized'),
               Text(cost.toLocalString()),
             ],
           ),
