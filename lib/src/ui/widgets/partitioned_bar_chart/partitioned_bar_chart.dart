@@ -44,7 +44,12 @@ class PartitionedBarChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final barsTopOffset = magnitudeLabelSize.height;
     final barsEndOffset = magnitudeLabelSize.width + magnitudeLabelOffset;
-    final magnitudesBottomOffset = barLabelOffset;
+    // Note: Magnitude lines seems to be padded at the bottom 4 pixels up, take
+    // that into account when computing magnitude bottom offset. Still can't
+    // figure out where it's coming from.
+    final magnitudesBottomOffset = (barLabelSize.height + barLabelOffset) -
+        (magnitudeLabelSize.height / 2) -
+        4;
 
     return Stack(
       children: [
