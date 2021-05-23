@@ -57,11 +57,11 @@ class BackupSection extends StatelessWidget {
   Future<void> _exportToDocuments() async {
     final timestamp = _dateTimeToTimestamp(DateTime.now());
     final name = 'expenses-$timestamp.json';
-    final appDir = (await getExternalStorageDirectory())!;
+    final appDir = await getTemporaryDirectory();
     final path = pathlib.join(appDir.path, name);
     final json = await provider.exportAsJson();
 
-    await File(path).writeAsString(json);
+    await File(path).writeAsString(json, flush: true);
 
     await Share.shareFiles([path]);
   }
