@@ -5,6 +5,7 @@ import 'package:cents/src/ui/expense_list_body/expense_list_body.dart';
 import 'package:cents/src/ui/expense_list_body/expense_list_body_controller.dart';
 import 'package:cents/src/ui/expense_stats_body/expense_stats_body.dart';
 import 'package:cents/src/ui/expense_stats_body/expense_stats_body_controller.dart';
+import 'package:cents/src/ui/settings_page/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -53,7 +54,7 @@ class _MainPageState extends State<MainPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(),
+      appBar: _appBar(context: context),
       body: SafeArea(child: _body()),
       floatingActionButton: _addExpenseFab(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -61,31 +62,28 @@ class _MainPageState extends State<MainPage>
     );
   }
 
-  AppBar _appBar() {
+  AppBar _appBar({required BuildContext context}) {
     switch (_selectedTabIndex) {
       case 0:
         return expenseListController.expenseSelection.isEmpty
-            ? _defaultAppBar()
+            ? _defaultAppBar(context: context)
             : _selectionAppBar();
 
       case 1:
-        return _defaultAppBar();
+        return _defaultAppBar(context: context);
 
       default:
         throw StateError('Invalid selected tab index $_selectedTabIndex');
     }
   }
 
-  AppBar _defaultAppBar() {
+  AppBar _defaultAppBar({required BuildContext context}) {
     return AppBar(
       title: Text('Cents'),
       actions: [
-        PopupMenuButton<String>(
-          itemBuilder: (BuildContext context) {
-            return ['Settings', 'About']
-                .map((x) => PopupMenuItem(value: x, child: Text(x)))
-                .toList();
-          },
+        IconButton(
+          icon: Icon(Icons.settings_rounded),
+          onPressed: () => _navigateToSettings(context),
         ),
       ],
     );
@@ -144,6 +142,16 @@ class _MainPageState extends State<MainPage>
           label: 'Stats',
         ),
       ],
+    );
+  }
+
+  Future<void> _navigateToSettings(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) {
+        final provider = context.read<ExpenseProvider>();
+        return SettingsPage(provider: provider);
+      }),
     );
   }
 
