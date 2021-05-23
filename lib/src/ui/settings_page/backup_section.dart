@@ -21,8 +21,8 @@ class BackupSection extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         _subheader(context: context),
-        _exportTile(onTap: _exportToDocuments),
         _importTile(onTap: () => _importFromPickedFile(context)),
+        _exportTile(onTap: _exportToDocuments),
       ],
     );
   }
@@ -40,14 +40,6 @@ class BackupSection extends StatelessWidget {
     );
   }
 
-  Widget _exportTile({required VoidCallback onTap}) {
-    return ListTile(
-      title: Text('Export'),
-      subtitle: Text('Export expenses to a JSON file in Documents'),
-      onTap: onTap,
-    );
-  }
-
   Widget _importTile({required VoidCallback onTap}) {
     return ListTile(
       title: Text('Import'),
@@ -56,16 +48,12 @@ class BackupSection extends StatelessWidget {
     );
   }
 
-  Future<void> _exportToDocuments() async {
-    final timestamp = _dateTimeToTimestamp(DateTime.now());
-    final name = 'expenses-$timestamp.json';
-    final appDir = await getTemporaryDirectory();
-    final path = pathlib.join(appDir.path, name);
-    final json = await provider.exportAsJson();
-
-    await File(path).writeAsString(json, flush: true);
-
-    await Share.shareFiles([path]);
+  Widget _exportTile({required VoidCallback onTap}) {
+    return ListTile(
+      title: Text('Export'),
+      subtitle: Text('Export expenses to a JSON file in Documents'),
+      onTap: onTap,
+    );
   }
 
   Future<void> _importFromPickedFile(BuildContext context) async {
@@ -85,6 +73,18 @@ class BackupSection extends StatelessWidget {
           'Failed to import expenses, please enable storage permission.');
       return;
     }
+  }
+
+  Future<void> _exportToDocuments() async {
+    final timestamp = _dateTimeToTimestamp(DateTime.now());
+    final name = 'expenses-$timestamp.json';
+    final appDir = await getTemporaryDirectory();
+    final path = pathlib.join(appDir.path, name);
+    final json = await provider.exportAsJson();
+
+    await File(path).writeAsString(json, flush: true);
+
+    await Share.shareFiles([path]);
   }
 
   String _dateTimeToTimestamp(DateTime dateTime) {
