@@ -16,7 +16,9 @@ class CategoryCostGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final categories = categoryCosts.keys.toList()..sort();
+    final categories = categoryCosts.keys.toList()
+      ..removeWhere((c) => categoryCosts[c] == Amount())
+      ..sort();
 
     return FixedGrid(
       crossAxisCount: 3,
