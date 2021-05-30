@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:quiver/time.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -70,5 +71,12 @@ Iterable<DateTime> _dateRange(
     yield current;
 
     current = current.add(interval);
+  }
+}
+
+extension ExtTime on TimeOfDay {
+  String display12() {
+    final asDate = DateTime(2000, DateTime.january, 1, hour, minute);
+    return DateFormat.jm().format(asDate);
   }
 }

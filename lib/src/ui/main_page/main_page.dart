@@ -1,6 +1,7 @@
 import 'package:cents/src/database/expense_provider.dart';
 import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/ui/expense_editor_page/expense_editor_page.dart';
+import 'package:cents/src/ui/expense_editor_page/expense_editor_page_model.dart';
 import 'package:cents/src/ui/expense_list_body/expense_list_body.dart';
 import 'package:cents/src/ui/expense_list_body/expense_list_body_controller.dart';
 import 'package:cents/src/ui/expense_stats_body/expense_stats_body.dart';
@@ -158,7 +159,15 @@ class _MainPageState extends State<MainPage>
   Future<void> _navigateToEditor(BuildContext context, int expenseId) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => ExpenseEditorPage(id: expenseId)),
+      MaterialPageRoute(
+        builder: (context) {
+          final provider = context.read<ExpenseProvider>();
+
+          return ExpenseEditorPage(
+            model: ExpenseEditorPageModel(provider: provider, id: expenseId),
+          );
+        },
+      ),
     );
   }
 }
