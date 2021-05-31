@@ -68,8 +68,7 @@ class MonthSummaryCardContent extends StatelessWidget {
     required MonthSummary monthSummary,
     required TextToColor textToColor,
   }) {
-    final categories = monthSummary.getAllCategories();
-    final categoryCosts = Map.fromEntries(categories
+    final categoryCosts = Map.fromEntries(monthSummary.categories
         .map((c) => MapEntry(c, monthSummary.totalCostBy(category: c))));
 
     return CategoryCostGrid(

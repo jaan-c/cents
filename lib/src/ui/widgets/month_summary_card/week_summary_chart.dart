@@ -65,7 +65,7 @@ class WeekSummaryChart extends StatelessWidget {
             .totalCostBy(weekOfMonth: weekOfMonth, dayOfWeek: d)
             .toDouble())
         .toList();
-    final categories = monthSummary.getAllCategories();
+    final categories = monthSummary.categories;
 
     final barDatas = <PartitionedBarData>[];
 

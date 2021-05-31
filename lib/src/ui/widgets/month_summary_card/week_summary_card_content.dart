@@ -60,7 +60,7 @@ class WeekSummaryCardContent extends StatelessWidget {
     required WeekOfMonth weekOfMonth,
     required ChangeWeekOfMonthCallback onChangeWeekOfMonth,
   }) {
-    final weeks = monthSummary.getAllWeeks();
+    final weeks = monthSummary.weeks;
     final hasPreviousWeek = weekOfMonth != weeks.first;
     final hasNextWeek = weekOfMonth != weeks.last;
     final onPreviousWeek = () {
@@ -129,9 +129,9 @@ class WeekSummaryCardContent extends StatelessWidget {
     required WeekOfMonth weekofMonth,
     required TextToColor textToColor,
   }) {
-    final categories = monthSummary.getAllCategories();
-    final categoryCosts = Map.fromEntries(categories.map((c) => MapEntry(
-        c, monthSummary.totalCostBy(category: c, weekOfMonth: weekofMonth))));
+    final categoryCosts = Map.fromEntries(monthSummary.categories.map((c) =>
+        MapEntry(c,
+            monthSummary.totalCostBy(category: c, weekOfMonth: weekofMonth))));
 
     return CategoryCostGrid(
       categoryCosts: categoryCosts,

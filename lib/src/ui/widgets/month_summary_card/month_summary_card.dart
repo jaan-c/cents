@@ -63,7 +63,7 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
   _MonthSummaryCardState({
     required MonthSummaryCardMode mode,
     required WeekOfMonth weekOfMonth,
-  })   : _mode = mode,
+  })  : _mode = mode,
         _weekOfMonth = weekOfMonth;
 
   @override
@@ -71,7 +71,8 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
     super.didUpdateWidget(oldWidget);
 
     if (widget.monthSummary != oldWidget.monthSummary) {
-      final weeks = widget.monthSummary.getAllWeeks();
+      final weeks = widget.monthSummary.weeks;
+
       if (_weekOfMonth.toInt() > weeks.last.toInt()) {
         _weekOfMonth = weeks.last;
       }
@@ -93,7 +94,7 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
               onSelectMode: (m) => setState(() {
                 _mode = m;
               }),
-              weekOfMonths: monthSummary.getAllWeeks(),
+              weekOfMonths: monthSummary.weeks,
             ),
             if (_mode == MonthSummaryCardMode.week)
               WeekSummaryCardContent(
