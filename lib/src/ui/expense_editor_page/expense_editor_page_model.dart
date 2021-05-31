@@ -45,8 +45,6 @@ class ExpenseEditorPageModel extends StateModel {
   void initState() {
     super.initState();
 
-    provider.addListener(notifyListeners);
-
     categoryController.addListener(notifyListeners);
     costController.addListener(notifyListeners);
     noteController.addListener(notifyListeners);
@@ -81,8 +79,6 @@ class ExpenseEditorPageModel extends StateModel {
 
   @override
   void dispose() {
-    provider.removeListener(notifyListeners);
-
     categoryController.dispose();
     costController.dispose();
     noteController.dispose();
