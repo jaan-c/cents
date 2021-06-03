@@ -13,10 +13,10 @@ class PartitionedBarData {
     List<double> partitionValues = const [],
     List<Color> partitionColors = const [],
     this.tooltipText = '',
-  })  : partitionValues =
+  })  : assert(partitionValues.fold<double>(0.0, (a, b) => a + b) == value),
+        assert(partitionValues.length == partitionColors.length),
+        partitionValues =
             partitionValues.isNotEmpty ? partitionValues : [value],
         partitionColors =
-            partitionColors.isNotEmpty ? partitionColors : [Colors.blue],
-        assert(partitionValues.reduce((a, b) => a + b) == value),
-        assert(partitionValues.length == partitionColors.length);
+            partitionColors.isNotEmpty ? partitionColors : [Colors.blue];
 }
