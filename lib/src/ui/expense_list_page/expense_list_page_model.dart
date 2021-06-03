@@ -20,9 +20,9 @@ class ExpenseListPageModel extends StateModel {
   var _expenses = <Expense>[];
   List<Expense> get expenses => _expenses.toList();
 
-  var _expenseSelection = <Expense>{};
-  Set<Expense> get expenseSelection => _expenseSelection.toSet();
-  bool get hasSelection => expenseSelection.isNotEmpty;
+  var _selectedExpenses = <Expense>{};
+  Set<Expense> get selectedExpenses => _selectedExpenses.toSet();
+  bool get hasSelectedExpense => selectedExpenses.isNotEmpty;
 
   MonthSummary get currentMonthSummary => Summary(_expenses)
       .getMonthSummary(currentDateTime.year, currentDateTime.month);
@@ -59,24 +59,24 @@ class ExpenseListPageModel extends StateModel {
   void toggleSelectExpense(Expense expense) {
     assert(expenses.contains(expense));
 
-    final copy = expenseSelection.toSet();
-    if (expenseSelection.contains(expense)) {
+    final copy = selectedExpenses.toSet();
+    if (selectedExpenses.contains(expense)) {
       copy.remove(expense);
     } else {
       copy.add(expense);
     }
 
-    _expenseSelection = copy;
+    _selectedExpenses = copy;
     notifyListeners();
   }
 
   void clearSelectedExpenses() {
-    _expenseSelection = {};
+    _selectedExpenses = {};
     notifyListeners();
   }
 
   Future<void> deleteSelectedExpenses() async {
-    final expenseIds = expenseSelection.map((e) => e.id).toList();
+    final expenseIds = selectedExpenses.map((e) => e.id).toList();
     await provider.deleteAll(expenseIds);
 
     notifyListeners();

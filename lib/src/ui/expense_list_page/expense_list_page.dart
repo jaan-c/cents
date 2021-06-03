@@ -27,10 +27,16 @@ class _ExpenseListPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(
-        onOpenStats: () => model.navigateToStats(context),
-        onOpenSettings: () => model.navigateToSettings(context),
-      ),
+      appBar: !model.hasSelectedExpense
+          ? _appBar(
+              onOpenStats: () => model.navigateToStats(context),
+              onOpenSettings: () => model.navigateToSettings(context),
+            )
+          : _appBarSelection(
+              selectedCount: model.selectedExpenses.length,
+              onClearSelected: model.clearSelectedExpenses,
+              onDeleteSelected: model.deleteSelectedExpenses,
+            ),
       body: CustomScrollView(
         slivers: [
           if (model.currentMonthSummary.isNotEmpty)
@@ -48,8 +54,8 @@ class _ExpenseListPageState
             ),
             SliverExpenseList(
               expenses: model.expenses,
-              expenseSelection: model.expenseSelection,
-              onToggleExpense: model.toggleSelectExpense,
+              selectedExpenses: model.selectedExpenses,
+              onToggleSelect: model.toggleSelectExpense,
               onEditExpense: (expenseId) =>
                   model.navigateToEditor(context, expenseId),
             ),
@@ -57,9 +63,11 @@ class _ExpenseListPageState
           _sliverBottomOffset(bottomOffsetHeight: _FAB_SIZE + _FAB_PADDING),
         ],
       ),
-      floatingActionButton: _addExpenseFab(
-        onPressed: () => model.navigateToEditor(context),
-      ),
+      floatingActionButton: !model.hasSelectedExpense
+          ? _addExpenseFab(
+              onPressed: () => model.navigateToEditor(context),
+            )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
@@ -78,6 +86,26 @@ class _ExpenseListPageState
         IconButton(
           onPressed: onOpenSettings,
           icon: Icon(Icons.settings_rounded),
+        ),
+      ],
+    );
+  }
+
+  AppBar _appBarSelection({
+    required int selectedCount,
+    required VoidCallback onClearSelected,
+    required VoidCallback onDeleteSelected,
+  }) {
+    return AppBar(
+      leading: IconButton(
+        icon: Icon(Icons.close_rounded),
+        onPressed: onClearSelected,
+      ),
+      title: Text('$selectedCount selected'),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.delete_rounded),
+          onPressed: onDeleteSelected,
         ),
       ],
     );
