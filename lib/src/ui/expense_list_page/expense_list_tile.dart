@@ -9,18 +9,20 @@ class ExpenseListTile extends StatelessWidget {
   final VoidCallback? onLongPress;
   final bool isSelected;
 
-  ExpenseListTile(
-      {required this.expense,
-      required this.onTap,
-      this.onLongPress,
-      required this.isSelected});
+  ExpenseListTile({
+    required this.expense,
+    required this.onTap,
+    this.onLongPress,
+    required this.isSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final selectColor = colorScheme.onSurface.withAlpha(33);
 
     return Material(
-      color: isSelected ? colorScheme.onSurface.withAlpha(33) : null,
+      color: isSelected ? selectColor : null,
       child: InkWell(
         onTap: onTap,
         onLongPress: onLongPress,
@@ -49,11 +51,9 @@ class ExpenseListTile extends StatelessWidget {
   }
 
   Widget _createdAtText(BuildContext context) {
-    final content = expense.createdAt.relativeDisplay();
-
     final textTheme = Theme.of(context).textTheme;
 
-    return Text(content, style: textTheme.overline);
+    return Text(expense.createdAt.relativeDisplay(), style: textTheme.overline);
   }
 
   Widget _categoryText(BuildContext context) {
@@ -74,13 +74,14 @@ class ExpenseListTile extends StatelessWidget {
 
   Widget _noteText(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
+    final brightness = theme.brightness;
+    final textColor =
+        brightness == Brightness.light ? Colors.black54 : Colors.white54;
 
     return Text(
       expense.note,
-      style: textTheme.bodyText2
-          ?.apply(color: colorScheme.onSurface.withOpacity(0.6)),
+      style: textTheme.bodyText2?.apply(color: textColor),
     );
   }
 }

@@ -25,6 +25,7 @@ class SliverExpenseList extends StatelessWidget {
       delegate: SliverChildBuilderDelegate(
         (_, ix) {
           final expense = expenses[ix];
+
           return _expenseListTile(
             expense: expense,
             expenseSelection: expenseSelection,

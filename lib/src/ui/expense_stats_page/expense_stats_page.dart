@@ -1,65 +1,50 @@
 import 'package:cents/src/domain/summary.dart';
 import 'package:cents/src/ui/widgets/month_summary_card/month_summary_card.dart';
+import 'package:cents/src/ui/widgets/state_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cents/src/ui/widgets/ext_widget_list.dart';
 
-import 'expense_stats_body_controller.dart';
+import 'expense_stats_page_model.dart';
 
-const _FAB_SIZE = 56.0;
-const _FAB_PADDING = 16;
+class ExpenseStatsPage extends StatefulWidget {
+  final ExpenseStatsPageModel model;
 
-class ExpenseStatsBody extends StatefulWidget {
-  final ExpenseStatsBodyController controller;
-
-  ExpenseStatsBody({required this.controller});
+  ExpenseStatsPage({required this.model});
 
   @override
-  _ExpenseStatsBodyState createState() =>
-      _ExpenseStatsBodyState(controller: controller);
+  _ExpenseStatsPageState createState() => _ExpenseStatsPageState(model);
 }
 
-class _ExpenseStatsBodyState extends State<ExpenseStatsBody> {
-  final ExpenseStatsBodyController controller;
-
-  _ExpenseStatsBodyState({required this.controller});
-
+class _ExpenseStatsPageState
+    extends StateWithModel<ExpenseStatsPage, ExpenseStatsPageModel> {
   @override
-  void initState() {
-    super.initState();
-    controller.addListener(_onControllerMutation);
-  }
+  final ExpenseStatsPageModel model;
 
-  @override
-  void dispose() {
-    controller.removeListener(_onControllerMutation);
-    super.dispose();
-  }
-
-  void _onControllerMutation() {
-    setState(() {});
-  }
+  _ExpenseStatsPageState(this.model);
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      primary: true,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _yearChoiceChips(
-              context: context,
-              selectedYear: controller.selectedYear,
-              allYears: controller.allYears,
-              onSelectYear: controller.selectYear,
-            ),
-            SizedBox(height: 8),
-            if (controller.selectedYearSummary != null)
-              _monthSummaryCards(yearSummary: controller.selectedYearSummary!),
-            SizedBox(height: _FAB_SIZE + _FAB_PADDING),
-          ],
+    return Scaffold(
+      appBar: AppBar(title: Text('Stats')),
+      body: SingleChildScrollView(
+        primary: true,
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _yearChoiceChips(
+                context: context,
+                years: model.years,
+                selectedYear: model.selectedYear,
+                onSelectYear: model.selectYear,
+              ),
+              SizedBox(height: 8),
+              if (model.selectedYearSummary.isNotEmpty)
+                _monthSummaryCards(yearSummary: model.selectedYearSummary),
+            ],
+          ),
         ),
       ),
     );
@@ -67,8 +52,8 @@ class _ExpenseStatsBodyState extends State<ExpenseStatsBody> {
 
   Widget _yearChoiceChips({
     required BuildContext context,
+    required List<int> years,
     required int? selectedYear,
-    required List<int> allYears,
     required void Function(int) onSelectYear,
   }) {
     return SingleChildScrollView(
@@ -76,9 +61,8 @@ class _ExpenseStatsBodyState extends State<ExpenseStatsBody> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          for (final year in allYears)
+          for (final year in years)
             _choiceChip(
-              context: context,
               selected: year == selectedYear,
               onSelected: () => onSelectYear(year),
               label: Text(year.toString()),
@@ -89,7 +73,6 @@ class _ExpenseStatsBodyState extends State<ExpenseStatsBody> {
   }
 
   Widget _choiceChip({
-    required BuildContext context,
     required bool selected,
     required VoidCallback onSelected,
     required Widget label,
@@ -112,7 +95,7 @@ class _ExpenseStatsBodyState extends State<ExpenseStatsBody> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final monthSummary in yearSummary.getAllMonthSummaries())
+        for (final monthSummary in yearSummary.monthSummaries)
           MonthSummaryCard(
             margin: EdgeInsets.zero,
             monthSummary: monthSummary,
