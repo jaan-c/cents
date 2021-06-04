@@ -60,10 +60,13 @@ class ExpenseListTile extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Text(
-        expense.category.name.isNotBlank
-            ? expense.category.name
-            : 'Uncategorized',
-        style: textTheme.subtitle1);
+      expense.category.name.isNotBlank
+          ? expense.category.name
+          : 'Uncategorized',
+      style: textTheme.subtitle1,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
   }
 
   Widget _costText(BuildContext context) {
