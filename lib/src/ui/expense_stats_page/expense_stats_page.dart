@@ -96,10 +96,11 @@ class _ExpenseStatsPageState
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (final monthSummary in yearSummary.monthSummaries)
-          MonthSummaryCard(
-            margin: EdgeInsets.zero,
-            monthSummary: monthSummary,
-          ),
+          if (monthSummary.isNotEmpty)
+            MonthSummaryCard(
+              margin: EdgeInsets.zero,
+              monthSummary: monthSummary,
+            ),
       ].intersperse(builder: () => SizedBox(height: 8)),
     );
   }
