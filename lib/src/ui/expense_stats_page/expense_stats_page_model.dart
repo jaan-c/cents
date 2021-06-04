@@ -2,6 +2,7 @@ import 'package:cents/src/database/expense_provider.dart';
 import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/domain/summary.dart';
 import 'package:cents/src/ui/widgets/state_model.dart';
+import 'package:quiver/iterables.dart';
 
 class ExpenseStatsPageModel extends StateModel {
   final ExpenseProvider provider;
@@ -39,6 +40,7 @@ class ExpenseStatsPageModel extends StateModel {
     final expenses = await provider.getAllExpenses();
 
     _expenses = expenses;
+    _selectedYear = _nearestOldestYear(DateTime.now().year, years);
     notifyListeners();
   }
 
@@ -46,4 +48,13 @@ class ExpenseStatsPageModel extends StateModel {
     _selectedYear = year;
     notifyListeners();
   }
+}
+
+int _nearestOldestYear(int fromYear, List<int> years) {
+  years = years.toList()..sort();
+
+  final distances = years.map((y) => (fromYear - y).abs()).toList();
+  final smallestDistanceIx = distances.indexOf(min(distances)!);
+
+  return years[smallestDistanceIx];
 }
