@@ -4,7 +4,7 @@ import 'package:cents/src/domain/week_of_month.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'category_cost_grid.dart';
+import 'category_breakdown.dart';
 import 'month_summary_card.dart';
 import 'week_summary_chart.dart';
 
@@ -133,7 +133,7 @@ class WeekSummaryCardContent extends StatelessWidget {
         MapEntry(c,
             monthSummary.totalCostBy(category: c, weekOfMonth: weekofMonth))));
 
-    return CategoryCostGrid(
+    return CategoryBreakdown(
       categoryCosts: categoryCosts,
       textToColor: textToColor,
     );

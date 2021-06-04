@@ -3,7 +3,7 @@ import 'package:cents/src/domain/summary.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'category_cost_grid.dart';
+import 'category_breakdown.dart';
 import 'month_summary_chart.dart';
 import 'month_summary_card.dart';
 
@@ -71,7 +71,7 @@ class MonthSummaryCardContent extends StatelessWidget {
     final categoryCosts = Map.fromEntries(monthSummary.categories
         .map((c) => MapEntry(c, monthSummary.totalCostBy(category: c))));
 
-    return CategoryCostGrid(
+    return CategoryBreakdown(
       categoryCosts: categoryCosts,
       textToColor: textToColor,
     );
