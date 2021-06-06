@@ -1,9 +1,19 @@
+import 'dart:ui';
+
+import 'package:quiver/core.dart';
+
 class ExpenseCategory implements Comparable<ExpenseCategory> {
+  static const UNSET_ID = 0;
+
+  final int id;
   final String name;
+  final Color color;
 
-  ExpenseCategory(String name) : name = name.trim();
-
-  ExpenseCategory.uncategorized() : this('');
+  ExpenseCategory({
+    this.id = ExpenseCategory.UNSET_ID,
+    required this.name,
+    this.color = const Color(0xFFFFFFFF),
+  }) : assert(name.isNotEmpty);
 
   @override
   bool operator ==(dynamic other) {
@@ -11,15 +21,18 @@ class ExpenseCategory implements Comparable<ExpenseCategory> {
   }
 
   @override
-  int get hashCode => name.hashCode;
+  int get hashCode => hash3(id, name, color);
 
   @override
   int compareTo(ExpenseCategory other) {
     return name.compareTo(other.name);
   }
 
-  @override
-  String toString() {
-    return name;
+  ExpenseCategory copyWith({int? id, String? name, Color? color}) {
+    return ExpenseCategory(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      color: color ?? this.color,
+    );
   }
 }
