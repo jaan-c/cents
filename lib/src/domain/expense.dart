@@ -12,19 +12,21 @@ class Expense {
   final DateTime createdAt;
   final String note;
 
-  Expense(
-      {this.id = UNSET_ID,
-      required this.category,
-      required this.cost,
-      required this.createdAt,
-      String note = ''}): note = note.trim();
+  Expense({
+    this.id = UNSET_ID,
+    required this.category,
+    required this.cost,
+    required this.createdAt,
+    this.note = '',
+  });
 
-  Expense copyWith(
-      {int? id,
-      ExpenseCategory? category,
-      Amount? cost,
-      DateTime? createdAt,
-      String? note}) {
+  Expense copyWith({
+    int? id,
+    ExpenseCategory? category,
+    Amount? cost,
+    DateTime? createdAt,
+    String? note,
+  }) {
     return Expense(
         id: id ?? this.id,
         category: category ?? this.category,
