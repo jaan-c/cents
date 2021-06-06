@@ -83,7 +83,7 @@ class MonthSummary {
   List<Expense> get expenses => _expenses.toList();
 
   List<ExpenseCategory> get categories =>
-      expenses.map((e) => e.category).toSet().toList();
+      expenses.map((e) => e.category).toSet().toList()..sort();
 
   List<WeekOfMonth> get weeks {
     final lastDayOfMonth = DateTime(year, month).lastDayOfMonth;
