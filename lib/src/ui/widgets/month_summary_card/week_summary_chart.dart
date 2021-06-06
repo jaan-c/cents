@@ -74,7 +74,7 @@ class WeekSummaryChart extends StatelessWidget {
       final cost = dayOfWeekCosts[i];
 
       final label = _intToDayOfWeekAbbreviation(dayOfWeek);
-      final categoryCosts = categories
+      final costs = categories
           .map((c) => monthSummary
               .totalCostBy(
                   weekOfMonth: weekOfMonth, dayOfWeek: dayOfWeek, category: c)
@@ -84,7 +84,7 @@ class WeekSummaryChart extends StatelessWidget {
       final data = PartitionedBarData(
         value: cost,
         label: label,
-        partitionValues: categoryCosts,
+        partitionValues: costs,
         partitionColors:
             categories.map((c) => textToColor(brightness, c.name)).toList(),
         tooltipText: '$label\n${Amount.fromDouble(cost).toLocalString()}',
