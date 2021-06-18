@@ -20,6 +20,14 @@ class Expense {
     this.note = '',
   });
 
+  @override
+  bool operator ==(dynamic other) {
+    return other is Expense && hashCode == other.hashCode;
+  }
+
+  @override
+  int get hashCode => hashObjects([id, category, cost, createdAt, note]);
+
   Expense copyWith({
     int? id,
     ExpenseCategory? category,
@@ -34,12 +42,4 @@ class Expense {
         createdAt: createdAt ?? this.createdAt,
         note: note ?? this.note);
   }
-
-  @override
-  bool operator ==(dynamic other) {
-    return other is Expense && hashCode == other.hashCode;
-  }
-
-  @override
-  int get hashCode => hashObjects([id, category, cost, createdAt, note]);
 }
