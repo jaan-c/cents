@@ -1,20 +1,11 @@
 import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/domain/expense_category.dart';
 import 'package:flutter/foundation.dart';
-import 'package:quiver/iterables.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'column_converter.dart';
 import 'database_opener.dart';
-import 'row_converter.dart';
-import 'utils.dart';
-
-const TABLE_EXPENSES = 'expenses';
-const COLUMN_ID = 'id';
-const COLUMN_CATEGORY = 'category';
-const COLUMN_COST = 'cost';
-const COLUMN_CREATED_AT = 'createdAt';
-const COLUMN_NOTE = 'note';
+import 'expense_crud.dart';
+import 'category_crud.dart';
 
 class ExpenseProvider with ChangeNotifier {
   static Future<ExpenseProvider> open() async {
@@ -31,110 +22,143 @@ class ExpenseProvider with ChangeNotifier {
 
   ExpenseProvider(this._database);
 
-  Future<List<Expense>> getAllExpenses() async {
-    final rows = await _database.query(TABLE_EXPENSES,
-        orderBy: '$COLUMN_CREATED_AT DESC');
-
-    final expenses =
-        rows.map((r) => r.cast<String, Object>().fromRow()).toList();
-
-    return expenses;
-  }
-
-  Future<Expense?> get(int expenseId) async {
-    return (await getAll([expenseId])).firstTry;
-  }
-
-  Future<List<Expense>> getAll(List<int> expenseIds) async {
-    final idsPlaceholder = range(expenseIds.length).map((_) => '?').join(',');
-    final rows = await _database.query(TABLE_EXPENSES,
-        where: '$COLUMN_ID = ($idsPlaceholder)', whereArgs: expenseIds);
-
-    return rows.map((r) => r.cast<String, Object>().fromRow()).toList();
-  }
-
-  Future<void> add(Expense expense) async {
-    assert(expense.id == Expense.UNSET_ID);
-
-    await addAll([expense]);
-  }
-
-  Future<void> addAll(List<Expense> expenses) async {
-    await _execInTransaction(expenses, _execAdd);
-    notifyListeners();
-  }
-
-  void _execAdd(Batch batch, Expense expense) {
-    final row = expense.toRow();
-    batch.insert(TABLE_EXPENSES, row);
-  }
-
-  Future<void> delete(int expenseId) async {
-    await deleteAll([expenseId]);
-  }
-
-  Future<void> deleteAll(List<int> expenseIds) async {
-    await _execInTransaction(expenseIds, _execDelete);
-    notifyListeners();
-  }
-
-  void _execDelete(Batch batch, int expenseId) {
-    batch.delete(TABLE_EXPENSES,
-        where: '$COLUMN_ID = ?', whereArgs: [expenseId]);
-  }
-
-  Future<void> update(Expense expense) async {
-    assert(expense.id != Expense.UNSET_ID);
-
-    await updateAll([expense]);
-  }
-
-  Future<void> updateAll(List<Expense> expenses) async {
-    await _execInTransaction(expenses, _execUpdate);
-    notifyListeners();
-  }
-
-  void _execUpdate(Batch batch, Expense expense) {
-    final row = expense.toRow();
-    batch.update(TABLE_EXPENSES, row,
-        where: '$COLUMN_ID = ?', whereArgs: [expense.id]);
-  }
-
-  Future<void> _execInTransaction<T>(
-    List<T> values,
-    void Function(Batch, T) exec,
-  ) async {
-    await _database.transaction((txn) async {
-      final batch = txn.batch();
-      values.forEach((v) => exec(batch, v));
-      await batch.commit(noResult: true, continueOnError: false);
-    });
-  }
-
-  Future<List<ExpenseCategory>> getAllCategories() async {
-    final rows = await _database.query(TABLE_EXPENSES,
-        distinct: true,
-        columns: [COLUMN_CATEGORY],
-        orderBy: '$COLUMN_CATEGORY ASC');
-
-    final categories =
-        rows.map((r) => (r[COLUMN_CATEGORY]! as String).toCategory()).toList();
-
-    return categories;
-  }
-
-  Future<void> renameCategory(
-      ExpenseCategory oldCategory, ExpenseCategory newCategory) async {
-    await _database.update(
-        TABLE_EXPENSES, {COLUMN_CATEGORY: newCategory.toColumn()},
-        where: '$COLUMN_CATEGORY = ?', whereArgs: [oldCategory.name]);
-
-    notifyListeners();
-  }
-
   @override
   Future<void> dispose() async {
     await _database.close();
     super.dispose();
+  }
+
+  Future<List<Expense>> getEveryExpense() async {
+    return ExpenseCrud.getEverything(_database);
+  }
+
+  Future<List<Expense>> getAllExpenses(Iterable<int> expenseIds) async {
+    return ExpenseCrud.getAll(_database, expenseIds);
+  }
+
+  Future<Expense?> getExpense(int expenseId) async {
+    final expenses = await ExpenseCrud.getAll(_database, [expenseId]);
+
+    if (expenses.isNotEmpty) {
+      return expenses.first;
+    }
+  }
+
+  /// Stores all [expenses].
+  ///
+  /// All [ExpenseCategory] with [ExpenseCategory.UNSET_ID] are stored
+  /// automatically before the expenses and ones with set id are checked against
+  /// stored categories, and throws a [StateError] if they don't match any.
+  Future<void> addAllExpenses(Iterable<Expense> expenses) async {
+    await _database.transaction((txn) async {
+      final existingCategories = await CategoryCrud.getEverything(txn);
+      _checkCategoriesExist(expenses, existingCategories);
+
+      await _addNewCategories(txn, expenses, ConflictAlgorithm.abort);
+      await ExpenseCrud.addAll(txn, expenses, ConflictAlgorithm.abort);
+    });
+
+    notifyListeners();
+  }
+
+  Future<void> updateAllExpenses(Iterable<Expense> expenses) async {
+    await _database.transaction((txn) async {
+      final existingCategories = await CategoryCrud.getEverything(txn);
+      _checkCategoriesExist(expenses, existingCategories);
+
+      await _addNewCategories(txn, expenses, ConflictAlgorithm.abort);
+      await ExpenseCrud.updateAll(txn, expenses, ConflictAlgorithm.abort);
+    });
+
+    notifyListeners();
+  }
+
+  /// Check if all categories with set id of each [expense] does exist in
+  /// [existingCategories].
+  void _checkCategoriesExist(
+    Iterable<Expense> expenses,
+    Iterable<ExpenseCategory> existingCategories,
+  ) {
+    final categoriesWithId = expenses
+        .map((e) => e.category)
+        .where((c) => c.id != ExpenseCategory.UNSET_ID);
+    final idExistingCategories =
+        Map.fromEntries(existingCategories.map((c) => MapEntry(c.id, c)));
+
+    for (final category in categoriesWithId) {
+      if (category != idExistingCategories[category.id]) {
+        throw StateError(
+            'Attempting to add/update non-existent category "${category.name}"');
+      }
+    }
+  }
+
+  Future<void> _addNewCategories(
+    DatabaseExecutor executor,
+    Iterable<Expense> expenses,
+    ConflictAlgorithm conflictAlgorithm,
+  ) async {
+    final newCategories = expenses
+        .map((e) => e.category)
+        .where((c) => c.id == ExpenseCategory.UNSET_ID)
+        .toSet();
+
+    await CategoryCrud.addAll(
+      executor,
+      newCategories,
+      conflictAlgorithm,
+    );
+  }
+
+  Future<void> deleteAllExpenses(Iterable<int> expenseIds) async {
+    await _database.transaction((txn) async {
+      await ExpenseCrud.deleteAll(txn, expenseIds);
+    });
+
+    notifyListeners();
+  }
+
+  Future<List<ExpenseCategory>> getEveryCategory() async {
+    return CategoryCrud.getEverything(_database);
+  }
+
+  Future<List<ExpenseCategory>> getAllCategories(
+    Iterable<int> categoryIds,
+  ) async {
+    return CategoryCrud.getAll(_database, categoryIds);
+  }
+
+  Future<ExpenseCategory?> getCategory(int categoryId) async {
+    final categories = await CategoryCrud.getAll(_database, [categoryId]);
+
+    if (categories.isNotEmpty) {
+      return categories.first;
+    }
+  }
+
+  Future<void> addAllCategories(Iterable<ExpenseCategory> categories) async {
+    await _database.transaction((txn) async {
+      await CategoryCrud.addAll(txn, categories, ConflictAlgorithm.abort);
+    });
+
+    notifyListeners();
+  }
+
+  Future<void> updateAllCategories(
+    Iterable<ExpenseCategory> categories,
+  ) async {
+    await _database.transaction((txn) async {
+      await CategoryCrud.updateAll(txn, categories, ConflictAlgorithm.abort);
+    });
+
+    notifyListeners();
+  }
+
+  Future<void> deleteAllCategories(Iterable<int> categoryIds) async {
+    await _database.transaction((txn) async {
+      await CategoryCrud.deleteAll(txn, categoryIds);
+    });
+
+    notifyListeners();
   }
 }

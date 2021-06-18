@@ -1,7 +1,8 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as pathlib;
 
-import 'expense_provider.dart';
+import 'category_crud_converter.dart';
+import 'expense_crud_converter.dart';
 
 abstract class DatabaseOpener {
   static const DATABASE_NAME = 'expenses.sql';
@@ -10,24 +11,59 @@ abstract class DatabaseOpener {
   static Future<Database> open() async {
     final path = pathlib.join(await getDatabasesPath(), DATABASE_NAME);
 
-    return await openDatabase(path,
-        version: DATABASE_VERSION, onCreate: _initializeExpensesTable);
+    return await openDatabase(
+      path,
+      version: DATABASE_VERSION,
+      onCreate: _initDatabase,
+    );
   }
 
   static Future<Database> openInMemory() async {
-    return await openDatabase(inMemoryDatabasePath,
-        version: DATABASE_VERSION, onCreate: _initializeExpensesTable);
+    return await openDatabase(
+      inMemoryDatabasePath,
+      version: DATABASE_VERSION,
+      onCreate: _initDatabase,
+    );
   }
 
-  static Future<void> _initializeExpensesTable(Database database, int _) async {
-    await database.execute(
+  static Future<void> _initDatabase(Database database, int version) async {
+    await database.transaction((txn) async {
+      await _initCategoryTable(txn, version);
+      await _initExpenseTable(txn, version);
+    });
+  }
+
+  static Future<void> _initCategoryTable(
+    DatabaseExecutor executor,
+    int _version,
+  ) async {
+    await executor.execute(
+      '''
+      CREATE TABLE IF NOT EXISTS $TABLE_CATEGORIES (
+        $CATEGORY_COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        $CATEGORY_COLUMN_NAME TEXT NOT NULL UNIQUE,
+        $CATEGORY_COLUMN_COLOR INTEGER NOT NULL
+      )
+      ''',
+    );
+  }
+
+  static Future<void> _initExpenseTable(
+    DatabaseExecutor executor,
+    int _version,
+  ) async {
+    await executor.execute(
       '''
       CREATE TABLE IF NOT EXISTS $TABLE_EXPENSES (
-        $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-        $COLUMN_CATEGORY TEXT NOT NULL,
-        $COLUMN_COST INTEGER NOT NULL,
-        $COLUMN_CREATED_AT TEXT NOT NULL,
-        $COLUMN_NOTE TEXT NOT NULL
+        $EXPENSE_COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        $EXPENSE_COLUMN_CATEGORY INTEGER NOT NULL,
+        $EXPENSE_COLUMN_COST INTEGER NOT NULL,
+        $EXPENSE_COLUMN_CREATED_AT TEXT NOT NULL,
+        $EXPENSE_COLUMN_NOTE TEXT NOT NULL,
+        FOREIGN KEY ($EXPENSE_COLUMN_CATEGORY)
+          REFERENCES $TABLE_CATEGORIES($CATEGORY_COLUMN_ID)
+          ON UPDATE NO ACTION
+          ON DELETE NO ACTION
       )
       ''',
     );
