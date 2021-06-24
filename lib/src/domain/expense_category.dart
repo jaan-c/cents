@@ -36,4 +36,9 @@ class ExpenseCategory implements Comparable<ExpenseCategory> {
       color: color ?? this.color,
     );
   }
+
+  @override
+  String toString() {
+    return '($id, $name, $color)';
+  }
 }
