@@ -1,29 +1,30 @@
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart' as pathlib;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'category_crud_converter.dart';
 import 'expense_crud_converter.dart';
 
-abstract class DatabaseOpener {
+abstract class ExpenseDatabaseOpener {
   static const DATABASE_NAME = 'expenses.sql';
   static const DATABASE_VERSION = 1;
 
-  static Future<Database> open() async {
-    final path = pathlib.join(await getDatabasesPath(), DATABASE_NAME);
-
-    return await openDatabase(
+  static Future<Database> open(
+    DatabaseFactory databaseFactory,
+    String path,
+  ) async {
+    return await databaseFactory.openDatabase(
       path,
-      version: DATABASE_VERSION,
-      onCreate: _initDatabase,
+      options: OpenDatabaseOptions(
+        version: DATABASE_VERSION,
+        onCreate: _initDatabase,
+      ),
     );
   }
 
-  static Future<Database> openInMemory() async {
-    return await openDatabase(
-      inMemoryDatabasePath,
-      version: DATABASE_VERSION,
-      onCreate: _initDatabase,
-    );
+  static Future<Database> openInMemory(
+    DatabaseFactory databaseFactory,
+  ) async {
+    return open(databaseFactoryFfi, inMemoryDatabasePath);
   }
 
   static Future<void> _initDatabase(Database database, int version) async {

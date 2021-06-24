@@ -2,20 +2,36 @@ import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/domain/expense_category.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart' as pathlib;
 
-import 'database_opener.dart';
+import 'expense_database_opener.dart';
 import 'expense_crud.dart';
 import 'category_crud.dart';
 
 class ExpenseProvider with ChangeNotifier {
-  static Future<ExpenseProvider> open() async {
-    final database = await DatabaseOpener.open();
+  static const DATABASE_NAME = 'expenses.sql';
+  static const DATABASE_VERSION = 1;
+
+  static Future<ExpenseProvider> open({
+    DatabaseFactory? defaultDatabaseFactory,
+    String path = '',
+  }) async {
+    defaultDatabaseFactory ??= databaseFactory;
+    path = path.isNotEmpty
+        ? path
+        : pathlib.join(await getDatabasesPath(), DATABASE_NAME);
+
+    final database =
+        await ExpenseDatabaseOpener.open(defaultDatabaseFactory, path);
     return ExpenseProvider(database);
   }
 
-  static Future<ExpenseProvider> openInMemory() async {
-    final database = await DatabaseOpener.openInMemory();
-    return ExpenseProvider(database);
+  static Future<ExpenseProvider> openInMemory({
+    DatabaseFactory? defaultDatabaseFactory,
+  }) async {
+    return ExpenseProvider.open(
+        defaultDatabaseFactory: defaultDatabaseFactory,
+        path: inMemoryDatabasePath);
   }
 
   final Database _database;
