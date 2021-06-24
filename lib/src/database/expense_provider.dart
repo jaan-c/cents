@@ -60,17 +60,12 @@ class ExpenseProvider with ChangeNotifier {
     }
   }
 
-  /// Stores all [expenses].
-  ///
-  /// All [ExpenseCategory] with [ExpenseCategory.UNSET_ID] are stored
-  /// automatically before the expenses and ones with set id are checked against
-  /// stored categories, and throws a [StateError] if they don't match any.
+  /// Stores all [expenses] with existing categories.
   Future<void> addAllExpenses(Iterable<Expense> expenses) async {
     await _database.transaction((txn) async {
       final existingCategories = await CategoryCrud.getEverything(txn);
       _checkCategoriesExist(expenses, existingCategories);
 
-      await _addNewCategories(txn, expenses, ConflictAlgorithm.abort);
       await ExpenseCrud.addAll(txn, expenses, ConflictAlgorithm.abort);
     });
 
@@ -82,7 +77,6 @@ class ExpenseProvider with ChangeNotifier {
       final existingCategories = await CategoryCrud.getEverything(txn);
       _checkCategoriesExist(expenses, existingCategories);
 
-      await _addNewCategories(txn, expenses, ConflictAlgorithm.abort);
       await ExpenseCrud.updateAll(txn, expenses, ConflictAlgorithm.abort);
     });
 
@@ -95,35 +89,21 @@ class ExpenseProvider with ChangeNotifier {
     Iterable<Expense> expenses,
     Iterable<ExpenseCategory> existingCategories,
   ) {
-    final categoriesWithId = expenses
-        .map((e) => e.category)
-        .where((c) => c.id != ExpenseCategory.UNSET_ID);
-    final idExistingCategories =
+    final categories = expenses.map((e) => e.category);
+    final idCategories =
         Map.fromEntries(existingCategories.map((c) => MapEntry(c.id, c)));
 
-    for (final category in categoriesWithId) {
-      if (category != idExistingCategories[category.id]) {
+    for (final category in categories) {
+      if (category.id == ExpenseCategory.UNSET_ID) {
         throw StateError(
-            'Attempting to add/update non-existent category "${category.name}"');
+            'Attempting to implicitly add category "${category.name}".');
+      }
+
+      if (category != idCategories[category.id]) {
+        throw StateError(
+            'Attempting to add/update non-existent category "${category.name}".');
       }
     }
-  }
-
-  Future<void> _addNewCategories(
-    DatabaseExecutor executor,
-    Iterable<Expense> expenses,
-    ConflictAlgorithm conflictAlgorithm,
-  ) async {
-    final newCategories = expenses
-        .map((e) => e.category)
-        .where((c) => c.id == ExpenseCategory.UNSET_ID)
-        .toSet();
-
-    await CategoryCrud.addAll(
-      executor,
-      newCategories,
-      conflictAlgorithm,
-    );
   }
 
   Future<void> deleteAllExpenses(Iterable<int> expenseIds) async {
