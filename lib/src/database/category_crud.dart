@@ -64,7 +64,7 @@ class CategoryCrud {
       batch.update(
         TABLE_CATEGORIES,
         row,
-        where: '$CATEGORY_COLUMN_ID == ?',
+        where: '$CATEGORY_COLUMN_ID = ?',
         whereArgs: [id],
         conflictAlgorithm: conflictAlgorithm,
       );
