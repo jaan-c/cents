@@ -28,6 +28,11 @@ class Expense {
   @override
   int get hashCode => hashObjects([id, category, cost, createdAt, note]);
 
+  @override
+  String toString() {
+    return '($id, $category, $cost, $createdAt, $note)';
+  }
+
   Expense copyWith({
     int? id,
     ExpenseCategory? category,

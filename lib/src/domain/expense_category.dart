@@ -29,16 +29,16 @@ class ExpenseCategory implements Comparable<ExpenseCategory> {
     return name.compareTo(other.name);
   }
 
+  @override
+  String toString() {
+    return '($id, $name, $color)';
+  }
+
   ExpenseCategory copyWith({int? id, String? name, Color? color}) {
     return ExpenseCategory(
       id: id ?? this.id,
       name: name ?? this.name,
       color: color ?? this.color,
     );
-  }
-
-  @override
-  String toString() {
-    return '($id, $name, $color)';
   }
 }
