@@ -49,6 +49,9 @@ class Amount with ComparableOperators<Amount> implements Comparable<Amount> {
   }
 
   @override
+  int get hashCode => totalCents.hashCode;
+
+  @override
   String toString() {
     if (cents == 0) {
       return units.toString();
