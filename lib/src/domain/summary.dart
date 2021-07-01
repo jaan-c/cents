@@ -1,92 +1,76 @@
-import 'package:cents/src/domain/amount.dart';
+import 'package:cents/src/domain/expense_category.dart';
+import 'package:cents/src/domain/week_of_month.dart';
 import 'package:quiver/iterables.dart';
+import 'package:quiver/time.dart';
 
+import 'amount.dart';
 import 'expense.dart';
-import 'expense_category.dart';
+import 'ext_date_time.dart';
 import 'expense_list_ext.dart';
-import 'ext_date.dart';
-import 'week_of_month.dart';
 
 class Summary {
-  final Map<int, YearSummary> _yearSummaries;
+  final List<Expense> _expenses;
 
-  Summary._internal(this._yearSummaries);
+  List<Expense> get expenses => _expenses.toList();
 
-  factory Summary(List<Expense> expenses) {
-    final yearSummaries =
-        expenses.groupByYear().map((y, es) => MapEntry(y, YearSummary(y, es)));
-
-    return Summary._internal(yearSummaries);
-  }
-
-  List<int> getAllYears() {
-    return _yearSummaries.keys.toList()..sort();
-  }
-
-  List<YearSummary> getAllYearSummaries() {
-    return getAllYears().map((y) => getYearSummary(y)!).toList();
-  }
-
-  bool hasYear(int year) {
-    return getYearSummary(year) != null;
-  }
-
-  bool hasMonth(int year, int month) {
-    return getMonthSummary(year, month) != null;
-  }
-
-  int? getClosestOldestYear(int fromYear) {
-    final years = getAllYears();
-    final distances = years.map((y) => (y - fromYear).abs());
-    final yearDistances = Map.fromEntries(
-        zip([years, distances]).map((yd) => MapEntry(yd[0], yd[1])));
-
-    if (yearDistances.isEmpty) {
-      return null;
+  List<int> get years {
+    final allYears = expenses.map((e) => e.createdAt.year).toList();
+    if (allYears.isEmpty) {
+      return [];
     }
 
-    final lowestDistance = min(yearDistances.values)!;
-    final closestYears = yearDistances.entries
-        .where((e) => e.value == lowestDistance)
-        .map((e) => e.key);
+    final startYear = min(allYears)!;
+    final endYear = max(allYears)!;
 
-    return min(closestYears)!;
+    return range(startYear, endYear + 1).cast<int>().toList();
   }
 
-  YearSummary? getYearSummary(int year) {
-    return _yearSummaries[year];
+  List<YearSummary> get yearSummaries =>
+      years.map((y) => YearSummary(y, expenses)).toList();
+
+  bool get isEmpty => expenses.isEmpty;
+  bool get isNotEmpty => expenses.isNotEmpty;
+
+  Summary(this._expenses);
+
+  YearSummary getYearSummary(int year) {
+    return YearSummary(year, expenses);
   }
 
-  MonthSummary? getMonthSummary(int year, int month) {
-    return getYearSummary(year)?.getMonthSummary(month);
+  MonthSummary getMonthSummary(int year, int month) {
+    return MonthSummary(year, month, expenses);
   }
 }
 
 class YearSummary {
   final int year;
 
-  final Map<int, MonthSummary> _monthSummaries;
+  final List<Expense> _expenses;
 
-  YearSummary._internal(this.year, this._monthSummaries);
+  List<Expense> get expenses => _expenses.toList();
+
+  List<int> get months =>
+      range(DateTime.january, DateTime.december + 1).cast<int>().toList();
+
+  List<MonthSummary> get monthSummaries =>
+      months.map((m) => MonthSummary(year, m, expenses)).toList();
+
+  bool get isEmpty => expenses.isEmpty;
+  bool get isNotEmpty => expenses.isNotEmpty;
+
+  YearSummary._internal(this.year, this._expenses);
 
   factory YearSummary(int year, List<Expense> expenses) {
-    final monthSummaries = expenses
-        .groupByMonth()
-        .map((m, es) => MapEntry(m, MonthSummary(year, m, es)));
+    final startOfYear = DateTime(year, DateTime.january, 1);
+    final endOfYear = DateTime(year + 1, DateTime.january, 1).subtract(aDay);
 
-    return YearSummary._internal(year, monthSummaries);
+    expenses = _filterExpenseByDateTimeRange(expenses, startOfYear, endOfYear);
+
+    return YearSummary._internal(year, expenses);
   }
 
-  List<int> getAllMonths() {
-    return _monthSummaries.keys.toList()..sort();
-  }
-
-  List<MonthSummary> getAllMonthSummaries() {
-    return getAllMonths().map((m) => getMonthSummary(m)!).toList();
-  }
-
-  MonthSummary? getMonthSummary(int month) {
-    return _monthSummaries[month];
+  MonthSummary getMonthSummary(int month) {
+    return MonthSummary(year, month, expenses);
   }
 }
 
@@ -96,43 +80,72 @@ class MonthSummary {
 
   final List<Expense> _expenses;
 
-  MonthSummary(this.year, this.month, this._expenses);
+  List<Expense> get expenses => _expenses.toList();
 
-  bool has5thWeek() {
-    final lastDayOfMonth =
+  List<ExpenseCategory> get categories =>
+      expenses.map((e) => e.category).toSet().toList()..sort();
+
+  List<WeekOfMonth> get weeks {
+    final lastDayOfMonth = DateTime(year, month).lastDayOfMonth;
+    final lastWeekOfMonth = DateTime(year, month, lastDayOfMonth).weekOfMonth;
+
+    return WeekOfMonth.values.take(lastWeekOfMonth.toInt()).toList();
+  }
+
+  bool get isEmpty => expenses.isEmpty;
+  bool get isNotEmpty => expenses.isNotEmpty;
+
+  MonthSummary._internal(this.year, this.month, this._expenses);
+
+  factory MonthSummary(int year, int month, List<Expense> expenses) {
+    final startOfMonth = DateTime(year, month, 1);
+    final endOfMonth =
         DateTime(year, month, DateTime(year, month).lastDayOfMonth);
 
-    return lastDayOfMonth.weekOfMonth == WeekOfMonth.fifth;
+    expenses =
+        _filterExpenseByDateTimeRange(expenses, startOfMonth, endOfMonth);
+
+    return MonthSummary._internal(year, month, expenses);
   }
 
-  List<Expense> getAllExpenses() {
-    return List.of(_expenses);
-  }
-
-  List<ExpenseCategory> getAllCategories() {
-    return getAllExpenses().map((e) => e.category).toSet().toList()
-      ..sort((a, b) => a.name.compareTo(b.name));
-  }
-
-  List<WeekOfMonth> getAllWeeks() {
-    return [
-      WeekOfMonth.first,
-      WeekOfMonth.second,
-      WeekOfMonth.third,
-      WeekOfMonth.fourth,
-      if (has5thWeek()) WeekOfMonth.fifth,
-    ];
-  }
-
-  List<Expense> getBy({ExpenseCategory? category, WeekOfMonth? weekOfMonth}) {
-    return getAllExpenses()
+  List<Expense> getBy({
+    ExpenseCategory? category,
+    WeekOfMonth? weekOfMonth,
+    int? dayOfWeek,
+  }) {
+    return expenses
         .where((e) =>
             (category == null || e.category == category) &&
-            (weekOfMonth == null || e.createdAt.weekOfMonth == weekOfMonth))
+            (weekOfMonth == null || e.createdAt.weekOfMonth == weekOfMonth) &&
+            (dayOfWeek == null || e.createdAt.weekday == dayOfWeek))
         .toList();
   }
 
-  Amount totalCostBy({ExpenseCategory? category, WeekOfMonth? weekOfMonth}) {
-    return getBy(category: category, weekOfMonth: weekOfMonth).totalCost();
+  Amount totalCostBy({
+    ExpenseCategory? category,
+    WeekOfMonth? weekOfMonth,
+    int? dayOfWeek,
+  }) {
+    return getBy(
+            category: category, weekOfMonth: weekOfMonth, dayOfWeek: dayOfWeek)
+        .totalCost();
   }
+}
+
+List<Expense> _filterExpenseByDateTimeRange(
+  List<Expense> expenses,
+  DateTime startDateTime,
+  DateTime endDateTime,
+) {
+  return expenses
+      .where((e) => _isDateTimeInRange(e.createdAt, startDateTime, endDateTime))
+      .toList();
+}
+
+bool _isDateTimeInRange(DateTime dateTime, DateTime start, DateTime end) {
+  final dateTimeMsEpoch = dateTime.millisecondsSinceEpoch;
+  final startMsEpoch = start.millisecondsSinceEpoch;
+  final endMsEpoch = end.millisecondsSinceEpoch;
+
+  return startMsEpoch <= dateTimeMsEpoch && dateTimeMsEpoch <= endMsEpoch;
 }

@@ -1,5 +1,6 @@
 import 'package:cents/src/database/expense_provider.dart';
-import 'package:cents/src/ui/main_page/main_page.dart';
+import 'package:cents/src/ui/expense_list_page/expense_list_page.dart';
+import 'package:cents/src/ui/expense_list_page/expense_list_page_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -49,7 +50,15 @@ class _AppState extends State<App> {
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
       title: 'Cents',
-      home: MainPage(),
+      home: Builder(
+        builder: (context) {
+          return ExpenseListPage(
+            model: ExpenseListPageModel(
+              provider: context.read<ExpenseProvider>(),
+            ),
+          );
+        },
+      ),
     );
   }
 

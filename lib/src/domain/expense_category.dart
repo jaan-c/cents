@@ -1,4 +1,4 @@
-class ExpenseCategory {
+class ExpenseCategory implements Comparable<ExpenseCategory> {
   final String name;
 
   ExpenseCategory(String name) : name = name.trim();
@@ -12,4 +12,14 @@ class ExpenseCategory {
 
   @override
   int get hashCode => name.hashCode;
+
+  @override
+  int compareTo(ExpenseCategory other) {
+    return name.compareTo(other.name);
+  }
+
+  @override
+  String toString() {
+    return name;
+  }
 }

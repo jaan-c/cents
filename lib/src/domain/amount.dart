@@ -18,7 +18,18 @@ class Amount with ComparableOperators<Amount> implements Comparable<Amount> {
       : assert(0 <= cents && cents <= 99),
         totalCents = cents + (unit * _CENTS_PER_UNIT);
 
-  Amount.parse(String text) : this.fromTotalCents(_textToTotalCents(text));
+  factory Amount.fromDouble(double n) {
+    final units = n.floor();
+    final cents = ((n - units) * _CENTS_PER_UNIT).toInt();
+
+    return Amount(units, cents);
+  }
+
+  factory Amount.parse(String text) {
+    final parsed = double.parse(text);
+
+    return Amount.fromDouble(parsed);
+  }
 
   Amount add(Amount other) {
     return Amount.fromTotalCents(totalCents + other.totalCents);
@@ -33,14 +44,16 @@ class Amount with ComparableOperators<Amount> implements Comparable<Amount> {
     return totalCents.compareTo(other.totalCents);
   }
 
+  double toDouble() {
+    return units + (cents / _CENTS_PER_UNIT);
+  }
+
   @override
   String toString() {
-    final asDecimal = double.parse('$units.$cents');
-
     if (cents == 0) {
       return units.toString();
     } else {
-      return NumberFormat('#.00').format(asDecimal);
+      return NumberFormat('#.00').format(toDouble());
     }
   }
 
@@ -48,26 +61,14 @@ class Amount with ComparableOperators<Amount> implements Comparable<Amount> {
     String currencySymbol = _PESOS,
     bool compact = false,
   }) {
-    final asDecimal = double.parse('$units.$cents');
-
     if (compact) {
       return NumberFormat.compactCurrency(
               symbol: currencySymbol, decimalDigits: 1)
-          .format(asDecimal);
+          .format(toDouble());
     } else {
       return NumberFormat.currency(
               symbol: currencySymbol, decimalDigits: cents == 0 ? 0 : 2)
-          .format(asDecimal);
+          .format(toDouble());
     }
   }
-}
-
-int _textToTotalCents(String text) {
-  text = double.parse(text).toString();
-
-  final split = text.split('.');
-  final unit = int.parse(split[0]);
-  final cents = split.length == 2 ? int.parse(split[1]) : 0;
-
-  return Amount(unit, cents).totalCents;
 }

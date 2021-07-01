@@ -1,6 +1,7 @@
 import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/domain/expense_category.dart';
 import 'package:flutter/foundation.dart';
+import 'package:quiver/iterables.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'column_converter.dart';
@@ -35,42 +36,79 @@ class ExpenseProvider with ChangeNotifier {
         orderBy: '$COLUMN_CREATED_AT DESC');
 
     final expenses =
-        rows.map((r) => r.assertNotNullValues().fromRow()).toList();
+        rows.map((r) => r.cast<String, Object>().fromRow()).toList();
 
     return expenses;
   }
 
   Future<Expense?> get(int expenseId) async {
-    final rows = await _database
-        .query(TABLE_EXPENSES, where: '$COLUMN_ID = ?', whereArgs: [expenseId]);
+    return (await getAll([expenseId])).firstTry;
+  }
 
-    final expense = rows.firstTry?.assertNotNullValues().fromRow();
+  Future<List<Expense>> getAll(List<int> expenseIds) async {
+    final idsPlaceholder = range(expenseIds.length).map((_) => '?').join(',');
+    final rows = await _database.query(TABLE_EXPENSES,
+        where: '$COLUMN_ID = ($idsPlaceholder)', whereArgs: expenseIds);
 
-    return expense;
+    return rows.map((r) => r.cast<String, Object>().fromRow()).toList();
   }
 
   Future<void> add(Expense expense) async {
     assert(expense.id == Expense.UNSET_ID);
 
-    await _database.insert(TABLE_EXPENSES, expense.toRow());
+    await addAll([expense]);
+  }
 
+  Future<void> addAll(List<Expense> expenses) async {
+    await _execInTransaction(expenses, _execAdd);
     notifyListeners();
   }
 
-  Future<void> delete(int expenseId) async {
-    await _database.delete(TABLE_EXPENSES,
-        where: '$COLUMN_ID = ?', whereArgs: [expenseId]);
+  void _execAdd(Batch batch, Expense expense) {
+    final row = expense.toRow();
+    batch.insert(TABLE_EXPENSES, row);
+  }
 
+  Future<void> delete(int expenseId) async {
+    await deleteAll([expenseId]);
+  }
+
+  Future<void> deleteAll(List<int> expenseIds) async {
+    await _execInTransaction(expenseIds, _execDelete);
     notifyListeners();
+  }
+
+  void _execDelete(Batch batch, int expenseId) {
+    batch.delete(TABLE_EXPENSES,
+        where: '$COLUMN_ID = ?', whereArgs: [expenseId]);
   }
 
   Future<void> update(Expense expense) async {
     assert(expense.id != Expense.UNSET_ID);
 
-    await _database.update(TABLE_EXPENSES, expense.toRow(),
-        where: '$COLUMN_ID = ?', whereArgs: [expense.id]);
+    await updateAll([expense]);
+  }
 
+  Future<void> updateAll(List<Expense> expenses) async {
+    await _execInTransaction(expenses, _execUpdate);
     notifyListeners();
+  }
+
+  void _execUpdate(Batch batch, Expense expense) {
+    final row = expense.toRow();
+    batch.update(TABLE_EXPENSES, row,
+        where: '$COLUMN_ID = ?', whereArgs: [expense.id]);
+  }
+
+  Future<void> _execInTransaction<T>(
+    List<T> values,
+    void Function(Batch, T) exec,
+  ) async {
+    await _database.transaction((txn) async {
+      final batch = txn.batch();
+      values.forEach((v) => exec(batch, v));
+      await batch.commit(noResult: true, continueOnError: false);
+    });
   }
 
   Future<List<ExpenseCategory>> getAllCategories() async {

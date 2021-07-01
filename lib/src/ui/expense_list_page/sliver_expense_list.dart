@@ -8,14 +8,14 @@ typedef EditExpenseCallback = void Function(int expenseId);
 
 class SliverExpenseList extends StatelessWidget {
   final List<Expense> expenses;
-  final Set<Expense> expenseSelection;
-  final ToggleExpenseCallback onToggleExpense;
+  final Set<Expense> selectedExpenses;
+  final ToggleExpenseCallback onToggleSelect;
   final EditExpenseCallback onEditExpense;
 
   SliverExpenseList({
     required this.expenses,
-    required this.expenseSelection,
-    required this.onToggleExpense,
+    required this.selectedExpenses,
+    required this.onToggleSelect,
     required this.onEditExpense,
   });
 
@@ -25,10 +25,11 @@ class SliverExpenseList extends StatelessWidget {
       delegate: SliverChildBuilderDelegate(
         (_, ix) {
           final expense = expenses[ix];
+
           return _expenseListTile(
             expense: expense,
-            expenseSelection: expenseSelection,
-            onToggleExpense: onToggleExpense,
+            selectedExpenses: selectedExpenses,
+            onToggleSelect: onToggleSelect,
             onEditExpense: onEditExpense,
             hasDivider: expense != expenses.last,
           );
@@ -40,24 +41,24 @@ class SliverExpenseList extends StatelessWidget {
 
   Widget _expenseListTile({
     required Expense expense,
-    required Set<Expense> expenseSelection,
-    required ToggleExpenseCallback onToggleExpense,
+    required Set<Expense> selectedExpenses,
+    required ToggleExpenseCallback onToggleSelect,
     required EditExpenseCallback onEditExpense,
     required bool hasDivider,
   }) {
     late final Widget tile;
-    if (expenseSelection.isEmpty) {
+    if (selectedExpenses.isEmpty) {
       tile = ExpenseListTile(
         expense: expense,
         onTap: () => onEditExpense(expense.id),
-        onLongPress: () => onToggleExpense(expense),
+        onLongPress: () => onToggleSelect(expense),
         isSelected: false,
       );
     } else {
       tile = ExpenseListTile(
         expense: expense,
-        onTap: () => onToggleExpense(expense),
-        isSelected: expenseSelection.contains(expense),
+        onTap: () => onToggleSelect(expense),
+        isSelected: selectedExpenses.contains(expense),
       );
     }
 

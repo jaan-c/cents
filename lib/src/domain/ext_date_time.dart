@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:quiver/time.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -5,16 +6,24 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'week_of_month.dart';
 
 extension ExtDate on DateTime {
+  static const startOfWeek = DateTime.monday;
+
   WeekOfMonth get weekOfMonth {
     final startOfMonth = DateTime(year, month, 1);
+    final offset = startOfMonth.weekday != startOfWeek ? 1 : 0;
+    final mondaysSinceStartOfMonth = _dateRange(startOfMonth, this, aDay)
+        .where((d) => d.weekday == DateTime.monday);
 
-    return WeekOfMonth.fromInt(_dateRange(startOfMonth, this, aWeek).length);
+    return WeekOfMonth.fromInt(mondaysSinceStartOfMonth.length + offset);
   }
 
   int get weekOfYear {
     final startOfYear = DateTime(year, DateTime.january, 1);
+    final offset = startOfYear.weekday != startOfWeek ? 1 : 0;
+    final mondaysSinceStartOfYear = _dateRange(startOfYear, this, aDay)
+        .where((d) => d.weekday == DateTime.monday);
 
-    return _dateRange(startOfYear, this, aWeek).length;
+    return mondaysSinceStartOfYear.length + offset;
   }
 
   int get lastDayOfMonth {
@@ -62,5 +71,12 @@ Iterable<DateTime> _dateRange(
     yield current;
 
     current = current.add(interval);
+  }
+}
+
+extension ExtTime on TimeOfDay {
+  String display12() {
+    final asDate = DateTime(2000, DateTime.january, 1, hour, minute);
+    return DateFormat.jm().format(asDate);
   }
 }
