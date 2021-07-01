@@ -62,6 +62,8 @@ class ExpenseProvider with ChangeNotifier {
 
   /// Stores all [expenses] with existing categories.
   Future<void> addAllExpenses(Iterable<Expense> expenses) async {
+    assert(expenses.every((e) => e.id == Expense.UNSET_ID));
+
     await _database.transaction((txn) async {
       final existingCategories = await CategoryCrud.getEverything(txn);
       _checkCategoriesExist(expenses, existingCategories);
@@ -94,10 +96,7 @@ class ExpenseProvider with ChangeNotifier {
         Map.fromEntries(existingCategories.map((c) => MapEntry(c.id, c)));
 
     for (final category in categories) {
-      if (category.id == ExpenseCategory.UNSET_ID) {
-        throw StateError(
-            'Attempting to implicitly add category "${category.name}".');
-      }
+      assert(category.id != ExpenseCategory.UNSET_ID);
 
       if (category != idCategories[category.id]) {
         throw StateError(
