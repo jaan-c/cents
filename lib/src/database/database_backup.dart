@@ -45,7 +45,7 @@ List<Expense> _decodeJsonBackup(String json) {
             ))
         .toList();
   } on TypeError catch (e) {
-    throw FormatException('Casting failed\n${e.stackTrace}');
+    throw FormatException('Casting failed: $e');
   }
 }
 
@@ -62,7 +62,7 @@ List<Expense> _decodeOldJsonBackup(String json) {
             ))
         .toList();
   } on TypeError catch (e) {
-    throw FormatException('Casting failed\n${e.stackTrace}');
+    throw FormatException('Casting failed: $e');
   }
 }
 
