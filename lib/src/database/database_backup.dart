@@ -35,7 +35,7 @@ extension ExpenseBackup on ExpenseProvider {
 
 List<Expense> _decodeJsonBackup(String json) {
   try {
-    final objects = jsonDecode(json) as List<Map<String, Object>>;
+    final objects = _dynamicToObjectList(jsonDecode(json));
 
     return objects
         .map((o) => objectToExpense(
@@ -45,13 +45,13 @@ List<Expense> _decodeJsonBackup(String json) {
             ))
         .toList();
   } on TypeError catch (e) {
-    throw FormatException('Casting failed: $e');
+    throw FormatException(e.stackTrace.toString());
   }
 }
 
 List<Expense> _decodeOldJsonBackup(String json) {
   try {
-    final objects = jsonDecode(json) as List<Map<String, Object>>;
+    final objects = _dynamicToObjectList(jsonDecode(json));
 
     return objects
         .map((o) => oldObjectToExpense(
@@ -62,11 +62,15 @@ List<Expense> _decodeOldJsonBackup(String json) {
             ))
         .toList();
   } on TypeError catch (e) {
-    throw FormatException('Casting failed: $e');
+    throw FormatException(e.toString());
   }
 }
 
 String _encodeJsonBackup(List<Expense> expenses) {
   final objects = expenses.map((e) => expenseToObject(e)).toList();
   return jsonEncode(objects);
+}
+
+List<Map<String, Object>> _dynamicToObjectList(dynamic value) {
+  return (value as List).map((o) => Map<String, Object>.from(o)).toList();
 }

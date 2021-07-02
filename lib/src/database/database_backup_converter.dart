@@ -29,7 +29,8 @@ Expense objectToExpense(
   required int id,
   required int categoryId,
 }) {
-  final categoryObject = object[JSON_EXPENSE_CATEGORY] as Map<String, Object>;
+  final categoryObject =
+      Map<String, Object>.from(object[JSON_EXPENSE_CATEGORY] as Map);
   final category = ExpenseCategory(
     id: categoryId,
     name: categoryObject[JSON_CATEGORY_NAME] as String,
