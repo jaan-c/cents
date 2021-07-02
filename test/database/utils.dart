@@ -6,11 +6,11 @@ Matcher equalsCategoryContent(ExpenseCategory category) {
   return allOf(
     predicate(
       (c) => (c as ExpenseCategory).name == category.name,
-      'Category name matches',
+      category.name,
     ),
     predicate(
       (c) => (c as ExpenseCategory).color == category.color,
-      'Category color matches',
+      category.color.toString(),
     ),
   );
 }
@@ -19,19 +19,19 @@ Matcher equalsExpenseContent(Expense expense) {
   return allOf(
     predicate(
       (e) => (e as Expense).category == expense.category,
-      'Expense category matches',
+      expense.category.toString(),
     ),
     predicate(
       (e) => (e as Expense).cost == expense.cost,
-      'Expense cost matches',
+      expense.cost.toString(),
     ),
     predicate(
       (e) => (e as Expense).createdAt == expense.createdAt,
-      'Expense createdAt matches',
+      expense.createdAt.toIso8601String(),
     ),
     predicate(
       (e) => (e as Expense).note == expense.note,
-      'Expense note matches',
+      expense.note.toString(),
     ),
   );
 }
