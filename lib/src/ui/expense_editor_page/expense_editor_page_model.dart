@@ -135,7 +135,6 @@ class ExpenseEditorPageModel extends StateModel {
         );
 
     if (category.id == ExpenseCategory.UNSET_ID) {
-      debugPrint('adding new category: $category');
       await provider.addAllCategories([category]);
       category = (await provider.getCategoryByName(categoryName))!;
     }
