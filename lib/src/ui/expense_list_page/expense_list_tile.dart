@@ -18,6 +18,37 @@ class ExpenseListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return _embellishment(
+      context: context,
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _categoryColorIcon(),
+            SizedBox(width: 24),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _createdAtOverline(context: context),
+                  _categoryAndCostText(context: context),
+                  if (expense.note.isNotBlank) _noteText(context),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _embellishment({
+    required BuildContext context,
+    required Widget child,
+  }) {
     final colorScheme = Theme.of(context).colorScheme;
     final selectColor = colorScheme.onSurface.withAlpha(33);
 
@@ -26,37 +57,39 @@ class ExpenseListTile extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         onLongPress: onLongPress,
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _createdAtText(context),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Expanded(child: _categoryText(context)),
-                  _costText(context),
-                ],
-              ),
-              if (expense.note.isNotBlank) _noteText(context),
-            ],
-          ),
-        ),
+        child: child,
       ),
     );
   }
 
-  Widget _createdAtText(BuildContext context) {
+  Widget _categoryColorIcon() {
+    return Icon(
+      Icons.circle_rounded,
+      color: expense.category.color,
+    );
+  }
+
+  Widget _createdAtOverline({required BuildContext context}) {
     final textTheme = Theme.of(context).textTheme;
 
     return Text(expense.createdAt.relativeDisplay(), style: textTheme.overline);
   }
 
-  Widget _categoryText(BuildContext context) {
+  Widget _categoryAndCostText({required BuildContext context}) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
+      children: [
+        Expanded(
+          child: _categoryText(context: context),
+        ),
+        _costText(context: context),
+      ],
+    );
+  }
+
+  Widget _categoryText({required BuildContext context}) {
     final textTheme = Theme.of(context).textTheme;
 
     return Text(
@@ -69,7 +102,7 @@ class ExpenseListTile extends StatelessWidget {
     );
   }
 
-  Widget _costText(BuildContext context) {
+  Widget _costText({required BuildContext context}) {
     final textTheme = Theme.of(context).textTheme;
 
     return Text(expense.cost.toLocalString(), style: textTheme.subtitle1);
@@ -85,6 +118,8 @@ class ExpenseListTile extends StatelessWidget {
     return Text(
       expense.note,
       style: textTheme.bodyText2?.apply(color: textColor),
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }
