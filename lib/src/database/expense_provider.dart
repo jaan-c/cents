@@ -44,6 +44,50 @@ class ExpenseProvider with ChangeNotifier {
     super.dispose();
   }
 
+  Future<List<ExpenseCategory>> getEveryCategory() async {
+    return CategoryCrud.getEverything(_database);
+  }
+
+  Future<List<ExpenseCategory>> getAllCategories(
+    Iterable<int> categoryIds,
+  ) async {
+    return CategoryCrud.getAll(_database, categoryIds);
+  }
+
+  Future<ExpenseCategory?> getCategory(int categoryId) async {
+    final categories = await CategoryCrud.getAll(_database, [categoryId]);
+
+    if (categories.isNotEmpty) {
+      return categories.first;
+    }
+  }
+
+  Future<void> addAllCategories(Iterable<ExpenseCategory> categories) async {
+    await _database.transaction((txn) async {
+      await CategoryCrud.addAll(txn, categories, ConflictAlgorithm.abort);
+    });
+
+    notifyListeners();
+  }
+
+  Future<void> updateAllCategories(
+    Iterable<ExpenseCategory> categories,
+  ) async {
+    await _database.transaction((txn) async {
+      await CategoryCrud.updateAll(txn, categories, ConflictAlgorithm.abort);
+    });
+
+    notifyListeners();
+  }
+
+  Future<void> deleteAllCategories(Iterable<int> categoryIds) async {
+    await _database.transaction((txn) async {
+      await CategoryCrud.deleteAll(txn, categoryIds);
+    });
+
+    notifyListeners();
+  }
+
   Future<List<Expense>> getEveryExpense() async {
     return ExpenseCrud.getEverything(_database);
   }
@@ -108,50 +152,6 @@ class ExpenseProvider with ChangeNotifier {
   Future<void> deleteAllExpenses(Iterable<int> expenseIds) async {
     await _database.transaction((txn) async {
       await ExpenseCrud.deleteAll(txn, expenseIds);
-    });
-
-    notifyListeners();
-  }
-
-  Future<List<ExpenseCategory>> getEveryCategory() async {
-    return CategoryCrud.getEverything(_database);
-  }
-
-  Future<List<ExpenseCategory>> getAllCategories(
-    Iterable<int> categoryIds,
-  ) async {
-    return CategoryCrud.getAll(_database, categoryIds);
-  }
-
-  Future<ExpenseCategory?> getCategory(int categoryId) async {
-    final categories = await CategoryCrud.getAll(_database, [categoryId]);
-
-    if (categories.isNotEmpty) {
-      return categories.first;
-    }
-  }
-
-  Future<void> addAllCategories(Iterable<ExpenseCategory> categories) async {
-    await _database.transaction((txn) async {
-      await CategoryCrud.addAll(txn, categories, ConflictAlgorithm.abort);
-    });
-
-    notifyListeners();
-  }
-
-  Future<void> updateAllCategories(
-    Iterable<ExpenseCategory> categories,
-  ) async {
-    await _database.transaction((txn) async {
-      await CategoryCrud.updateAll(txn, categories, ConflictAlgorithm.abort);
-    });
-
-    notifyListeners();
-  }
-
-  Future<void> deleteAllCategories(Iterable<int> categoryIds) async {
-    await _database.transaction((txn) async {
-      await CategoryCrud.deleteAll(txn, categoryIds);
     });
 
     notifyListeners();
