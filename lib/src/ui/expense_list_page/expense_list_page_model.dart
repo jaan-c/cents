@@ -49,7 +49,7 @@ class ExpenseListPageModel extends StateModel {
   }
 
   Future<void> _updateStateFromProvider() async {
-    final expenses = await provider.getAllExpenses();
+    final expenses = await provider.getEveryExpense();
 
     _expenses = expenses;
     clearSelectedExpenses();
@@ -76,8 +76,8 @@ class ExpenseListPageModel extends StateModel {
   }
 
   Future<void> deleteSelectedExpenses() async {
-    final expenseIds = selectedExpenses.map((e) => e.id).toList();
-    await provider.deleteAll(expenseIds);
+    final expenseIds = selectedExpenses.map((e) => e.id);
+    await provider.deleteAllExpenses(expenseIds);
 
     notifyListeners();
   }

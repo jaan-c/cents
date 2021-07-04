@@ -6,6 +6,8 @@ import 'package:cents/src/ui/widgets/state_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'utils.dart';
+
 class ExpenseEditorPageModel extends StateModel {
   final ExpenseProvider provider;
 
@@ -21,9 +23,12 @@ class ExpenseEditorPageModel extends StateModel {
   TimeOfDay get creationTime =>
       TimeOfDay(hour: createdAt.hour, minute: createdAt.minute);
 
-  var _categorySelection = <String>[];
-  List<String> get categorySelection => _categorySelection.toList()
-    ..removeWhere((c) => c == categoryController.text);
+  var _categorySelection = <String, ExpenseCategory>{};
+  Map<String, ExpenseCategory> get categorySelection =>
+      Map<String, ExpenseCategory>.from(_categorySelection);
+  Map<String, ExpenseCategory> get categorySelectionFiltered =>
+      Map<String, ExpenseCategory>.from(_categorySelection)
+        ..remove(categoryController.text);
 
   bool get isExpenseNew => id == Expense.UNSET_ID;
 
@@ -52,12 +57,11 @@ class ExpenseEditorPageModel extends StateModel {
     if (!isExpenseNew) {
       _initFieldsFromProvider();
     }
-
     _initCategorySelection();
   }
 
   Future<void> _initFieldsFromProvider() async {
-    final expense = await provider.get(id);
+    final expense = await provider.getExpense(id);
 
     if (expense != null) {
       categoryController.text = expense.category.name;
@@ -70,9 +74,10 @@ class ExpenseEditorPageModel extends StateModel {
   }
 
   Future<void> _initCategorySelection() async {
-    final categories = await provider.getAllCategories();
+    final categories = await provider.getEveryCategory();
 
-    _categorySelection = categories.map((c) => c.name).toList();
+    _categorySelection =
+        Map.fromEntries(categories.map((c) => MapEntry(c.name, c)));
 
     notifyListeners();
   }
@@ -121,18 +126,32 @@ class ExpenseEditorPageModel extends StateModel {
   Future<void> save(BuildContext context) async {
     assert(areFieldsValid);
 
+    final brightness = Theme.of(context).brightness;
+    final categoryName = categoryController.text;
+    var category = categorySelection[categoryName] ??
+        ExpenseCategory(
+          name: categoryName,
+          color: textToColor(brightness, categoryName),
+        );
+
+    if (category.id == ExpenseCategory.UNSET_ID) {
+      debugPrint('adding new category: $category');
+      await provider.addAllCategories([category]);
+      category = (await provider.getCategoryByName(categoryName))!;
+    }
+
     final expense = Expense(
       id: id,
-      category: ExpenseCategory(categoryController.text),
+      category: category,
       cost: Amount.parse(costController.text),
       note: noteController.text,
       createdAt: createdAt,
     );
 
     if (isExpenseNew) {
-      await provider.add(expense);
+      await provider.addAllExpenses([expense]);
     } else {
-      await provider.update(expense);
+      await provider.updateAllExpenses([expense]);
     }
 
     close(context);
@@ -141,7 +160,7 @@ class ExpenseEditorPageModel extends StateModel {
   Future<void> delete(BuildContext context) async {
     assert(!isExpenseNew);
 
-    await provider.delete(id);
+    await provider.deleteAllExpenses([id]);
 
     close(context);
   }

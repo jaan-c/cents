@@ -37,7 +37,7 @@ class ExpenseStatsPageModel extends StateModel {
   }
 
   Future<void> _updateStateFromProvider() async {
-    final expenses = await provider.getAllExpenses();
+    final expenses = await provider.getEveryExpense();
 
     _expenses = expenses;
     _selectedYear = _nearestOldestYear(DateTime.now().year, years);

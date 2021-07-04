@@ -1,3 +1,4 @@
+import 'package:cents/src/domain/expense_category.dart';
 import 'package:cents/src/ui/widgets/state_model.dart';
 import 'package:cents/src/domain/ext_date_time.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,7 @@ class _ExpenseEditorPageState
               _primaryFields(
                 categoryController: model.categoryController,
                 costController: model.costController,
-                categorySelection: model.categorySelection,
+                categorySelection: model.categorySelectionFiltered,
               ),
               SizedBox(height: 8),
               _secondaryFields(
@@ -83,7 +84,7 @@ class _ExpenseEditorPageState
   Widget _primaryFields({
     required TextEditingController categoryController,
     required TextEditingController costController,
-    required List<String> categorySelection,
+    required Map<String, ExpenseCategory> categorySelection,
   }) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -106,7 +107,7 @@ class _ExpenseEditorPageState
 
   Widget _categoryField({
     required TextEditingController controller,
-    required List<String> categorySelection,
+    required Map<String, ExpenseCategory> categorySelection,
   }) {
     return TextField(
       controller: controller,
@@ -127,16 +128,18 @@ class _ExpenseEditorPageState
 
   Widget _categorySelectionDropdown({
     required TextEditingController controller,
-    required List<String> categorySelection,
+    required Map<String, ExpenseCategory> categorySelection,
   }) {
+    final categoryNames = categorySelection.keys.toList()..sort();
+
     return PopupMenuButton<String>(
-      onSelected: (category) => controller.text = category,
+      onSelected: (categoryName) => controller.text = categoryName,
       icon: Icon(Icons.expand_more_rounded),
       itemBuilder: (_) => [
-        for (final category in categorySelection)
+        for (final categoryName in categoryNames)
           PopupMenuItem(
-            value: category,
-            child: Text(category),
+            value: categoryName,
+            child: Text(categoryName),
           ),
       ],
     );

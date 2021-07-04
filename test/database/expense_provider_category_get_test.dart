@@ -43,6 +43,13 @@ void main() {
         throwsAssertionError);
   });
 
+  test('Category get by name throws AssertionError on empty names.', () async {
+    await expectLater(
+        () => provider.getCategoryByName(''), throwsAssertionError);
+    await expectLater(
+        () => provider.getAllCategoriesByName(['', '']), throwsAssertionError);
+  });
+
   test('Categoy get returns null on non-existent id.', () async {
     final categories = await provider.getEveryCategory();
     final nonExistentId = categories.fold<int>(0, (acc, c) => acc + c.id);
@@ -55,7 +62,7 @@ void main() {
 
     final c1 = categories[0];
     expect(await provider.getCategory(c1.id), c1);
-    expect((await provider.getAllCategories([c1.id])).first, c1);
+    expect(await provider.getCategoryByName(c1.name), c1);
   });
 
   test('Category get multiple.', () async {
@@ -67,6 +74,10 @@ void main() {
     expect(
         (await provider.getAllCategories([c1.id, c2.id]))
           ..sort((a, b) => a.id.compareTo(b.id)),
+        equals([c1, c2]));
+    expect(
+        (await provider.getAllCategoriesByName([c1.name, c2.name]))
+          ..sort((a, b) => a.name.compareTo(b.name)),
         equals([c1, c2]));
   });
 
