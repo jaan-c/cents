@@ -6,13 +6,10 @@ import 'package:cents/src/ui/widgets/partitioned_bar_chart/partitioned_bar_data.
 import 'package:flutter/material.dart';
 import 'package:quiver/iterables.dart';
 
-import 'month_summary_card.dart';
-
 class MonthSummaryChart extends StatelessWidget {
   final MonthSummary monthSummary;
-  final TextToColor textToColor;
 
-  MonthSummaryChart({required this.monthSummary, required this.textToColor});
+  MonthSummaryChart({required this.monthSummary});
 
   @override
   Widget build(BuildContext context) {
@@ -23,24 +20,14 @@ class MonthSummaryChart extends StatelessWidget {
 
     return PartitionedBarChart(
       maxValue: ceilingCost,
-      barDatas: _barDatas(
-        context: context,
-        monthSummary: monthSummary,
-        textToColor: textToColor,
-      ),
+      barDatas: _barDatas(monthSummary: monthSummary),
       magnitudePartitionCount: 4,
       magnitudeToLabel: (m) =>
           Amount.fromDouble(m).toLocalString(compact: true),
     );
   }
 
-  List<PartitionedBarData> _barDatas({
-    required BuildContext context,
-    required MonthSummary monthSummary,
-    required TextToColor textToColor,
-  }) {
-    final brightness = Theme.of(context).brightness;
-
+  List<PartitionedBarData> _barDatas({required MonthSummary monthSummary}) {
     final weeks = monthSummary.weeks;
     final weekCosts = weeks
         .map((w) => monthSummary.totalCostBy(weekOfMonth: w).toDouble())
@@ -64,8 +51,7 @@ class MonthSummaryChart extends StatelessWidget {
         value: value,
         label: label,
         partitionValues: categoryCosts,
-        partitionColors:
-            categories.map((c) => textToColor(brightness, c.name)).toList(),
+        partitionColors: categories.map((c) => c.color).toList(),
         tooltipText: '$label Week\n${Amount.fromDouble(value).toLocalString()}',
       );
 

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'category_breakdown.dart';
-import 'month_summary_card.dart';
 import 'week_summary_chart.dart';
 
 typedef ChangeWeekOfMonthCallback = void Function(WeekOfMonth);
@@ -14,13 +13,11 @@ class WeekSummaryCardContent extends StatelessWidget {
   final MonthSummary monthSummary;
   final WeekOfMonth weekOfMonth;
   final ChangeWeekOfMonthCallback onChangeWeekOfMonth;
-  final TextToColor textToColor;
 
   WeekSummaryCardContent({
     required this.monthSummary,
     required this.weekOfMonth,
     required this.onChangeWeekOfMonth,
-    required this.textToColor,
   });
 
   @override
@@ -41,15 +38,10 @@ class WeekSummaryCardContent extends StatelessWidget {
           child: WeekSummaryChart(
             monthSummary: monthSummary,
             weekOfMonth: weekOfMonth,
-            textToColor: textToColor,
           ),
         ),
         SizedBox(height: 16),
-        _footer(
-          monthSummary: monthSummary,
-          weekofMonth: weekOfMonth,
-          textToColor: textToColor,
-        ),
+        _footer(monthSummary: monthSummary, weekofMonth: weekOfMonth),
       ],
     );
   }
@@ -127,7 +119,6 @@ class WeekSummaryCardContent extends StatelessWidget {
   Widget _footer({
     required MonthSummary monthSummary,
     required WeekOfMonth weekofMonth,
-    required TextToColor textToColor,
   }) {
     final categoryCosts = Map.fromEntries(monthSummary.categories.map((c) =>
         MapEntry(c,
@@ -135,7 +126,6 @@ class WeekSummaryCardContent extends StatelessWidget {
 
     return CategoryBreakdown(
       categoryCosts: categoryCosts,
-      textToColor: textToColor,
     );
   }
 }

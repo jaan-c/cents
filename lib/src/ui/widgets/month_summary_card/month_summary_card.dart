@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'package:cents/src/domain/summary.dart';
 import 'package:cents/src/domain/week_of_month.dart';
 import 'package:cents/src/domain/ext_date_time.dart';
@@ -103,13 +102,9 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
                 onChangeWeekOfMonth: (w) => setState(() {
                   _weekOfMonth = w;
                 }),
-                textToColor: _textToColor,
               )
             else
-              MonthSummaryCardContent(
-                monthSummary: monthSummary,
-                textToColor: _textToColor,
-              ),
+              MonthSummaryCardContent(monthSummary: monthSummary),
           ],
         ),
       ),
@@ -135,34 +130,5 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
       label: Text(label),
       onPressed: onPressed,
     );
-  }
-
-  Color _textToColor(Brightness brightness, String text) {
-    final swatches = [
-      Colors.pink,
-      Colors.red,
-      Colors.deepOrange,
-      Colors.orange,
-      Colors.amber,
-      Colors.yellow,
-      Colors.lime,
-      Colors.lightGreen,
-      Colors.green,
-      Colors.teal,
-      Colors.cyan,
-      Colors.lightBlue,
-      Colors.blue,
-      Colors.indigo,
-      Colors.purple,
-      Colors.deepPurple,
-      Colors.blueGrey,
-      Colors.brown,
-    ];
-
-    final ix = math.Random(text.hashCode).nextInt(swatches.length);
-    final swatch = swatches[ix];
-    final shade = brightness == Brightness.light ? 400 : 300;
-
-    return swatch[shade]!;
   }
 }

@@ -7,8 +7,6 @@ import 'package:cents/src/ui/widgets/partitioned_bar_chart/partitioned_bar_data.
 import 'package:flutter/material.dart';
 import 'package:quiver/iterables.dart';
 
-import 'month_summary_card.dart';
-
 class WeekSummaryChart extends StatelessWidget {
   static const _dayOfWeeks = [
     DateTime.monday,
@@ -22,13 +20,8 @@ class WeekSummaryChart extends StatelessWidget {
 
   final MonthSummary monthSummary;
   final WeekOfMonth weekOfMonth;
-  final TextToColor textToColor;
 
-  WeekSummaryChart({
-    required this.monthSummary,
-    required this.weekOfMonth,
-    required this.textToColor,
-  });
+  WeekSummaryChart({required this.monthSummary, required this.weekOfMonth});
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +33,7 @@ class WeekSummaryChart extends StatelessWidget {
 
     return PartitionedBarChart(
       maxValue: ceilingCost,
-      barDatas: _barDatas(
-        context: context,
-        monthSummary: monthSummary,
-        weekOfMonth: weekOfMonth,
-        textToColor: textToColor,
-      ),
+      barDatas: _barDatas(monthSummary: monthSummary, weekOfMonth: weekOfMonth),
       magnitudePartitionCount: 4,
       magnitudeToLabel: (m) =>
           Amount.fromDouble(m).toLocalString(compact: true),
@@ -53,13 +41,9 @@ class WeekSummaryChart extends StatelessWidget {
   }
 
   List<PartitionedBarData> _barDatas({
-    required BuildContext context,
     required MonthSummary monthSummary,
     required WeekOfMonth weekOfMonth,
-    required TextToColor textToColor,
   }) {
-    final brightness = Theme.of(context).brightness;
-
     final dayOfWeekCosts = _dayOfWeeks
         .map((d) => monthSummary
             .totalCostBy(weekOfMonth: weekOfMonth, dayOfWeek: d)
@@ -85,8 +69,7 @@ class WeekSummaryChart extends StatelessWidget {
         value: cost,
         label: label,
         partitionValues: costs,
-        partitionColors:
-            categories.map((c) => textToColor(brightness, c.name)).toList(),
+        partitionColors: categories.map((c) => c.color).toList(),
         tooltipText: '$label\n${Amount.fromDouble(cost).toLocalString()}',
       );
 

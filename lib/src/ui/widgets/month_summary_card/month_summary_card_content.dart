@@ -5,16 +5,11 @@ import 'package:intl/intl.dart';
 
 import 'category_breakdown.dart';
 import 'month_summary_chart.dart';
-import 'month_summary_card.dart';
 
 class MonthSummaryCardContent extends StatelessWidget {
   final MonthSummary monthSummary;
-  final TextToColor textToColor;
 
-  MonthSummaryCardContent({
-    required this.monthSummary,
-    required this.textToColor,
-  });
+  MonthSummaryCardContent({required this.monthSummary});
 
   @override
   Widget build(BuildContext context) {
@@ -28,16 +23,10 @@ class MonthSummaryCardContent extends StatelessWidget {
         SizedBox(height: 24),
         SizedBox(
           height: 150,
-          child: MonthSummaryChart(
-            monthSummary: monthSummary,
-            textToColor: textToColor,
-          ),
+          child: MonthSummaryChart(monthSummary: monthSummary),
         ),
         SizedBox(height: 16),
-        _footer(
-          monthSummary: monthSummary,
-          textToColor: textToColor,
-        ),
+        _footer(monthSummary: monthSummary),
       ],
     );
   }
@@ -64,16 +53,12 @@ class MonthSummaryCardContent extends StatelessWidget {
     );
   }
 
-  Widget _footer({
-    required MonthSummary monthSummary,
-    required TextToColor textToColor,
-  }) {
+  Widget _footer({required MonthSummary monthSummary}) {
     final categoryCosts = Map.fromEntries(monthSummary.categories
         .map((c) => MapEntry(c, monthSummary.totalCostBy(category: c))));
 
     return CategoryBreakdown(
       categoryCosts: categoryCosts,
-      textToColor: textToColor,
     );
   }
 }

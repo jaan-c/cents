@@ -2,16 +2,11 @@ import 'package:cents/src/domain/amount.dart';
 import 'package:cents/src/domain/expense_category.dart';
 import 'package:flutter/material.dart';
 
-import 'month_summary_card.dart';
-
 class CategoryBreakdown extends StatelessWidget {
   final Map<ExpenseCategory, Amount> categoryCosts;
-  final TextToColor textToColor;
 
-  CategoryBreakdown({
-    required Map<ExpenseCategory, Amount> categoryCosts,
-    required this.textToColor,
-  }) : categoryCosts = Map.fromEntries(
+  CategoryBreakdown({required Map<ExpenseCategory, Amount> categoryCosts})
+      : categoryCosts = Map.fromEntries(
             categoryCosts.entries.where((cc) => cc.value != Amount()));
 
   @override
@@ -27,7 +22,6 @@ class CategoryBreakdown extends StatelessWidget {
             context: context,
             category: category,
             cost: categoryCosts[category]!,
-            textToColor: textToColor,
           ),
       ],
     );
@@ -37,11 +31,8 @@ class CategoryBreakdown extends StatelessWidget {
     required BuildContext context,
     required ExpenseCategory category,
     required Amount cost,
-    required TextToColor textToColor,
   }) {
-    final brightness = Theme.of(context).brightness;
-
-    final categoryColor = textToColor(brightness, category.name);
+    final categoryColor = category.color;
     final categoryName =
         category.name.isNotEmpty ? category.name : 'Uncategorized';
 
