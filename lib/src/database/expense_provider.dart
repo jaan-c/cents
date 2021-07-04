@@ -54,8 +54,23 @@ class ExpenseProvider with ChangeNotifier {
     return CategoryCrud.getAll(_database, categoryIds);
   }
 
+  Future<List<ExpenseCategory>> getAllCategoriesByName(
+    Iterable<String> categoryNames,
+  ) async {
+    return CategoryCrud.getAllByName(_database, categoryNames);
+  }
+
   Future<ExpenseCategory?> getCategory(int categoryId) async {
     final categories = await CategoryCrud.getAll(_database, [categoryId]);
+
+    if (categories.isNotEmpty) {
+      return categories.first;
+    }
+  }
+
+  Future<ExpenseCategory?> getCategoryByName(String categoryName) async {
+    final categories =
+        await CategoryCrud.getAllByName(_database, [categoryName]);
 
     if (categories.isNotEmpty) {
       return categories.first;

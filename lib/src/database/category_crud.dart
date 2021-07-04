@@ -32,6 +32,23 @@ class CategoryCrud {
     return rows.map((r) => rowToCategory(r)).toList();
   }
 
+  static Future<List<ExpenseCategory>> getAllByName(
+    DatabaseExecutor executor,
+    Iterable<String> names,
+  ) async {
+    assert(names.every((element) => element.isNotEmpty));
+
+    final namePlaceHolders = _tuplePlaceholder(names.length);
+    final rows = await executor.query(
+      TABLE_CATEGORIES,
+      where: '$CATEGORY_COLUMN_NAME IN $namePlaceHolders',
+      whereArgs: names.toList(),
+      orderBy: '$CATEGORY_COLUMN_NAME ASC',
+    );
+
+    return rows.map((r) => rowToCategory(r)).toList();
+  }
+
   static Future<void> addAll(
     DatabaseExecutor executor,
     Iterable<ExpenseCategory> categories,
