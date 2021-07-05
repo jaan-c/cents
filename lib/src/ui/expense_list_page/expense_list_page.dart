@@ -30,6 +30,7 @@ class _ExpenseListPageState
       appBar: !model.hasSelectedExpense
           ? _appBar(
               onOpenStats: () => model.navigateToStats(context),
+              onOpenCategories: () => model.navigateToCategories(context),
               onOpenSettings: () => model.navigateToSettings(context),
             )
           : _appBarSelection(
@@ -74,6 +75,7 @@ class _ExpenseListPageState
 
   AppBar _appBar({
     required VoidCallback onOpenStats,
+    required VoidCallback onOpenCategories,
     required VoidCallback onOpenSettings,
   }) {
     return AppBar(
@@ -82,6 +84,10 @@ class _ExpenseListPageState
         IconButton(
           onPressed: onOpenStats,
           icon: Icon(Icons.table_chart_rounded),
+        ),
+        IconButton(
+          onPressed: onOpenCategories,
+          icon: Icon(Icons.category_rounded),
         ),
         IconButton(
           onPressed: onOpenSettings,

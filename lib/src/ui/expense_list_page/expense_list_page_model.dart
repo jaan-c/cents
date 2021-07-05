@@ -1,6 +1,8 @@
 import 'package:cents/src/database/expense_provider.dart';
 import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/domain/summary.dart';
+import 'package:cents/src/ui/category_list_page/category_list_page.dart';
+import 'package:cents/src/ui/category_list_page/category_list_page_model.dart';
 import 'package:cents/src/ui/expense_editor_page/expense_editor_page.dart';
 import 'package:cents/src/ui/expense_editor_page/expense_editor_page_model.dart';
 import 'package:cents/src/ui/expense_stats_page/expense_stats_page.dart';
@@ -105,6 +107,19 @@ class ExpenseListPageModel extends StateModel {
       MaterialPageRoute(builder: (context) {
         return ExpenseStatsPage(
           model: ExpenseStatsPageModel(
+            provider: context.read<ExpenseProvider>(),
+          ),
+        );
+      }),
+    );
+  }
+
+  Future<void> navigateToCategories(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) {
+        return CategoryListPage(
+          model: CategoryListPageModel(
             provider: context.read<ExpenseProvider>(),
           ),
         );
