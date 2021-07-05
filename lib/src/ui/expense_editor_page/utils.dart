@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 Color textToColor(Brightness brightness, String text) {
-  final swatches = [
+  final colors = [
     Colors.pink,
     Colors.red,
     Colors.deepOrange,
@@ -21,11 +21,8 @@ Color textToColor(Brightness brightness, String text) {
     Colors.deepPurple,
     Colors.blueGrey,
     Colors.brown,
-  ];
+  ].map((e) => e[300]!).toList();
 
-  final ix = math.Random(text.hashCode).nextInt(swatches.length);
-  final swatch = swatches[ix];
-  final shade = brightness == Brightness.light ? 400 : 300;
-
-  return swatch[shade]!;
+  final ix = math.Random(text.hashCode).nextInt(colors.length);
+  return colors[ix];
 }
