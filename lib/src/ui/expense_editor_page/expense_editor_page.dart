@@ -55,8 +55,6 @@ class _ExpenseEditorPageState
               _sheetActions(
                 onSave: model.areFieldsValid ? () => model.save(context) : null,
                 onClose: () => model.close(context),
-                onDelete:
-                    model.isExpenseNew ? null : () => model.delete(context),
               ),
             ],
           ),
@@ -301,7 +299,6 @@ class _ExpenseEditorPageState
   Widget _sheetActions({
     required VoidCallback? onSave,
     required VoidCallback onClose,
-    required VoidCallback? onDelete,
   }) {
     return Row(
       mainAxisSize: MainAxisSize.max,
