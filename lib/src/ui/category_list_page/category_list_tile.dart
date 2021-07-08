@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 
 class CategoryListTile extends StatelessWidget {
   final ExpenseCategory category;
+  final VoidCallback onTap;
   final VoidCallback onDelete;
 
-  const CategoryListTile({required this.category, required this.onDelete});
+  const CategoryListTile({
+    required this.category,
+    required this.onTap,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +28,7 @@ class CategoryListTile extends StatelessWidget {
         icon: Icon(Icons.delete_outline_rounded),
         onPressed: onDelete,
       ),
+      onTap: onTap,
     );
   }
 }
