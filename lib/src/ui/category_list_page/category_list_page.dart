@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'category_list_page_model.dart';
 import 'category_list_tile.dart';
 
+typedef _EditCategoryCallback = void Function(ExpenseCategory);
+typedef _DeleteCategoryCallback = void Function(ExpenseCategory);
+
 class CategoryListPage extends StatefulWidget {
   final CategoryListPageModel model;
 
@@ -25,7 +28,18 @@ class _CategoryListPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(),
-      body: _body(),
+      body: _body(
+        categories: model.categories,
+        onEditCategory: (category) => model.navigateToEditor(
+          context: context,
+          categoryId: category.id,
+        ),
+        onDeleteCategory: (category) => _showDeleteDialog(
+          context,
+          category,
+          () => model.deleteCategoryAndOwnedExpenses(category),
+        ),
+      ),
     );
   }
 
@@ -35,16 +49,19 @@ class _CategoryListPageState
     );
   }
 
-  Widget _body() {
-    final categories = model.categories;
-
+  Widget _body({
+    required List<ExpenseCategory> categories,
+    required _EditCategoryCallback onEditCategory,
+    required _DeleteCategoryCallback onDeleteCategory,
+  }) {
     return ListView.separated(
       itemBuilder: (_, ix) {
         final category = categories[ix];
 
         return CategoryListTile(
           category: category,
-          onDelete: () => _showDeleteDialog(context, category),
+          onTap: () => onEditCategory(category),
+          onDelete: () => onDeleteCategory(category),
         );
       },
       separatorBuilder: (_, __) => Divider(height: 1),
@@ -55,10 +72,12 @@ class _CategoryListPageState
   Future<void> _showDeleteDialog(
     BuildContext context,
     ExpenseCategory category,
+    VoidCallback onDelete,
   ) async {
     await showDialog(
       context: context,
-      builder: (context) => _deleteDialog(context: context, category: category),
+      builder: (context) => _deleteDialog(
+          context: context, category: category, onDelete: onDelete),
       barrierDismissible: true,
     );
   }
@@ -66,6 +85,7 @@ class _CategoryListPageState
   Widget _deleteDialog({
     required BuildContext context,
     required ExpenseCategory category,
+    required VoidCallback onDelete,
   }) {
     final dangerColor = Theme.of(context).colorScheme.error;
 
@@ -80,8 +100,8 @@ class _CategoryListPageState
           child: Text('CANCEL'),
         ),
         TextButton(
-          onPressed: () async {
-            await model.deleteCategoryAndOwnedExpenses(category);
+          onPressed: () {
+            onDelete();
             Navigator.pop(context);
           },
           child: Text('DELETE', style: TextStyle(color: dangerColor)),
