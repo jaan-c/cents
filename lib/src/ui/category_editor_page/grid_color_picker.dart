@@ -41,8 +41,9 @@ class GridColorPicker extends StatelessWidget {
       child: Container(
         width: kMinInteractiveDimension,
         height: kMinInteractiveDimension,
-        color: color,
         decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
           border: Border.all(width: 1, color: colorScheme.onSurface),
         ),
         child: isSelected ? Icon(Icons.check_rounded) : null,
