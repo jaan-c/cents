@@ -4,7 +4,8 @@ import 'package:quiver/core.dart';
 
 class ExpenseCategory implements Comparable<ExpenseCategory> {
   static const UNSET_ID = 0;
-  static const DEFAULT_COLOR = Color(0xFFFFFFFF);
+  // Use Colors.blue.shade300 directly since it isn't a const value :|
+  static const DEFAULT_COLOR = Color(0xFF64B5F6);
 
   final int id;
   final String name;
