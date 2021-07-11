@@ -1,7 +1,10 @@
 import 'package:cents/src/database/expense_provider.dart';
 import 'package:cents/src/domain/expense_category.dart';
+import 'package:cents/src/ui/category_editor_page/category_editor_page.dart';
+import 'package:cents/src/ui/category_editor_page/category_editor_page_model.dart';
 import 'package:cents/src/ui/widgets/state_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CategoryListPageModel extends StateModel {
   final ExpenseProvider provider;
@@ -46,6 +49,16 @@ class CategoryListPageModel extends StateModel {
     required BuildContext context,
     int categoryId = ExpenseCategory.UNSET_ID,
   }) async {
-    // TODO: Implement!
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) {
+        return CategoryEditorPage(
+          model: CategoryEditorPageModel(
+            provider: context.read<ExpenseProvider>(),
+            id: categoryId,
+          ),
+        );
+      }),
+    );
   }
 }
