@@ -41,7 +41,6 @@ class ExpenseCrud {
       return rowToExpense(r, idCategories[categoryId]!);
     }).toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    ;
   }
 
   static Future<void> addAll(
