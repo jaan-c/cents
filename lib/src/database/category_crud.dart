@@ -12,7 +12,8 @@ class CategoryCrud {
       orderBy: '$CATEGORY_COLUMN_NAME ASC',
     );
 
-    return rows.map((r) => rowToCategory(r)).toList();
+    return rows.map((r) => rowToCategory(r)).toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
   }
 
   static Future<List<ExpenseCategory>> getAll(
@@ -29,7 +30,8 @@ class CategoryCrud {
       orderBy: '$CATEGORY_COLUMN_NAME ASC',
     );
 
-    return rows.map((r) => rowToCategory(r)).toList();
+    return rows.map((r) => rowToCategory(r)).toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
   }
 
   static Future<List<ExpenseCategory>> getAllByName(

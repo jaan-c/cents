@@ -15,7 +15,8 @@ class ExpenseCrud {
     return rows.map((r) {
       final categoryId = expenseColumnToId(r[EXPENSE_COLUMN_CATEGORY]);
       return rowToExpense(r, idCategories[categoryId]!);
-    }).toList();
+    }).toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
 
   static Future<List<Expense>> getAll(
@@ -38,7 +39,9 @@ class ExpenseCrud {
     return rows.map((r) {
       final categoryId = expenseColumnToId(r[EXPENSE_COLUMN_CATEGORY]);
       return rowToExpense(r, idCategories[categoryId]!);
-    }).toList();
+    }).toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    ;
   }
 
   static Future<void> addAll(
