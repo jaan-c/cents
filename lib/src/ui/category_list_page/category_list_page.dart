@@ -1,4 +1,5 @@
 import 'package:cents/src/domain/expense_category.dart';
+import 'package:cents/src/ui/widgets/countdown_prompt_dialog.dart';
 import 'package:cents/src/ui/widgets/state_model.dart';
 import 'package:flutter/material.dart';
 
@@ -94,24 +95,13 @@ class _CategoryListPageState
   }) {
     final dangerColor = Theme.of(context).colorScheme.error;
 
-    return AlertDialog(
-      title: Text('Delete category?'),
-      content: Text(
-        'This will delete ${category.name} category and all ${category.name} expense.',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text('CANCEL'),
-        ),
-        TextButton(
-          onPressed: () {
-            onDelete();
-            Navigator.pop(context);
-          },
-          child: Text('DELETE', style: TextStyle(color: dangerColor)),
-        ),
-      ],
+    return CountdownPromptDialog(
+      title: 'Delete category?',
+      message:
+          'This will delete ${category.name} category and all ${category.name} expense.',
+      positiveButtonText: 'DELETE',
+      positiveButtonColor: dangerColor,
+      onPositivePressed: onDelete,
     );
   }
 
