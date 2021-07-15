@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'category_list_page_model.dart';
 import 'category_list_tile.dart';
 
+typedef _AddCategoryCallback = void Function();
 typedef _EditCategoryCallback = void Function(ExpenseCategory);
 typedef _DeleteCategoryCallback = void Function(ExpenseCategory);
 
@@ -40,6 +41,10 @@ class _CategoryListPageState
           () => model.deleteCategoryAndOwnedExpenses(category),
         ),
       ),
+      floatingActionButton: _addCategoryFab(
+        onAddCategory: () => model.navigateToEditor(context: context),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -107,6 +112,14 @@ class _CategoryListPageState
           child: Text('DELETE', style: TextStyle(color: dangerColor)),
         ),
       ],
+    );
+  }
+
+  Widget _addCategoryFab({required _AddCategoryCallback onAddCategory}) {
+    return FloatingActionButton.extended(
+      onPressed: onAddCategory,
+      icon: Icon(Icons.add_rounded),
+      label: Text('Add Category'),
     );
   }
 }
