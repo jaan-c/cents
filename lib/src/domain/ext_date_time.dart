@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:quiver/time.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 import 'week_of_month.dart';
 
@@ -47,16 +46,6 @@ extension ExtDate on DateTime {
 
   String display() {
     return '${dateDisplay()}, ${time12Display()}';
-  }
-
-  String relativeDisplay([DateTime? now]) {
-    now ??= DateTime.now();
-
-    if (!now.difference(this).isNegative) {
-      return timeago.format(this, clock: now);
-    } else {
-      return display();
-    }
   }
 }
 

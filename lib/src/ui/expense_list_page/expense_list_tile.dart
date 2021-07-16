@@ -73,7 +73,7 @@ class ExpenseListTile extends StatelessWidget {
   Widget _createdAtOverline({required BuildContext context}) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Text(expense.createdAt.relativeDisplay(), style: textTheme.overline);
+    return Text(expense.createdAt.display(), style: textTheme.overline);
   }
 
   Widget _categoryAndCostText({required BuildContext context}) {
