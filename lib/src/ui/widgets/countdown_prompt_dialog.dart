@@ -69,6 +69,7 @@ class _CountdownPromptDialogState extends State<CountdownPromptDialog> {
           child: Text('CANCEL'),
         ),
         _countdownPositiveButton(
+          context: context,
           countdownTimer: _countdownTimer,
           text: widget.positiveButtonText,
           color: widget.positiveButtonColor,
@@ -79,6 +80,7 @@ class _CountdownPromptDialogState extends State<CountdownPromptDialog> {
   }
 
   Widget _countdownPositiveButton({
+    required BuildContext context,
     required CountdownTimer countdownTimer,
     required String text,
     Color? color,
@@ -105,7 +107,10 @@ class _CountdownPromptDialogState extends State<CountdownPromptDialog> {
             );
           case ConnectionState.done:
             return TextButton(
-              onPressed: onPressed,
+              onPressed: () {
+                onPressed();
+                Navigator.pop(context);
+              },
               child: Text(text, style: TextStyle(color: color)),
             );
         }
