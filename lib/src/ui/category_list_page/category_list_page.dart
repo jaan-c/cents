@@ -38,7 +38,7 @@ class _CategoryListPageState
         ),
         onDeleteCategory: (category) => _showDeleteDialog(
           context,
-          category,
+          category.name,
           () => model.deleteCategoryAndOwnedExpenses(category),
         ),
       ),
@@ -77,31 +77,19 @@ class _CategoryListPageState
 
   Future<void> _showDeleteDialog(
     BuildContext context,
-    ExpenseCategory category,
+    String categoryName,
     VoidCallback onDelete,
   ) async {
-    await showDialog(
-      context: context,
-      builder: (context) => _deleteDialog(
-          context: context, category: category, onDelete: onDelete),
-      barrierDismissible: true,
-    );
-  }
-
-  Widget _deleteDialog({
-    required BuildContext context,
-    required ExpenseCategory category,
-    required VoidCallback onDelete,
-  }) {
     final dangerColor = Theme.of(context).colorScheme.error;
 
-    return CountdownPromptDialog(
+    return CountdownPromptDialog.show(
+      context: context,
       title: 'Delete category?',
-      message:
-          'This will delete ${category.name} category and all ${category.name} expense.',
+      message: 'Delete $categoryName category and all associated expenses?',
       positiveButtonText: 'DELETE',
       positiveButtonColor: dangerColor,
       onPositivePressed: onDelete,
+      barrierDismissable: true,
     );
   }
 

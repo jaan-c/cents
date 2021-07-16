@@ -1,3 +1,4 @@
+import 'package:cents/src/ui/widgets/countdown_prompt_dialog.dart';
 import 'package:cents/src/ui/widgets/state_model.dart';
 import 'package:flutter/material.dart';
 
@@ -47,6 +48,7 @@ class _CategoryEditorPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(
+        context: context,
         isCategoryNew: model.isCategoryNew,
         onDelete: () => model.deleteCategoryAndOwnedExpenses(context),
       ),
@@ -76,6 +78,7 @@ class _CategoryEditorPageState
   }
 
   AppBar _appBar({
+    required BuildContext context,
     required bool isCategoryNew,
     required VoidCallback onDelete,
   }) {
@@ -85,9 +88,26 @@ class _CategoryEditorPageState
         if (!isCategoryNew)
           IconButton(
             icon: Icon(Icons.delete_rounded),
-            onPressed: onDelete,
+            onPressed: () => _showDeleteDialog(context, onDelete),
           ),
       ],
+    );
+  }
+
+  Future<void> _showDeleteDialog(
+    BuildContext context,
+    VoidCallback onDelete,
+  ) async {
+    final dangerColor = Theme.of(context).colorScheme.error;
+
+    return CountdownPromptDialog.show(
+      context: context,
+      title: 'Delete category?',
+      message: 'Delete this category and all associated expenses?',
+      positiveButtonText: 'DELETE',
+      positiveButtonColor: dangerColor,
+      onPositivePressed: onDelete,
+      barrierDismissable: true,
     );
   }
 
