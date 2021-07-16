@@ -117,9 +117,10 @@ class _CategoryEditorPageState
       textCapitalization: TextCapitalization.words,
       decoration: InputDecoration(
         labelText: 'Category',
-        hintText: 'Category name',
+        hintText: 'Name',
         border: OutlineInputBorder(),
       ),
+      autofocus: true,
     );
   }
 
