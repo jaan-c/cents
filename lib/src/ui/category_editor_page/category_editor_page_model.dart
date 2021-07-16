@@ -26,6 +26,7 @@ class CategoryEditorPageModel extends StateModel {
   void initState() {
     super.initState();
 
+    nameController.addListener(notifyListeners);
     _initFields();
   }
 
