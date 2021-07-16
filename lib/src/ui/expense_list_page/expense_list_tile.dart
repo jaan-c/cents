@@ -18,6 +18,7 @@ class ExpenseListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // NOTE: We don't use ListTile here because it doesn't support an overline text.
     return _embellishment(
       context: context,
       child: Padding(
