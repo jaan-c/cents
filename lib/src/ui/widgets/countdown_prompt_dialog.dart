@@ -18,6 +18,7 @@ class CountdownPromptDialog extends StatefulWidget {
         title: title,
         message: message,
         positiveButtonText: positiveButtonText,
+        positiveButtonColor: positiveButtonColor,
         onPositivePressed: onPositivePressed,
       ),
       barrierDismissible: barrierDismissable,
