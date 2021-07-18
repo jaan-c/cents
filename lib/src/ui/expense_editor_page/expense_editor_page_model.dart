@@ -33,6 +33,10 @@ class ExpenseEditorPageModel extends StateModel {
   bool get isExpenseNew => id == Expense.UNSET_ID;
 
   bool get areFieldsValid {
+    if (categoryController.text.isEmpty) {
+      return false;
+    }
+
     try {
       Amount.parse(costController.text);
       return true;
@@ -54,7 +58,7 @@ class ExpenseEditorPageModel extends StateModel {
     costController.addListener(notifyListeners);
     noteController.addListener(notifyListeners);
 
-      _initFieldsFromProvider();
+    _initFieldsFromProvider();
     _initCategorySelection();
   }
 
@@ -66,12 +70,12 @@ class ExpenseEditorPageModel extends StateModel {
     final expense = (await provider.getExpense(id)) ??
         (throw StateError('Editing a non-existent expense with id $id'));
 
-      categoryController.text = expense.category.name;
-      costController.text = expense.cost.toString();
-      noteController.text = expense.note;
-      _createdAt = expense.createdAt;
+    categoryController.text = expense.category.name;
+    costController.text = expense.cost.toString();
+    noteController.text = expense.note;
+    _createdAt = expense.createdAt;
 
-      notifyListeners();
+    notifyListeners();
   }
 
   Future<void> _initCategorySelection() async {
