@@ -54,23 +54,24 @@ class ExpenseEditorPageModel extends StateModel {
     costController.addListener(notifyListeners);
     noteController.addListener(notifyListeners);
 
-    if (!isExpenseNew) {
       _initFieldsFromProvider();
-    }
     _initCategorySelection();
   }
 
   Future<void> _initFieldsFromProvider() async {
-    final expense = await provider.getExpense(id);
+    if (!isExpenseNew) {
+      return;
+    }
 
-    if (expense != null) {
+    final expense = (await provider.getExpense(id)) ??
+        (throw StateError('Editing a non-existent expense with id $id'));
+
       categoryController.text = expense.category.name;
       costController.text = expense.cost.toString();
       noteController.text = expense.note;
       _createdAt = expense.createdAt;
 
       notifyListeners();
-    }
   }
 
   Future<void> _initCategorySelection() async {
