@@ -112,7 +112,7 @@ class _ExpenseEditorPageState
       textCapitalization: TextCapitalization.words,
       decoration: InputDecoration(
         labelText: 'Category',
-        hintText: 'Uncategorized',
+        hintText: 'Name',
         border: OutlineInputBorder(),
         suffixIcon: categorySelection.isNotEmpty
             ? _categorySelectionDropdown(
