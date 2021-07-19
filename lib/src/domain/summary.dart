@@ -143,9 +143,6 @@ List<Expense> _filterExpenseByDateTimeRange(
 }
 
 bool _isDateTimeInRange(DateTime dateTime, DateTime start, DateTime end) {
-  final dateTimeMsEpoch = dateTime.millisecondsSinceEpoch;
-  final startMsEpoch = start.millisecondsSinceEpoch;
-  final endMsEpoch = end.millisecondsSinceEpoch;
-
-  return startMsEpoch <= dateTimeMsEpoch && dateTimeMsEpoch <= endMsEpoch;
+  return (start.isBefore(dateTime) || start.isAtSameMomentAs(dateTime)) &&
+      (dateTime.isBefore(end) || dateTime.isAtSameMomentAs(end));
 }
