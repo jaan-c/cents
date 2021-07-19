@@ -19,7 +19,7 @@ class CategoryEditorPageModel extends StateModel {
 
   CategoryEditorPageModel({
     required this.provider,
-    this.id = ExpenseCategory.UNSET_ID,
+    required this.id,
   });
 
   @override

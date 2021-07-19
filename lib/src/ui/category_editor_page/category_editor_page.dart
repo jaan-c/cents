@@ -1,6 +1,9 @@
+import 'package:cents/src/database/expense_provider.dart';
+import 'package:cents/src/domain/expense_category.dart';
 import 'package:cents/src/ui/widgets/countdown_prompt_dialog.dart';
 import 'package:cents/src/ui/widgets/state_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'category_editor_page_model.dart';
 import 'grid_color_picker.dart';
@@ -8,6 +11,26 @@ import 'grid_color_picker.dart';
 typedef SetColorCallback = void Function(Color);
 
 class CategoryEditorPage extends StatefulWidget {
+  static Future<void> push(
+    BuildContext context, [
+    int categoryId = ExpenseCategory.UNSET_ID,
+  ]) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return CategoryEditorPage(
+            model: CategoryEditorPageModel(
+              provider: context.read<ExpenseProvider>(),
+              id: categoryId,
+            ),
+          );
+        },
+        settings: RouteSettings(name: '$CategoryEditorPage'),
+      ),
+    );
+  }
+
   final CategoryEditorPageModel model;
 
   const CategoryEditorPage({required this.model});
@@ -50,7 +73,11 @@ class _CategoryEditorPageState
       appBar: _appBar(
         context: context,
         isCategoryNew: model.isCategoryNew,
-        onDelete: () => model.deleteCategoryAndOwnedExpenses(context),
+        onDelete: () async {
+          // Already pops after, the additional pop is for page.
+          await model.deleteCategoryAndOwnedExpenses(context);
+          Navigator.pop(context);
+        },
       ),
       body: SingleChildScrollView(
         child: Padding(
