@@ -107,10 +107,7 @@ class _CountdownPromptDialogState extends State<CountdownPromptDialog> {
             );
           case ConnectionState.done:
             return TextButton(
-              onPressed: () {
-                onPressed();
-                Navigator.pop(context);
-              },
+              onPressed: onPressed,
               child: Text(text, style: TextStyle(color: color)),
             );
         }
