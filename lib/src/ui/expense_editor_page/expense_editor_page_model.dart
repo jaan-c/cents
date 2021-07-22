@@ -63,7 +63,7 @@ class ExpenseEditorPageModel extends StateModel {
   }
 
   Future<void> _initFieldsFromProvider() async {
-    if (!isExpenseNew) {
+    if (isExpenseNew) {
       return;
     }
 
