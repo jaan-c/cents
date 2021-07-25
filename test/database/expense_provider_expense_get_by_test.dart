@@ -128,4 +128,20 @@ void main() {
     expect(expenses, hasLength(1));
     expect(expenses[0], equalsExpenseContent(initialExpenses[1]));
   });
+
+  test('Get by combined criteria', () async {
+    final expenses = await provider.getExpenseBy(
+      categoryName: 'Food',
+      costRange: AmountRange(Amount(30), Amount(40)),
+      createdAtRange: DateTimeRange(
+        DateTime(2021, DateTime.july, 23),
+        DateTime(2021, DateTime.july, 24),
+      ),
+    )
+      ..sort((a, b) => a.id.compareTo(b.id));
+
+    expect(expenses, hasLength(2));
+    expect(expenses[0], equalsExpenseContent(initialExpenses[2]));
+    expect(expenses[1], equalsExpenseContent(initialExpenses[3]));
+  });
 }
