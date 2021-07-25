@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as pathlib;
 
+import 'amount_range.dart';
+import 'date_time_range.dart';
 import 'expense_database_opener.dart';
 import 'expense_crud.dart';
 import 'category_crud.dart';
@@ -117,6 +119,21 @@ class ExpenseProvider with ChangeNotifier {
     if (expenses.isNotEmpty) {
       return expenses.first;
     }
+  }
+
+  Future<List<Expense>> getExpenseBy({
+    String? categoryName,
+    AmountRange? costRange,
+    DateTimeRange? createdAtRange,
+    String? noteKeyword,
+  }) async {
+    return ExpenseCrud.getBy(
+      _database,
+      categoryName: categoryName,
+      costRange: costRange,
+      createdAtRange: createdAtRange,
+      noteKeyword: noteKeyword,
+    );
   }
 
   /// Stores all [expenses] with existing categories.
