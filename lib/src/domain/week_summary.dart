@@ -11,6 +11,9 @@ class WeekSummary {
 
   final List<Expense> expenses;
 
+  List<ExpenseCategory> get categories =>
+      expenses.map((e) => e.category).toSet().toList()..sort();
+
   WeekSummary(this.year, this.weekOfYear, List<Expense> expenses)
       : assert(expenses.every((element) =>
             WeekRange.ofYear(year, weekOfYear).isInRange(element.createdAt))),
