@@ -1,9 +1,9 @@
+import 'package:cents/src/domain/date_time_range.dart';
 import 'package:cents/src/domain/expense.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'amount_range.dart';
 import 'category_crud.dart';
-import 'date_time_range.dart';
 import 'expense_crud_converter.dart';
 import 'category_crud_converter.dart';
 

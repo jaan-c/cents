@@ -1,3 +1,4 @@
+import 'package:cents/src/domain/date_time_range.dart';
 import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/domain/expense_category.dart';
 import 'package:flutter/foundation.dart';
@@ -5,7 +6,6 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as pathlib;
 
 import 'amount_range.dart';
-import 'date_time_range.dart';
 import 'expense_database_opener.dart';
 import 'expense_crud.dart';
 import 'category_crud.dart';

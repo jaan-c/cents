@@ -1,9 +1,9 @@
 import 'dart:ui';
 
 import 'package:cents/src/database/amount_range.dart';
-import 'package:cents/src/database/date_time_range.dart';
 import 'package:cents/src/database/expense_provider.dart';
 import 'package:cents/src/domain/amount.dart';
+import 'package:cents/src/domain/date_time_range.dart';
 import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/domain/expense_category.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
