@@ -1,3 +1,5 @@
+import 'package:quiver/time.dart';
+
 class WeekOfMonth {
   static const values = [first, second, third, fourth, fifth, sixth];
 
@@ -13,6 +15,15 @@ class WeekOfMonth {
   const WeekOfMonth.fromInt(int weekOfMonth)
       : assert(1 <= weekOfMonth && weekOfMonth <= 6),
         _asInt = weekOfMonth;
+
+  factory WeekOfMonth.fromDateTime(DateTime dateTime) {
+    final startOfMonth = DateTime(dateTime.year, dateTime.month, 1);
+    final offset = startOfMonth.weekday != DateTime.monday ? 1 : 0;
+    final mondaysSinceStartOfMonth = _dateRange(startOfMonth, dateTime, aDay)
+        .where((d) => d.weekday == DateTime.monday);
+
+    return WeekOfMonth.fromInt(mondaysSinceStartOfMonth.length + offset);
+  }
 
   @override
   bool operator ==(dynamic other) {
@@ -48,5 +59,19 @@ class WeekOfMonth {
       default:
         throw StateError('Invalid week of month ${toInt()}');
     }
+  }
+}
+
+Iterable<DateTime> _dateRange(
+    DateTime start, DateTime end, Duration interval) sync* {
+  assert(interval != Duration.zero);
+  start = DateTime(start.year, start.month, start.day);
+  end = DateTime(end.year, end.month, end.day);
+
+  var current = start;
+  while (current == end || current.isBefore(end)) {
+    yield current;
+
+    current = current.add(interval);
   }
 }
