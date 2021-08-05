@@ -12,12 +12,12 @@ import 'week_summary_chart.dart';
 
 typedef SetWeekRangeCallback = void Function(WeekRange);
 
-class WeekSummaryCardContent extends StatelessWidget {
+class WeekSummaryContent extends StatelessWidget {
   final WeekRange weekRange;
   final List<Expense> expenses;
   final SetWeekRangeCallback onSetWeekRange;
 
-  WeekSummaryCardContent({
+  WeekSummaryContent({
     required this.weekRange,
     required this.expenses,
     required this.onSetWeekRange,

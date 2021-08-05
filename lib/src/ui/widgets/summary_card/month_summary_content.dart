@@ -10,12 +10,12 @@ import 'month_summary_chart.dart';
 
 typedef SetMonthRangeCallback = void Function(MonthRange);
 
-class MonthSummaryCardContent extends StatelessWidget {
+class MonthSummaryContent extends StatelessWidget {
   final MonthRange monthRange;
   final List<Expense> expenses;
   final SetMonthRangeCallback onSetMonthRange;
 
-  MonthSummaryCardContent({
+  MonthSummaryContent({
     required this.monthRange,
     required this.expenses,
     required this.onSetMonthRange,
