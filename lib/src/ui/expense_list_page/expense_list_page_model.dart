@@ -1,6 +1,6 @@
 import 'package:cents/src/database/expense_provider.dart';
+import 'package:cents/src/domain/date_time_range.dart';
 import 'package:cents/src/domain/expense.dart';
-import 'package:cents/src/domain/summary.dart';
 import 'package:cents/src/ui/category_list_page/category_list_page.dart';
 import 'package:cents/src/ui/category_list_page/category_list_page_model.dart';
 import 'package:cents/src/ui/expense_editor_page/expense_editor_page.dart';
@@ -9,15 +9,41 @@ import 'package:cents/src/ui/expense_stats_page/expense_stats_page.dart';
 import 'package:cents/src/ui/expense_stats_page/expense_stats_page_model.dart';
 import 'package:cents/src/ui/settings_page/settings_page.dart';
 import 'package:cents/src/ui/widgets/state_model.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cents/src/ui/widgets/summary_card/summary_card.dart';
+import 'package:flutter/material.dart' hide DateTimeRange;
+import 'package:isoweek/isoweek.dart';
 import 'package:provider/provider.dart';
 
 typedef OpenEditorCallback = void Function(int expenseId);
 
+enum SummaryCardMode { week, month }
+
 class ExpenseListPageModel extends StateModel {
   final ExpenseProvider provider;
   final DateTime currentDateTime;
+
+  var _summaryCardMode = SummaryCardMode.week;
+  SummaryCardMode get summaryCardMode => _summaryCardMode;
+
+  SummaryCardData<DateTimeRange> get summaryCardData {
+    if (summaryCardMode == SummaryCardMode.week) {
+      return WeekSummaryCardData(
+          dateTimeRange: weekRange,
+          expenses: expenses,
+          onSetDateTimeRange: setWeekRange);
+    } else {
+      return MonthSummaryCardData(
+          dateTimeRange: monthRange,
+          expenses: expenses,
+          onSetDateTimeRange: setMonthRange);
+    }
+  }
+
+  WeekRange _weekRange;
+  WeekRange get weekRange => _weekRange;
+
+  MonthRange _monthRange;
+  MonthRange get monthRange => _monthRange;
 
   var _expenses = <Expense>[];
   List<Expense> get expenses => _expenses.toList();
@@ -26,36 +52,80 @@ class ExpenseListPageModel extends StateModel {
   Set<Expense> get selectedExpenses => _selectedExpenses.toSet();
   bool get hasSelectedExpense => selectedExpenses.isNotEmpty;
 
-  MonthSummary get currentMonthSummary => Summary(_expenses)
-      .getMonthSummary(currentDateTime.year, currentDateTime.month);
+  ExpenseListPageModel._internal(
+    this.provider,
+    this.currentDateTime,
+    this._weekRange,
+    this._monthRange,
+  );
 
-  ExpenseListPageModel({
-    required this.provider,
+  factory ExpenseListPageModel({
+    required ExpenseProvider provider,
     DateTime? currentDateTime,
-  }) : currentDateTime = currentDateTime ?? DateTime.now();
+  }) {
+    currentDateTime ??= DateTime.now();
+
+    final week = Week.fromDate(currentDateTime);
+    final weekRange = WeekRange.ofYear(week.year, week.weekNumber);
+    final monthRange = MonthRange(currentDateTime.year, currentDateTime.month);
+
+    return ExpenseListPageModel._internal(
+        provider, currentDateTime, weekRange, monthRange);
+  }
 
   @override
   void initState() {
     super.initState();
 
-    provider.addListener(_updateStateFromProvider);
+    provider.addListener(_updateExpensesFilteredByDateTimeRange);
 
-    _updateStateFromProvider();
+    _updateExpensesFilteredByDateTimeRange();
   }
 
   @override
   void dispose() {
-    provider.removeListener(_updateStateFromProvider);
+    provider.removeListener(_updateExpensesFilteredByDateTimeRange);
 
     super.dispose();
   }
 
-  Future<void> _updateStateFromProvider() async {
-    final expenses = await provider.getEveryExpense();
+  Future<void> _updateExpensesFilteredByDateTimeRange() async {
+    final dateTimeRange =
+        summaryCardMode == SummaryCardMode.week ? weekRange : monthRange;
+    final expenses = await provider.getExpenseBy(createdAtRange: dateTimeRange);
 
     _expenses = expenses;
     clearSelectedExpenses();
     notifyListeners();
+  }
+
+  Future<void> switchSummaryCardMode() async {
+    _summaryCardMode = summaryCardMode == SummaryCardMode.week
+        ? SummaryCardMode.month
+        : SummaryCardMode.week;
+    _expenses = [];
+    clearSelectedExpenses();
+    notifyListeners();
+
+    await _updateExpensesFilteredByDateTimeRange();
+  }
+
+  Future<void> setWeekRange(WeekRange newWeekRange) async {
+    _weekRange = newWeekRange;
+    _expenses = [];
+    clearSelectedExpenses();
+    notifyListeners();
+
+    await _updateExpensesFilteredByDateTimeRange();
+  }
+
+  Future<void> setMonthRange(MonthRange newMonthRange) async {
+    _monthRange = newMonthRange;
+    _expenses = [];
+    clearSelectedExpenses();
+    notifyListeners();
+
+    await _updateExpensesFilteredByDateTimeRange();
   }
 
   void toggleSelectExpense(Expense expense) {

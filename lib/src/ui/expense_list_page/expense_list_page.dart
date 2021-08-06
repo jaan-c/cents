@@ -1,5 +1,5 @@
-import 'package:cents/src/ui/widgets/month_summary_card/month_summary_card.dart';
 import 'package:cents/src/ui/widgets/state_model.dart';
+import 'package:cents/src/ui/widgets/summary_card/summary_card.dart';
 import 'package:flutter/material.dart';
 
 import 'expense_list_page_model.dart';
@@ -40,14 +40,9 @@ class _ExpenseListPageState
             ),
       body: CustomScrollView(
         slivers: [
-          if (model.currentMonthSummary.isNotEmpty)
-            SliverToBoxAdapter(
-              child: MonthSummaryCard(
-                monthSummary: model.currentMonthSummary,
-                mode: MonthSummaryCardMode.week,
-                margin: EdgeInsets.all(8),
-              ),
-            ),
+          SliverToBoxAdapter(
+            child: SummaryCard(data: model.summaryCardData),
+          ),
           if (model.expenses.isNotEmpty) ...[
             _sliverListSubheader(
               context: context,
