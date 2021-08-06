@@ -5,8 +5,6 @@ import 'package:cents/src/ui/category_list_page/category_list_page.dart';
 import 'package:cents/src/ui/category_list_page/category_list_page_model.dart';
 import 'package:cents/src/ui/expense_editor_page/expense_editor_page.dart';
 import 'package:cents/src/ui/expense_editor_page/expense_editor_page_model.dart';
-import 'package:cents/src/ui/expense_stats_page/expense_stats_page.dart';
-import 'package:cents/src/ui/expense_stats_page/expense_stats_page_model.dart';
 import 'package:cents/src/ui/settings_page/settings_page.dart';
 import 'package:cents/src/ui/widgets/state_model.dart';
 import 'package:cents/src/ui/widgets/summary_card/summary_card.dart';
@@ -165,19 +163,6 @@ class ExpenseListPageModel extends StateModel {
           model: ExpenseEditorPageModel(
             provider: context.read<ExpenseProvider>(),
             id: expenseId,
-          ),
-        );
-      }),
-    );
-  }
-
-  Future<void> navigateToStats(BuildContext context) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) {
-        return ExpenseStatsPage(
-          model: ExpenseStatsPageModel(
-            provider: context.read<ExpenseProvider>(),
           ),
         );
       }),
