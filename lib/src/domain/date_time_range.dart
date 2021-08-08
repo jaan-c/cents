@@ -45,8 +45,9 @@ DateTime _getStartOfMonth(int year, int month) {
 
 DateTime _getEndOfMonth(int year, int month) {
   final startOfMonth = _getStartOfMonth(year, month);
-  final nextMonth = startOfMonth.add(Duration(days: 31));
-  final startOfNextMonth = _getStartOfMonth(nextMonth.year, nextMonth.day);
+  final startOfNextMonth = startOfMonth.month != DateTime.december
+      ? _getStartOfMonth(startOfMonth.year, startOfMonth.month + 1)
+      : _getStartOfMonth(startOfMonth.year + 1, DateTime.january);
 
   return startOfNextMonth.subtract(Duration(days: 1));
 }
