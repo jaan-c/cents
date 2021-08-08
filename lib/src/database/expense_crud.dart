@@ -68,8 +68,8 @@ class ExpenseCrud {
         ? 'TRUE'
         : '''
           DATETIME($EXPENSE_COLUMN_CREATED_AT) 
-          BETWEEN DATETIME("${createdAtRange.start.toIso8601String()}") 
-            AND DATETIME("${createdAtRange.end.toIso8601String()}")
+          BETWEEN DATETIME('${createdAtRange.start.toIso8601String()}') 
+            AND DATETIME('${createdAtRange.end.toIso8601String()}')
         ''';
     final noteKeywordCondition = noteKeyword == null
         ? 'TRUE'
