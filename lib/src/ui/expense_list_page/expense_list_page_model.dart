@@ -72,16 +72,6 @@ class ExpenseListPageModel extends StateModel {
     super.dispose();
   }
 
-  Future<void> _updateExpensesFilteredByDateTimeRange() async {
-    final dateTimeRange =
-        summaryCardMode == SummaryCardMode.week ? weekRange : monthRange;
-    final expenses = await provider.getExpenseBy(createdAtRange: dateTimeRange);
-
-    _expenses = expenses;
-    clearSelectedExpenses();
-    notifyListeners();
-  }
-
   Future<void> switchSummaryCardMode() async {
     _summaryCardMode = summaryCardMode == SummaryCardMode.week
         ? SummaryCardMode.month
@@ -109,6 +99,16 @@ class ExpenseListPageModel extends StateModel {
     notifyListeners();
 
     await _updateExpensesFilteredByDateTimeRange();
+  }
+
+  Future<void> _updateExpensesFilteredByDateTimeRange() async {
+    final dateTimeRange =
+        summaryCardMode == SummaryCardMode.week ? weekRange : monthRange;
+    final expenses = await provider.getExpenseBy(createdAtRange: dateTimeRange);
+
+    _expenses = expenses;
+    clearSelectedExpenses();
+    notifyListeners();
   }
 
   void toggleSelectExpense(Expense expense) {
