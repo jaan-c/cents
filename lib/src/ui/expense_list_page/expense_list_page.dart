@@ -128,7 +128,7 @@ class _ExpenseListPageState
   }) {
     final switcherChip = ActionChip(
       label: Text(
-        mode == SummaryCardMode.week ? 'Month Summary' : 'Week Summary',
+        mode == SummaryCardMode.week ? 'Week Summary' : 'Month Summary',
       ),
       onPressed: onSwitchMode,
     );
