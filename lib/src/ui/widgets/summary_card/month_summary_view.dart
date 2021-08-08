@@ -1,11 +1,11 @@
 import 'package:cents/src/domain/amount.dart';
 import 'package:cents/src/domain/date_time_range.dart';
 import 'package:cents/src/domain/expense.dart';
-import 'package:cents/src/domain/month_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'category_breakdown.dart';
+import 'month_summary.dart';
 import 'month_summary_chart.dart';
 
 typedef SetMonthRangeCallback = void Function(MonthRange);

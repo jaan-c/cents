@@ -1,9 +1,9 @@
 import 'package:cents/src/domain/expense.dart';
 
-import 'amount.dart';
-import 'date_time_range.dart';
-import 'expense_category.dart';
-import 'expense_list_ext.dart';
+import 'package:cents/src/domain/amount.dart';
+import 'package:cents/src/domain/date_time_range.dart';
+import 'package:cents/src/domain/expense_category.dart';
+import 'package:cents/src/domain/expense_list_ext.dart';
 
 class WeekSummary {
   final int year;

@@ -1,10 +1,11 @@
 import 'package:cents/src/domain/amount.dart';
-import 'package:cents/src/domain/week_summary.dart';
 import 'package:cents/src/ui/widgets/partitioned_bar_chart/partitioned_bar_chart.dart';
 import 'package:cents/src/ui/widgets/partitioned_bar_chart/partitioned_bar_data.dart';
 import 'package:flutter/material.dart';
 import 'package:quiver/iterables.dart';
 import 'package:cents/src/domain/ext_double.dart';
+
+import 'week_summary.dart';
 
 class WeekSummaryChart extends StatelessWidget {
   static const _weekdays = [

@@ -2,12 +2,12 @@ import 'package:cents/src/domain/amount.dart';
 import 'package:cents/src/domain/date_time_range.dart';
 import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/domain/week_of_month.dart';
-import 'package:cents/src/domain/week_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:isoweek/isoweek.dart';
 
 import 'category_breakdown.dart';
+import 'week_summary.dart';
 import 'week_summary_chart.dart';
 
 typedef SetWeekRangeCallback = void Function(WeekRange);

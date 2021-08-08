@@ -1,11 +1,11 @@
 import 'package:cents/src/domain/expense_category.dart';
 
-import 'amount.dart';
-import 'date_time_range.dart';
-import 'expense.dart';
-import 'ext_date_time.dart';
-import 'expense_list_ext.dart';
-import 'week_of_month.dart';
+import 'package:cents/src/domain/amount.dart';
+import 'package:cents/src/domain/date_time_range.dart';
+import 'package:cents/src/domain/expense.dart';
+import 'package:cents/src/domain/ext_date_time.dart';
+import 'package:cents/src/domain/expense_list_ext.dart';
+import 'package:cents/src/domain/week_of_month.dart';
 
 class MonthSummary {
   final int year;

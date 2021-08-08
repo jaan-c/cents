@@ -1,10 +1,11 @@
 import 'package:cents/src/domain/amount.dart';
-import 'package:cents/src/domain/month_summary.dart';
 import 'package:cents/src/ui/widgets/partitioned_bar_chart/partitioned_bar_chart.dart';
 import 'package:cents/src/ui/widgets/partitioned_bar_chart/partitioned_bar_data.dart';
 import 'package:flutter/material.dart';
 import 'package:quiver/iterables.dart';
 import 'package:cents/src/domain/ext_double.dart';
+
+import 'month_summary.dart';
 
 class MonthSummaryChart extends StatelessWidget {
   final MonthSummary monthSummary;
