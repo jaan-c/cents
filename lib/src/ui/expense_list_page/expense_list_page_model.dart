@@ -7,7 +7,6 @@ import 'package:cents/src/ui/expense_editor_page/expense_editor_page.dart';
 import 'package:cents/src/ui/expense_editor_page/expense_editor_page_model.dart';
 import 'package:cents/src/ui/settings_page/settings_page.dart';
 import 'package:cents/src/ui/widgets/state_model.dart';
-import 'package:cents/src/ui/widgets/summary_card/summary_card.dart';
 import 'package:flutter/material.dart' hide DateTimeRange;
 import 'package:isoweek/isoweek.dart';
 import 'package:provider/provider.dart';
@@ -22,20 +21,6 @@ class ExpenseListPageModel extends StateModel {
 
   var _summaryCardMode = SummaryCardMode.week;
   SummaryCardMode get summaryCardMode => _summaryCardMode;
-
-  SummaryCardData<DateTimeRange> get summaryCardData {
-    if (summaryCardMode == SummaryCardMode.week) {
-      return WeekSummaryCardData(
-          dateTimeRange: weekRange,
-          expenses: expenses,
-          onSetDateTimeRange: setWeekRange);
-    } else {
-      return MonthSummaryCardData(
-          dateTimeRange: monthRange,
-          expenses: expenses,
-          onSetDateTimeRange: setMonthRange);
-    }
-  }
 
   WeekRange _weekRange;
   WeekRange get weekRange => _weekRange;

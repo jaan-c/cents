@@ -1,5 +1,6 @@
 import 'package:cents/src/ui/widgets/state_model.dart';
-import 'package:cents/src/ui/widgets/summary_card/summary_card.dart';
+import 'package:cents/src/ui/widgets/summary_card/month_summary_view.dart';
+import 'package:cents/src/ui/widgets/summary_card/week_summary_view.dart';
 import 'package:flutter/material.dart';
 
 import 'expense_list_page_model.dart';
@@ -40,7 +41,21 @@ class _ExpenseListPageState
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: SummaryCard(data: model.summaryCardData),
+            child: _summaryCard(
+              mode: model.summaryCardMode,
+              onSwitchMode: model.switchSummaryCardMode,
+              child: model.summaryCardMode == SummaryCardMode.week
+                  ? WeekSummaryView(
+                      weekRange: model.weekRange,
+                      expenses: model.expenses,
+                      onSetWeekRange: model.setWeekRange,
+                    )
+                  : MonthSummaryView(
+                      monthRange: model.monthRange,
+                      expenses: model.expenses,
+                      onSetMonthRange: model.setMonthRange,
+                    ),
+            ),
           ),
           if (model.expenses.isNotEmpty) ...[
             _sliverListSubheader(
@@ -103,6 +118,35 @@ class _ExpenseListPageState
           onPressed: onDeleteSelected,
         ),
       ],
+    );
+  }
+
+  Widget _summaryCard({
+    required SummaryCardMode mode,
+    required VoidCallback onSwitchMode,
+    required Widget child,
+  }) {
+    final switcherChip = ActionChip(
+      label: Text(
+        mode == SummaryCardMode.week ? 'Month Summary' : 'Week Summary',
+      ),
+      onPressed: onSwitchMode,
+    );
+
+    return Card(
+      margin: EdgeInsets.all(8),
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            switcherChip,
+            SizedBox(height: 8),
+            child,
+          ],
+        ),
+      ),
     );
   }
 
