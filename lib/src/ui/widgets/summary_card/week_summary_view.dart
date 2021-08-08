@@ -92,12 +92,10 @@ class WeekSummaryView extends StatelessWidget {
   }) {
     final textTheme = Theme.of(context).textTheme;
 
-    // 1st week of Aug
     final monthName = DateFormat(DateFormat.ABBR_MONTH).format(weekRange.start);
     final yearString = DateFormat(DateFormat.YEAR).format(weekRange.start);
     final weekOfMonth =
         WeekOfMonth.fromDateTime(weekRange.start).toOrdinalString();
-    // 31th week of 2021
     final weekOfYear =
         _intToOrdinalString(Week.fromDate(weekRange.start).weekNumber);
 
