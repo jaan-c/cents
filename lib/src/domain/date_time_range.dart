@@ -10,6 +10,11 @@ class DateTimeRange {
     return (start.isBefore(dateTime) || start.isAtSameMomentAs(dateTime)) &&
         (dateTime.isBefore(end) || dateTime.isAtSameMomentAs(end));
   }
+
+  @override
+  String toString() {
+    return 'DateTimeRange($start, $end)';
+  }
 }
 
 class MonthRange extends DateTimeRange {
