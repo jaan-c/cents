@@ -19,18 +19,18 @@ class DateTimeRange {
 
 class MonthRange extends DateTimeRange {
   MonthRange get previous {
-    if (start.month == DateTime.january) {
-      return MonthRange(start.year - 1, DateTime.december);
-    } else {
+    if (start.month != DateTime.january) {
       return MonthRange(start.year, start.month - 1);
+    } else {
+      return MonthRange(start.year - 1, DateTime.december);
     }
   }
 
   MonthRange get next {
-    if (start.month == DateTime.december) {
-      return MonthRange(start.year + 1, DateTime.january);
-    } else {
+    if (start.month != DateTime.december) {
       return MonthRange(start.year, start.month + 1);
+    } else {
+      return MonthRange(start.year + 1, DateTime.january);
     }
   }
 
