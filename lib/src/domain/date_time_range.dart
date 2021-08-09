@@ -18,26 +18,26 @@ class DateTimeRange {
 }
 
 class MonthRange extends DateTimeRange {
-  final int _year;
-  final int _month;
+  final int year;
+  final int month;
 
   MonthRange get previous {
-    if (_month != DateTime.january) {
-      return MonthRange(_year, _month - 1);
+    if (month != DateTime.january) {
+      return MonthRange(year, month - 1);
     } else {
-      return MonthRange(_year - 1, DateTime.december);
+      return MonthRange(year - 1, DateTime.december);
     }
   }
 
   MonthRange get next {
-    final nextMonth = _nextMonthOf(_year, _month);
+    final nextMonth = _nextMonthOf(year, month);
     return MonthRange(nextMonth.year, nextMonth.month);
   }
 
   MonthRange(int year, int month)
       : assert(DateTime.january <= month && month <= DateTime.december),
-        _year = year,
-        _month = month,
+        year = year,
+        month = month,
         super(_getStartOfMonth(year, month), _getEndOfMonth(year, month));
 }
 
