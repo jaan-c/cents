@@ -101,6 +101,9 @@ class WeekSummaryView extends StatelessWidget {
 
     final weekOfMonthLabel = '$weekOfMonth week of $monthName';
     final weekOfYearLabel = '$weekOfYear week of $yearString';
+    final enDash = '\u2013';
+    final weekRangeLabel =
+        '${DateFormat.MMMd().format(weekRange.start)}$enDash${DateFormat.MMMd().format(weekRange.end)}';
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -109,6 +112,7 @@ class WeekSummaryView extends StatelessWidget {
         Text(weekCost.toLocalString(), style: textTheme.headline5),
         Text(weekOfMonthLabel, style: textTheme.bodyText2),
         Text(weekOfYearLabel, style: textTheme.bodyText2),
+        Text(weekRangeLabel, style: textTheme.bodyText2),
       ],
     );
   }

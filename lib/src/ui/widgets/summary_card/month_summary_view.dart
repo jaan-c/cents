@@ -57,9 +57,6 @@ class MonthSummaryView extends StatelessWidget {
     required MonthRange monthRange,
     required SetMonthRangeCallback onSetMonthRange,
   }) {
-    final monthStart = monthRange.start;
-    final monthName =
-        DateFormat.MMMM().format(DateTime(monthStart.year, monthStart.month));
     final previousMonthRange = monthRange.previous;
     final nextMonthRange = monthRange.next;
 
@@ -74,7 +71,7 @@ class MonthSummaryView extends StatelessWidget {
         Expanded(
           child: _headerTitle(
             context: context,
-            monthName: monthName,
+            monthRange: monthRange,
             monthCost: monthCost,
           ),
         ),
@@ -88,20 +85,24 @@ class MonthSummaryView extends StatelessWidget {
 
   Widget _headerTitle({
     required BuildContext context,
-    required String monthName,
+    required MonthRange monthRange,
     required Amount monthCost,
   }) {
     final textTheme = Theme.of(context).textTheme;
+
+    final monthLabel =
+        DateFormat.MMMM().format(DateTime(monthRange.year, monthRange.month));
+    final enDash = '\u2013';
+    final monthRangeLabel =
+        '${DateFormat.MMMd().format(monthRange.start)}$enDash${DateFormat.MMMd().format(monthRange.end)}';
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(monthCost.toLocalString(), style: textTheme.headline5),
-        Text(
-          monthName,
-          style: textTheme.bodyText2,
-        ),
+        Text(monthLabel, style: textTheme.bodyText2),
+        Text(monthRangeLabel, style: textTheme.bodyText2),
       ],
     );
   }
