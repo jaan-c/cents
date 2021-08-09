@@ -18,38 +18,49 @@ class DateTimeRange {
 }
 
 class MonthRange extends DateTimeRange {
+  final int _year;
+  final int _month;
+
   MonthRange get previous {
-    if (start.month != DateTime.january) {
-      return MonthRange(start.year, start.month - 1);
+    if (_month != DateTime.january) {
+      return MonthRange(_year, _month - 1);
     } else {
-      return MonthRange(start.year - 1, DateTime.december);
+      return MonthRange(_year - 1, DateTime.december);
     }
   }
 
   MonthRange get next {
-    if (start.month != DateTime.december) {
-      return MonthRange(start.year, start.month + 1);
-    } else {
-      return MonthRange(start.year + 1, DateTime.january);
-    }
+    final nextMonth = _nextMonthOf(_year, _month);
+    return MonthRange(nextMonth.year, nextMonth.month);
   }
 
   MonthRange(int year, int month)
       : assert(DateTime.january <= month && month <= DateTime.december),
+        _year = year,
+        _month = month,
         super(_getStartOfMonth(year, month), _getEndOfMonth(year, month));
 }
 
 DateTime _getStartOfMonth(int year, int month) {
-  return DateTime(year, month);
+  final fourthDay = DateTime(year, month, 4);
+  final firstWeek = Week.fromDate(fourthDay);
+  return firstWeek.days.first;
 }
 
 DateTime _getEndOfMonth(int year, int month) {
-  final startOfMonth = _getStartOfMonth(year, month);
-  final startOfNextMonth = startOfMonth.month != DateTime.december
-      ? _getStartOfMonth(startOfMonth.year, startOfMonth.month + 1)
-      : _getStartOfMonth(startOfMonth.year + 1, DateTime.january);
+  final nextMonth = _nextMonthOf(year, month);
+  final fourthDayOfNextMonth = DateTime(nextMonth.year, nextMonth.month, 4);
+  final firstWeekOfNextMonth = Week.fromDate(fourthDayOfNextMonth);
 
-  return startOfNextMonth.subtract(Duration(days: 1));
+  return firstWeekOfNextMonth.previous.days.last;
+}
+
+DateTime _nextMonthOf(int year, int month) {
+  if (month != DateTime.december) {
+    return DateTime(year, month + 1);
+  } else {
+    return DateTime(year + 1, DateTime.january);
+  }
 }
 
 class WeekRange extends DateTimeRange {

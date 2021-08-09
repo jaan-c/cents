@@ -1,14 +1,15 @@
-import 'package:quiver/time.dart';
+import 'package:isoweek/isoweek.dart';
+
+import 'date_time_range.dart';
 
 class WeekOfMonth {
-  static const values = [first, second, third, fourth, fifth, sixth];
+  static const values = [first, second, third, fourth, fifth];
 
   static const first = WeekOfMonth.fromInt(1);
   static const second = WeekOfMonth.fromInt(2);
   static const third = WeekOfMonth.fromInt(3);
   static const fourth = WeekOfMonth.fromInt(4);
   static const fifth = WeekOfMonth.fromInt(5);
-  static const sixth = WeekOfMonth.fromInt(6);
 
   final int _asInt;
 
@@ -17,12 +18,19 @@ class WeekOfMonth {
         _asInt = weekOfMonth;
 
   factory WeekOfMonth.fromDateTime(DateTime dateTime) {
-    final startOfMonth = DateTime(dateTime.year, dateTime.month, 1);
-    final offset = startOfMonth.weekday != DateTime.monday ? 1 : 0;
-    final mondaysSinceStartOfMonth = _dateRange(startOfMonth, dateTime, aDay)
-        .where((d) => d.weekday == DateTime.monday);
+    final firstDayOfMonth = MonthRange(dateTime.year, dateTime.month).start;
+    final firstWeekOfMonth = Week.fromDate(firstDayOfMonth);
 
-    return WeekOfMonth.fromInt(mondaysSinceStartOfMonth.length + offset);
+    var weekOfMonth = 1;
+    var week = firstWeekOfMonth;
+    while (true) {
+      if (WeekRange.ofYear(week.year, week.weekNumber).isInRange(dateTime)) {
+        return WeekOfMonth.fromInt(weekOfMonth);
+      }
+
+      weekOfMonth++;
+      week = week.next;
+    }
   }
 
   @override
@@ -59,19 +67,5 @@ class WeekOfMonth {
       default:
         throw StateError('Invalid week of month ${toInt()}');
     }
-  }
-}
-
-Iterable<DateTime> _dateRange(
-    DateTime start, DateTime end, Duration interval) sync* {
-  assert(interval != Duration.zero);
-  start = DateTime(start.year, start.month, start.day);
-  end = DateTime(end.year, end.month, end.day);
-
-  var current = start;
-  while (current == end || current.isBefore(end)) {
-    yield current;
-
-    current = current.add(interval);
   }
 }
