@@ -57,19 +57,13 @@ class _ExpenseListPageState
                     ),
             ),
           ),
-          if (model.expenses.isNotEmpty) ...[
-            _sliverListSubheader(
-              context: context,
-              subheaderText: 'Recent Expenses',
-            ),
-            SliverExpenseList(
-              expenses: model.expenses,
-              selectedExpenses: model.selectedExpenses,
-              onToggleSelect: model.toggleSelectExpense,
-              onEditExpense: (expenseId) =>
-                  model.navigateToEditor(context, expenseId),
-            ),
-          ],
+          SliverExpenseList(
+            expenses: model.expenses,
+            selectedExpenses: model.selectedExpenses,
+            onToggleSelect: model.toggleSelectExpense,
+            onEditExpense: (expenseId) =>
+                model.navigateToEditor(context, expenseId),
+          ),
           _sliverBottomOffset(bottomOffsetHeight: _FAB_SIZE + _FAB_PADDING),
         ],
       ),
@@ -146,25 +140,6 @@ class _ExpenseListPageState
             child,
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _sliverListSubheader({
-    required BuildContext context,
-    required String subheaderText,
-  }) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
-
-    return SliverToBoxAdapter(
-      child: ListTile(
-        title: Text(
-          subheaderText,
-          style: textTheme.subtitle2?.apply(color: colorScheme.secondary),
-        ),
-        dense: true,
       ),
     );
   }
