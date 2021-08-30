@@ -30,6 +30,7 @@ class _ExpenseListPageState
     return Scaffold(
       appBar: !model.hasSelectedExpense
           ? _appBar(
+              onOpenAllExpenses: () => model.navigateToAllExpenses(context),
               onOpenCategories: () => model.navigateToCategories(context),
               onOpenSettings: () => model.navigateToSettings(context),
             )
@@ -77,12 +78,17 @@ class _ExpenseListPageState
   }
 
   AppBar _appBar({
+    required VoidCallback onOpenAllExpenses,
     required VoidCallback onOpenCategories,
     required VoidCallback onOpenSettings,
   }) {
     return AppBar(
       title: Text('Cents'),
       actions: [
+        IconButton(
+          onPressed: onOpenAllExpenses,
+          icon: Icon(Icons.list_alt_rounded),
+        ),
         IconButton(
           onPressed: onOpenCategories,
           icon: Icon(Icons.category_rounded),

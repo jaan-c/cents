@@ -1,6 +1,8 @@
 import 'package:cents/src/database/expense_provider.dart';
 import 'package:cents/src/domain/date_time_range.dart';
 import 'package:cents/src/domain/expense.dart';
+import 'package:cents/src/ui/all_expense_page/all_expense_page.dart';
+import 'package:cents/src/ui/all_expense_page/all_expense_page_model.dart';
 import 'package:cents/src/ui/category_list_page/category_list_page.dart';
 import 'package:cents/src/ui/category_list_page/category_list_page_model.dart';
 import 'package:cents/src/ui/expense_editor_page/expense_editor_page.dart';
@@ -151,6 +153,21 @@ class ExpenseListPageModel extends StateModel {
           ),
         );
       }),
+    );
+  }
+
+  Future<void> navigateToAllExpenses(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return AllExpensePage(
+            model: AllExpensePageModel(
+              provider: context.read<ExpenseProvider>(),
+            ),
+          );
+        },
+      ),
     );
   }
 
