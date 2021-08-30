@@ -152,7 +152,7 @@ class _AllExpensePageState
     return ActionChip(
       label: Text(
         costRangeFilter != null
-            ? _amountRangeToString(costRangeFilter)
+            ? 'Cost: ${_amountRangeToString(costRangeFilter)}'
             : 'Cost',
       ),
       onPressed: () => CostRangeFilterDialog.show(
