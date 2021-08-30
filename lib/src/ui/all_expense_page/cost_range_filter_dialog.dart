@@ -36,11 +36,21 @@ class _CostRangeFilterDialogState extends State<CostRangeFilterDialog> {
   late final TextEditingController startCostController;
   late final TextEditingController endCostController;
 
-  bool get areRangeFieldsValid =>
-      (_isValidAmountText(startCostController.text) &&
-          endCostController.text.trim().isEmpty) ||
-      (_isValidAmountText(startCostController.text) &&
-          _isValidAmountText(endCostController.text));
+  bool get areRangeFieldsValid {
+    try {
+      AmountRange(
+        Amount.parse(startCostController.text),
+        Amount.parse(endCostController.text.trim().isNotEmpty
+            ? endCostController.text
+            : startCostController.text),
+      );
+      return true;
+    } on FormatException {
+      return false;
+    } on AssertionError {
+      return false;
+    }
+  }
 
   @override
   void initState() {
@@ -129,12 +139,14 @@ class _CostRangeFilterDialogState extends State<CostRangeFilterDialog> {
     return TextButton(
       onPressed: areRangeFieldsValid
           ? () {
-              onSetCostRange(
-                AmountRange(
-                  Amount.parse(startCostController.text),
-                  Amount.parse(endCostController.text),
-                ),
+              final amountRange = AmountRange(
+                Amount.parse(startCostController.text),
+                Amount.parse(endCostController.text.trim().isNotEmpty
+                    ? endCostController.text
+                    : startCostController.text),
               );
+              onSetCostRange(amountRange);
+
               Navigator.pop(context);
             }
           : null,
