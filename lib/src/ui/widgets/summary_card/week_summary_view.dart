@@ -93,14 +93,10 @@ class WeekSummaryView extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     final monthName = DateFormat(DateFormat.ABBR_MONTH).format(weekRange.start);
-    final yearString = DateFormat(DateFormat.YEAR).format(weekRange.start);
     final weekOfMonth =
         WeekOfMonth.fromDateTime(weekRange.start).toOrdinalString();
-    final weekOfYear =
-        _intToOrdinalString(Week.fromDate(weekRange.start).weekNumber);
 
     final weekOfMonthLabel = '$weekOfMonth week of $monthName';
-    final weekOfYearLabel = '$weekOfYear week of $yearString';
     final enDash = '\u2013';
     final weekRangeLabel =
         '${DateFormat.MMMd().format(weekRange.start)}$enDash${DateFormat.MMMd().format(weekRange.end)}';
@@ -111,7 +107,6 @@ class WeekSummaryView extends StatelessWidget {
       children: [
         Text(weekCost.toLocalString(), style: textTheme.headline5),
         Text(weekOfMonthLabel, style: textTheme.bodyText2),
-        Text(weekOfYearLabel, style: textTheme.bodyText2),
         Text(weekRangeLabel, style: textTheme.bodyText2),
       ],
     );
@@ -123,34 +118,4 @@ class WeekSummaryView extends StatelessWidget {
 
     return CategoryBreakdown(categoryCosts: categoryCosts);
   }
-}
-
-String _intToOrdinalString(int n) {
-  final lastDigit = int.parse(n.toString().split('').last);
-
-  late final String suffix;
-  switch (lastDigit) {
-    case 1:
-      suffix = 'st';
-      break;
-    case 2:
-      suffix = 'nd';
-      break;
-    case 3:
-      suffix = 'rd';
-      break;
-    case 0:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
-      suffix = 'th';
-      break;
-    default:
-      throw StateError('Unhandled lastDigit $lastDigit');
-  }
-
-  return '$n$suffix';
 }
