@@ -2,7 +2,7 @@ import 'package:cents/src/database/amount_range.dart';
 import 'package:cents/src/domain/amount.dart';
 import 'package:flutter/material.dart';
 
-typedef SetCostRangeCallback = void Function(AmountRange);
+typedef SetCostRangeCallback = void Function(AmountRange?);
 
 class CostRangeFilterDialog extends StatefulWidget {
   static Future<void> show({
@@ -87,6 +87,7 @@ class _CostRangeFilterDialogState extends State<CostRangeFilterDialog> {
         ],
       ),
       actions: [
+        _removeButton(onSetCostRange: widget.onSetCostRange),
         _cancelButton(),
         _okButton(
           areRangeFieldsValid: areRangeFieldsValid,
@@ -123,6 +124,16 @@ class _CostRangeFilterDialogState extends State<CostRangeFilterDialog> {
     );
   }
 
+  Widget _removeButton({required SetCostRangeCallback onSetCostRange}) {
+    return TextButton(
+      onPressed: () {
+        onSetCostRange(null);
+        Navigator.pop(context);
+      },
+      child: Text('REMOVE'),
+    );
+  }
+
   Widget _cancelButton() {
     return TextButton(
       onPressed: () => Navigator.pop(context),
@@ -152,14 +163,5 @@ class _CostRangeFilterDialogState extends State<CostRangeFilterDialog> {
           : null,
       child: Text('OK'),
     );
-  }
-}
-
-bool _isValidAmountText(String text) {
-  try {
-    Amount.parse(text);
-    return true;
-  } on FormatException {
-    return false;
   }
 }
