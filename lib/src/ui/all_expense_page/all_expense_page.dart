@@ -96,29 +96,32 @@ class _AllExpensePageState
         Expanded(
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _categoryFilterChip(
-                  context: context,
-                  categoryFilter: categoryNameFilter,
-                  categories: categories,
-                  setCategoryFilter: setCategoryFilter,
-                ),
-                _costRangeFilterChip(
-                  costRangeFilter: costRangeFilter,
-                  setCostRangeFilter: setCostRangeFilter,
-                ),
-                _createdAtRangeFilterChip(
-                  createdAtRangeFilter: createdAtRangeFilter,
-                  setCreatedAtRangeFilter: setCreatedAtRangeFilter,
-                ),
-                _noteKeywordFilterChip(
-                  noteKeywordFilter: noteKeywordFilter,
-                  setNoteKeywordFilter: setNoteKeywordFilter,
-                ),
-              ].intersperse(builder: () => SizedBox(width: 8)),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _categoryFilterChip(
+                    context: context,
+                    categoryFilter: categoryNameFilter,
+                    categories: categories,
+                    setCategoryFilter: setCategoryFilter,
+                  ),
+                  _costRangeFilterChip(
+                    costRangeFilter: costRangeFilter,
+                    setCostRangeFilter: setCostRangeFilter,
+                  ),
+                  _createdAtRangeFilterChip(
+                    createdAtRangeFilter: createdAtRangeFilter,
+                    setCreatedAtRangeFilter: setCreatedAtRangeFilter,
+                  ),
+                  _noteKeywordFilterChip(
+                    noteKeywordFilter: noteKeywordFilter,
+                    setNoteKeywordFilter: setNoteKeywordFilter,
+                  ),
+                ].intersperse(builder: () => SizedBox(width: 8)),
+              ),
             ),
           ),
         )
