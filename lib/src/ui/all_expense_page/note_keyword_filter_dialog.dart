@@ -53,7 +53,7 @@ class _NoteKeywordFilterDialogState extends State<NoteKeywordFilterDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Set Cost Range'),
+      title: Text('Set Keyword'),
       content: _noteKeywordField(controller: noteKeywordController),
       actions: [
         _cancelButton(),
@@ -69,9 +69,8 @@ class _NoteKeywordFilterDialogState extends State<NoteKeywordFilterDialog> {
   Widget _noteKeywordField({required TextEditingController controller}) {
     return TextField(
       controller: controller,
-      keyboardType: TextInputType.numberWithOptions(decimal: true),
       decoration: InputDecoration(
-        labelText: 'Note Keyword',
+        labelText: 'Keyword',
         border: OutlineInputBorder(),
       ),
     );

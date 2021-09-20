@@ -208,10 +208,10 @@ class _AllExpensePageState
     required void Function(String?) setNoteKeywordFilter,
   }) {
     return Container(
-      constraints: BoxConstraints(maxWidth: 100),
+      constraints: BoxConstraints(maxWidth: 200),
       child: ActionChip(
         label: Text(
-          noteKeywordFilter ?? 'Note',
+          noteKeywordFilter != null ? 'Keyword: $noteKeywordFilter' : 'Keyword',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
