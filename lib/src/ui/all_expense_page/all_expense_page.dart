@@ -132,7 +132,7 @@ class _AllExpensePageState
     required List<ExpenseCategory> categories,
     required void Function(ExpenseCategory?) setCategoryFilter,
   }) {
-    return ActionChip(
+    return InputChip(
       label: Text(categoryFilter != null
           ? 'Category: ${categoryFilter.name}'
           : 'Category'),
@@ -142,6 +142,7 @@ class _AllExpensePageState
         categories: categories,
         onSelectCategory: setCategoryFilter,
       ),
+      onDeleted: categoryFilter != null ? () => setCategoryFilter(null) : null,
     );
   }
 
@@ -149,7 +150,7 @@ class _AllExpensePageState
     required AmountRange? costRangeFilter,
     required void Function(AmountRange?) setCostRangeFilter,
   }) {
-    return ActionChip(
+    return InputChip(
       label: Text(
         costRangeFilter != null
             ? 'Cost: ${_amountRangeToString(costRangeFilter)}'
@@ -160,6 +161,8 @@ class _AllExpensePageState
         costRange: costRangeFilter,
         onSetCostRange: setCostRangeFilter,
       ),
+      onDeleted:
+          costRangeFilter != null ? () => setCostRangeFilter(null) : null,
     );
   }
 
@@ -176,7 +179,7 @@ class _AllExpensePageState
     required DateTimeRange? createdAtRangeFilter,
     required void Function(DateTimeRange?) setCreatedAtRangeFilter,
   }) {
-    return ActionChip(
+    return InputChip(
       label: Text(createdAtRangeFilter != null
           ? 'Date: ${_dateRangeToString(createdAtRangeFilter)}'
           : 'Date'),
@@ -185,6 +188,9 @@ class _AllExpensePageState
         createdAtRange: createdAtRangeFilter,
         onSetCreatedAtRange: setCreatedAtRangeFilter,
       ),
+      onDeleted: createdAtRangeFilter != null
+          ? () => setCreatedAtRangeFilter(null)
+          : null,
     );
   }
 
@@ -209,7 +215,7 @@ class _AllExpensePageState
   }) {
     return Container(
       constraints: BoxConstraints(maxWidth: 200),
-      child: ActionChip(
+      child: InputChip(
         label: Text(
           noteKeywordFilter != null ? 'Keyword: $noteKeywordFilter' : 'Keyword',
           maxLines: 1,
@@ -220,6 +226,8 @@ class _AllExpensePageState
           noteKeyword: noteKeywordFilter,
           onSetNoteKeyword: setNoteKeywordFilter,
         ),
+        onDeleted:
+            noteKeywordFilter != null ? () => setNoteKeywordFilter(null) : null,
       ),
     );
   }

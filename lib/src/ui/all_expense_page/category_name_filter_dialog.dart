@@ -1,7 +1,7 @@
 import 'package:cents/src/domain/expense_category.dart';
 import 'package:flutter/material.dart';
 
-typedef SelectCategoryCallback = void Function(ExpenseCategory?);
+typedef SelectCategoryCallback = void Function(ExpenseCategory);
 
 class CategoryFilterDialog extends StatelessWidget {
   static Future<void> show({
@@ -46,16 +46,6 @@ class CategoryFilterDialog extends StatelessWidget {
               Navigator.pop(context);
             },
             isSelected: c == category,
-          ),
-        if (category != null)
-          ListTile(
-            leading: Icon(Icons.remove_circle_outline_rounded),
-            title: Text('Remove filter'),
-            onTap: () {
-              onSelectCategory(null);
-              Navigator.pop(context);
-            },
-            dense: true,
           ),
       ],
     );
