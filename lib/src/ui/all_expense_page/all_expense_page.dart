@@ -178,7 +178,7 @@ class _AllExpensePageState
   }) {
     return ActionChip(
       label: Text(createdAtRangeFilter != null
-          ? _dateRangeToString(createdAtRangeFilter)
+          ? 'Date: ${_dateRangeToString(createdAtRangeFilter)}'
           : 'Date'),
       onPressed: () => CreatedAtRangeFilterDialog.show(
         context: context,
