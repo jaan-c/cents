@@ -174,7 +174,9 @@ class _AllExpensePageState
       return range.start.toLocalString();
     } else {
       final enDash = '\u2013';
-      return '${range.start.toLocalString()}$enDash${range.end.toLocalString()}';
+      final start = range.start.toLocalString();
+      final end = range.end.toLocalString();
+      return '$start$enDash$end';
     }
   }
 
@@ -204,12 +206,10 @@ class _AllExpensePageState
       return DateFormat.MMMd().format(range.start);
     } else {
       final enDash = '\u2013';
-      return '${DateFormat.MMMd().format(range.start)}$enDash${DateFormat.MMMd().format(range.end)}';
+      final start = DateFormat.MMMd().format(range.start);
+      final end = DateFormat.MMMd().format(range.end);
+      return '$start$enDash$end';
     }
-  }
-
-  bool _isSameDay(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   Widget _noteKeywordFilterChip({
@@ -234,4 +234,8 @@ class _AllExpensePageState
       ),
     );
   }
+}
+
+bool _isSameDay(DateTime a, DateTime b) {
+  return a.year == b.year && a.month == b.month && a.day == b.day;
 }
