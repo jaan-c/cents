@@ -16,6 +16,7 @@ class CreatedAtRangeFilterDialog {
           : null,
       firstDate: DateTime.fromMillisecondsSinceEpoch(0),
       lastDate: DateTime(2100),
+      saveText: 'OK',
     );
 
     if (dateTimeRange != null) {
