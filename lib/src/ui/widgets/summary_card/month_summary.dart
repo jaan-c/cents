@@ -8,17 +8,17 @@ import 'package:cents/src/domain/expense_list_ext.dart';
 import 'package:cents/src/domain/week_of_month.dart';
 
 class MonthSummary {
-  final int year;
-  final int month;
-
+  final MonthRange monthRange;
   final List<Expense> expenses;
 
   List<ExpenseCategory> get categories =>
       expenses.map((e) => e.category).toSet().toList()..sort();
 
   List<WeekOfMonth> get weeks {
-    final lastDayOfMonth = DateTime(year, month).lastDayOfMonth;
-    final lastWeekOfMonth = DateTime(year, month, lastDayOfMonth).weekOfMonth;
+    final lastDayOfMonth =
+        DateTime(monthRange.year, monthRange.month).lastDayOfMonth;
+    final lastWeekOfMonth =
+        DateTime(monthRange.year, monthRange.month, lastDayOfMonth).weekOfMonth;
 
     return WeekOfMonth.values.take(lastWeekOfMonth.toInt()).toList();
   }
@@ -26,9 +26,8 @@ class MonthSummary {
   bool get isEmpty => expenses.isEmpty;
   bool get isNotEmpty => expenses.isNotEmpty;
 
-  MonthSummary(this.year, this.month, List<Expense> expenses)
-      : assert(expenses
-            .every((e) => MonthRange(year, month).isInRange(e.createdAt))),
+  MonthSummary(this.monthRange, List<Expense> expenses)
+      : assert(expenses.every((e) => monthRange.isInRange(e.createdAt))),
         expenses = List.unmodifiable(expenses);
 
   List<Expense> getBy({ExpenseCategory? category, WeekOfMonth? weekOfMonth}) {
