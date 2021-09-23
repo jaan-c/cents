@@ -57,10 +57,8 @@ DateTime _getStartOfMonth(int year, int month) {
 
 DateTime _getEndOfMonth(int year, int month) {
   final nextMonth = _nextMonthOf(year, month);
-  final fourthDayOfNextMonth = DateTime(nextMonth.year, nextMonth.month, 4);
-  final firstWeekOfNextMonth = Week.fromDate(fourthDayOfNextMonth);
-
-  return firstWeekOfNextMonth.previous.days.last;
+  final startOfNextMonth = _getStartOfMonth(nextMonth.year, nextMonth.month);
+  return startOfNextMonth.subtract(Duration(microseconds: 1));
 }
 
 DateTime _nextMonthOf(int year, int month) {
