@@ -3,7 +3,6 @@ import 'package:cents/src/domain/expense_category.dart';
 import 'package:cents/src/domain/amount.dart';
 import 'package:cents/src/domain/date_time_range.dart';
 import 'package:cents/src/domain/expense.dart';
-import 'package:cents/src/domain/ext_date_time.dart';
 import 'package:cents/src/domain/expense_list_ext.dart';
 import 'package:cents/src/domain/week_of_month.dart';
 
@@ -15,12 +14,10 @@ class MonthSummary {
       expenses.map((e) => e.category).toSet().toList()..sort();
 
   List<WeekOfMonth> get weeks {
-    final lastDayOfMonth =
-        DateTime(monthRange.year, monthRange.month).lastDayOfMonth;
-    final lastWeekOfMonth =
-        DateTime(monthRange.year, monthRange.month, lastDayOfMonth).weekOfMonth;
+    final difference = monthRange.end.difference(monthRange.start);
+    final weekCount = difference.inDays ~/ 7;
 
-    return WeekOfMonth.values.take(lastWeekOfMonth.toInt()).toList();
+    return WeekOfMonth.values.take(weekCount).toList();
   }
 
   bool get isEmpty => expenses.isEmpty;
