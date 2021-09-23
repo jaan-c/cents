@@ -15,7 +15,8 @@ class MonthSummary {
 
   List<WeekOfMonth> get weeks {
     final difference = monthRange.end.difference(monthRange.start);
-    final weekCount = difference.inDays ~/ 7;
+    // Add 1 to difference since last day is 1 microsecond less from 24 hours.
+    final weekCount = (difference.inDays + 1) ~/ 7;
 
     return WeekOfMonth.values.take(weekCount).toList();
   }
