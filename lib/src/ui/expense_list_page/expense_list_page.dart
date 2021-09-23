@@ -1,4 +1,5 @@
 import 'package:cents/src/ui/widgets/state_model.dart';
+import 'package:cents/src/ui/widgets/summary_card/month_summary.dart';
 import 'package:cents/src/ui/widgets/summary_card/month_summary_view.dart';
 import 'package:cents/src/ui/widgets/summary_card/week_summary_view.dart';
 import 'package:flutter/material.dart';
@@ -52,8 +53,8 @@ class _ExpenseListPageState
                       onSetWeekRange: model.setWeekRange,
                     )
                   : MonthSummaryView(
-                      monthRange: model.monthRange,
-                      expenses: model.expenses,
+                      monthSummary:
+                          MonthSummary(model.monthRange, model.expenses),
                       onSetMonthRange: model.setMonthRange,
                     ),
             ),

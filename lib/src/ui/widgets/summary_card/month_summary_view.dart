@@ -1,6 +1,5 @@
 import 'package:cents/src/domain/amount.dart';
 import 'package:cents/src/domain/date_time_range.dart';
-import 'package:cents/src/domain/expense.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -11,23 +10,16 @@ import 'month_summary_chart.dart';
 typedef SetMonthRangeCallback = void Function(MonthRange);
 
 class MonthSummaryView extends StatelessWidget {
-  final MonthRange monthRange;
-  final List<Expense> expenses;
+  final MonthSummary monthSummary;
   final SetMonthRangeCallback onSetMonthRange;
 
   MonthSummaryView({
-    required this.monthRange,
-    required this.expenses,
+    required this.monthSummary,
     required this.onSetMonthRange,
-  }) : assert(expenses.every((e) => monthRange.isInRange(e.createdAt)));
+  });
 
   @override
   Widget build(BuildContext context) {
-    final monthSummary = MonthSummary(
-      monthRange.start.year,
-      monthRange.start.month,
-      expenses,
-    );
     final monthCost = monthSummary.totalCostBy();
 
     return Column(
@@ -37,7 +29,7 @@ class MonthSummaryView extends StatelessWidget {
         _header(
           context: context,
           monthCost: monthCost,
-          monthRange: monthRange,
+          monthRange: monthSummary.monthRange,
           onSetMonthRange: onSetMonthRange,
         ),
         SizedBox(height: 24),
