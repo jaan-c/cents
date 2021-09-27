@@ -17,14 +17,6 @@ class DateTimeRange {
   }
 }
 
-class DateRange extends DateTimeRange {
-  DateRange(DateTime startDay, DateTime endDay)
-      : super(
-          DateTime(startDay.year, startDay.month, startDay.day),
-          DateTime(endDay.year, endDay.month, endDay.day, 23, 59, 59, 999),
-        );
-}
-
 class MonthRange extends DateTimeRange {
   final int year;
   final int month;

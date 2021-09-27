@@ -1,5 +1,6 @@
 import 'package:cents/src/database/amount_range.dart';
 import 'package:cents/src/domain/date_time_range.dart';
+import 'package:cents/src/domain/day_range.dart';
 import 'package:cents/src/domain/expense_category.dart';
 import 'package:cents/src/ui/widgets/state_model.dart';
 import 'package:cents/src/ui/widgets/ext_widget_list.dart';
@@ -200,7 +201,7 @@ class _AllExpensePageState
   }
 
   String _dateRangeToString(DateTimeRange dateTimeRange) {
-    final range = DateRange(dateTimeRange.start, dateTimeRange.end);
+    final range = DayRange(dateTimeRange.start, dateTimeRange.end);
 
     if (_isSameDay(range.start, range.end)) {
       return DateFormat.MMMd().format(range.start);
