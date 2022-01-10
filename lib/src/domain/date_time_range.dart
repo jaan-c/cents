@@ -60,29 +60,3 @@ DateTime _nextMonthOf(int year, int month) {
     return DateTime(year + 1, DateTime.january);
   }
 }
-
-class WeekRange extends DateTimeRange {
-  WeekRange get previous {
-    final previousWeek = Week.fromDate(start).previous;
-    return WeekRange.ofYear(previousWeek.year, previousWeek.weekNumber);
-  }
-
-  WeekRange get next {
-    final nextWeek = Week.fromDate(start).next;
-    return WeekRange.ofYear(nextWeek.year, nextWeek.weekNumber);
-  }
-
-  WeekRange.ofYear(int year, int weekOfYear)
-      : super(_getStartOfWeekOfYear(year, weekOfYear),
-            _getEndOfWeekOfYear(year, weekOfYear));
-}
-
-DateTime _getStartOfWeekOfYear(int year, int weekOfYear) {
-  final week = Week(year: year, weekNumber: weekOfYear);
-  return week.day(0); // Monday
-}
-
-DateTime _getEndOfWeekOfYear(int year, int weekOfYear) {
-  final week = Week(year: year, weekNumber: weekOfYear);
-  return week.day(6); // Sunday
-}

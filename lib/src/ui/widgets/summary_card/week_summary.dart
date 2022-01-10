@@ -1,7 +1,7 @@
 import 'package:cents/src/domain/expense.dart';
 
 import 'package:cents/src/domain/amount.dart';
-import 'package:cents/src/domain/date_time_range.dart';
+import 'package:cents/src/domain/week_range.dart';
 import 'package:cents/src/domain/expense_category.dart';
 import 'package:cents/src/domain/expense_list_ext.dart';
 
@@ -16,7 +16,8 @@ class WeekSummary {
 
   WeekSummary(this.year, this.weekOfYear, List<Expense> expenses)
       : assert(expenses.every((element) =>
-            WeekRange.ofYear(year, weekOfYear).isInRange(element.createdAt))),
+            WeekRange.fromWeekOfYear(year, weekOfYear)
+                .isInRange(element.createdAt))),
         expenses = List.unmodifiable(expenses);
 
   List<Expense> getBy({

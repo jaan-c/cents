@@ -10,8 +10,8 @@ import 'package:cents/src/ui/expense_editor_page/expense_editor_page_model.dart'
 import 'package:cents/src/ui/settings_page/settings_page.dart';
 import 'package:cents/src/ui/widgets/state_model.dart';
 import 'package:flutter/material.dart' hide DateTimeRange;
-import 'package:isoweek/isoweek.dart';
 import 'package:provider/provider.dart';
+import 'package:cents/src/domain/week_range.dart';
 
 typedef OpenEditorCallback = void Function(int expenseId);
 
@@ -50,8 +50,7 @@ class ExpenseListPageModel extends StateModel {
   }) {
     currentDateTime ??= DateTime.now();
 
-    final week = Week.fromDate(currentDateTime);
-    final weekRange = WeekRange.ofYear(week.year, week.weekNumber);
+    final weekRange = WeekRange.fromDateTime(currentDateTime);
     final monthRange = MonthRange(currentDateTime.year, currentDateTime.month);
 
     return ExpenseListPageModel._internal(

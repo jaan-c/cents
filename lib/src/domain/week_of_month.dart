@@ -1,6 +1,7 @@
 import 'package:isoweek/isoweek.dart';
 
 import 'date_time_range.dart';
+import 'week_range.dart';
 
 class WeekOfMonth {
   static const values = [first, second, third, fourth, fifth];
@@ -24,7 +25,8 @@ class WeekOfMonth {
     var weekOfMonth = 1;
     var week = firstWeekOfMonth;
     while (true) {
-      if (WeekRange.ofYear(week.year, week.weekNumber).isInRange(dateTime)) {
+      if (WeekRange.fromWeekOfYear(week.year, week.weekNumber)
+          .isInRange(dateTime)) {
         return WeekOfMonth.fromInt(weekOfMonth);
       }
 
