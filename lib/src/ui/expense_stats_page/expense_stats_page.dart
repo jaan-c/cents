@@ -80,7 +80,7 @@ class _ExpenseStatsPageState
     final chipTheme = ChipTheme.of(context);
     final labelStyle =
         (!selected ? chipTheme.labelStyle : chipTheme.secondaryLabelStyle)
-            .copyWith(fontWeight: FontWeight.w500);
+            !.copyWith(fontWeight: FontWeight.w500);
 
     return ChoiceChip(
       selected: selected,
