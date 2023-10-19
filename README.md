@@ -1,16 +1,17 @@
 # cents
 
-A new Flutter project.
+Expense logging app for Android, written in Flutter. 
 
-## Getting Started
+## Screenshots
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<table>
+    <tr>
+        <td><img src="./screenshots/screenshot1.png" width="216px" height="444px"></img></td>
+        <td><img src="./screenshots/screenshot2.png" width="216px" height="444px"></img></td>
+        <td><img src="./screenshots/screenshot3.png" width="216px" height="444px"></img></td>
+    </tr>
+    <tr>
+        <td><img src="./screenshots/screenshot4.png" width="216px" height="444px"></img></td>
+        <td><img src="./screenshots/screenshot5.png" width="216px" height="444px"></img></td>
+    </tr>
+</table>
