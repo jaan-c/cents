@@ -9,7 +9,7 @@ class ExpenseListTile extends StatelessWidget {
   final VoidCallback? onLongPress;
   final bool isSelected;
 
-  ExpenseListTile({
+  const ExpenseListTile({super.key, 
     required this.expense,
     required this.onTap,
     this.onLongPress,
@@ -27,7 +27,7 @@ class ExpenseListTile extends StatelessWidget {
         onTap: onTap,
         onLongPress: onLongPress,
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +53,7 @@ class ExpenseListTile extends StatelessWidget {
   Widget _createdAtText(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Text(expense.createdAt.relativeDisplay(), style: textTheme.overline);
+    return Text(expense.createdAt.relativeDisplay(), style: textTheme.labelSmall);
   }
 
   Widget _categoryText(BuildContext context) {
@@ -63,7 +63,7 @@ class ExpenseListTile extends StatelessWidget {
       expense.category.name.isNotBlank
           ? expense.category.name
           : 'Uncategorized',
-      style: textTheme.subtitle1,
+      style: textTheme.titleMedium,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
     );
@@ -72,7 +72,7 @@ class ExpenseListTile extends StatelessWidget {
   Widget _costText(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Text(expense.cost.toLocalString(), style: textTheme.subtitle1);
+    return Text(expense.cost.toLocalString(), style: textTheme.titleMedium);
   }
 
   Widget _noteText(BuildContext context) {
@@ -84,7 +84,7 @@ class ExpenseListTile extends StatelessWidget {
 
     return Text(
       expense.note,
-      style: textTheme.bodyText2?.apply(color: textColor),
+      style: textTheme.bodyMedium?.apply(color: textColor),
     );
   }
 }

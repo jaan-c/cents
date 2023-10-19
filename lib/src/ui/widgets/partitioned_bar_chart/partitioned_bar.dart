@@ -12,7 +12,7 @@ class PartitionedBar extends StatelessWidget {
   final double labelOffset;
   final BorderRadius barBorderRadius;
 
-  PartitionedBar({
+  PartitionedBar({super.key, 
     required this.heightFactor,
     required this.label,
     required this.partitionFactors,
@@ -53,7 +53,7 @@ class PartitionedBar extends StatelessWidget {
       return Tooltip(
         message: tooltipText,
         preferBelow: false,
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         child: labeledBar,
       );
     } else {
@@ -68,7 +68,7 @@ class PartitionedBar extends StatelessWidget {
     required double thickness,
     required BorderRadius borderRadius,
   }) {
-    final maxPartitionFlex = 1000;
+    const maxPartitionFlex = 1000;
     final partitions = <Widget>[];
 
     for (var i = 0; i < partitionFactors.length; i++) {
@@ -83,7 +83,7 @@ class PartitionedBar extends StatelessWidget {
       partitions.add(part);
     }
 
-    return Container(
+    return SizedBox(
       width: thickness,
       child: FractionallySizedBox(
         heightFactor: heightFactor,
@@ -107,7 +107,7 @@ class PartitionedBar extends StatelessWidget {
   }) {
     final textTheme = Theme.of(context).textTheme;
 
-    final labelStyle = textTheme.subtitle2!.copyWith(fontSize: 12);
+    final labelStyle = textTheme.titleSmall!.copyWith(fontSize: 12);
 
     return SizedBox.fromSize(
       size: size,

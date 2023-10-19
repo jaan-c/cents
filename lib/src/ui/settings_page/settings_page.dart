@@ -6,13 +6,13 @@ import 'backup_section.dart';
 class SettingsPage extends StatelessWidget {
   final ExpenseProvider provider;
 
-  SettingsPage({required this.provider});
+  const SettingsPage({super.key, required this.provider});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: const Text('Settings'),
       ),
       body: SingleChildScrollView(
         child: Column(

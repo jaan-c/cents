@@ -12,7 +12,7 @@ class SliverExpenseList extends StatelessWidget {
   final ToggleExpenseCallback onToggleSelect;
   final EditExpenseCallback onEditExpense;
 
-  SliverExpenseList({
+  const SliverExpenseList({super.key, 
     required this.expenses,
     required this.selectedExpenses,
     required this.onToggleSelect,
@@ -70,7 +70,7 @@ class SliverExpenseList extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           tile,
-          Divider(height: 1),
+          const Divider(height: 1),
         ],
       );
     }

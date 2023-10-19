@@ -11,7 +11,7 @@ class MonthSummaryCardContent extends StatelessWidget {
   final MonthSummary monthSummary;
   final TextToColor textToColor;
 
-  MonthSummaryCardContent({
+  const MonthSummaryCardContent({super.key, 
     required this.monthSummary,
     required this.textToColor,
   });
@@ -25,7 +25,7 @@ class MonthSummaryCardContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _header(context: context, monthCost: monthCost),
-        SizedBox(height: 24),
+        const SizedBox(height: 24),
         SizedBox(
           height: 150,
           child: MonthSummaryChart(
@@ -33,7 +33,7 @@ class MonthSummaryCardContent extends StatelessWidget {
             textToColor: textToColor,
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         _footer(
           monthSummary: monthSummary,
           textToColor: textToColor,
@@ -55,10 +55,10 @@ class MonthSummaryCardContent extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(monthCost.toLocalString(), style: textTheme.headline5),
+        Text(monthCost.toLocalString(), style: textTheme.headlineSmall),
         Text(
           monthName,
-          style: textTheme.bodyText2,
+          style: textTheme.bodyMedium,
         ),
       ],
     );

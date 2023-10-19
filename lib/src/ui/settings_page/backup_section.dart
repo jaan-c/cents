@@ -8,12 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as pathlib;
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 
 class BackupSection extends StatelessWidget {
   final ExpenseProvider provider;
 
-  BackupSection({required this.provider});
+  const BackupSection({super.key, required this.provider});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class BackupSection extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
     final textStyle =
-        textTheme.subtitle2!.copyWith(color: colorScheme.secondary);
+        textTheme.titleSmall!.copyWith(color: colorScheme.secondary);
 
     return ListTile(
       title: Text('Backup', style: textStyle),
@@ -42,16 +42,16 @@ class BackupSection extends StatelessWidget {
 
   Widget _importTile({required VoidCallback onTap}) {
     return ListTile(
-      title: Text('Import'),
-      subtitle: Text('Import expenses from a JSON file'),
+      title: const Text('Import'),
+      subtitle: const Text('Import expenses from a JSON file'),
       onTap: onTap,
     );
   }
 
   Widget _exportTile({required VoidCallback onTap}) {
     return ListTile(
-      title: Text('Export'),
-      subtitle: Text('Export expenses to a JSON file in Documents'),
+      title: const Text('Export'),
+      subtitle: const Text('Export expenses to a JSON file in Documents'),
       onTap: onTap,
     );
   }
@@ -84,7 +84,7 @@ class BackupSection extends StatelessWidget {
 
     await File(path).writeAsString(json, flush: true);
 
-    await Share.shareFiles([path]);
+    await Share.shareXFiles([XFile(path)]);
   }
 
   String _dateTimeToTimestamp(DateTime dateTime) {

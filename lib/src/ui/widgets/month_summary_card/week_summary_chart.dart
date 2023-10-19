@@ -24,7 +24,7 @@ class WeekSummaryChart extends StatelessWidget {
   final WeekOfMonth weekOfMonth;
   final TextToColor textToColor;
 
-  WeekSummaryChart({
+  const WeekSummaryChart({super.key, 
     required this.monthSummary,
     required this.weekOfMonth,
     required this.textToColor,

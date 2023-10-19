@@ -16,7 +16,7 @@ class WeekSummaryCardContent extends StatelessWidget {
   final ChangeWeekOfMonthCallback onChangeWeekOfMonth;
   final TextToColor textToColor;
 
-  WeekSummaryCardContent({
+  const WeekSummaryCardContent({super.key, 
     required this.monthSummary,
     required this.weekOfMonth,
     required this.onChangeWeekOfMonth,
@@ -35,7 +35,7 @@ class WeekSummaryCardContent extends StatelessWidget {
           weekOfMonth: weekOfMonth,
           onChangeWeekOfMonth: onChangeWeekOfMonth,
         ),
-        SizedBox(height: 24),
+        const SizedBox(height: 24),
         SizedBox(
           height: 150,
           child: WeekSummaryChart(
@@ -44,7 +44,7 @@ class WeekSummaryCardContent extends StatelessWidget {
             textToColor: textToColor,
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         _footer(
           monthSummary: monthSummary,
           weekofMonth: weekOfMonth,
@@ -63,16 +63,16 @@ class WeekSummaryCardContent extends StatelessWidget {
     final weeks = monthSummary.weeks;
     final hasPreviousWeek = weekOfMonth != weeks.first;
     final hasNextWeek = weekOfMonth != weeks.last;
-    final onPreviousWeek = () {
+    onPreviousWeek() {
       final currentIndex = weeks.indexOf(weekOfMonth);
       final previousWeek = weeks[currentIndex - 1];
       onChangeWeekOfMonth(previousWeek);
-    };
-    final onNextweek = () {
+    }
+    onNextweek() {
       final currentIndex = weeks.indexOf(weekOfMonth);
       final nextWeek = weeks[currentIndex + 1];
       onChangeWeekOfMonth(nextWeek);
-    };
+    }
 
     final weekCost = monthSummary.totalCostBy(weekOfMonth: weekOfMonth);
 
@@ -81,7 +81,7 @@ class WeekSummaryCardContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         IconButton(
-          icon: Icon(Icons.navigate_before_rounded),
+          icon: const Icon(Icons.navigate_before_rounded),
           onPressed: hasPreviousWeek ? onPreviousWeek : null,
         ),
         Expanded(
@@ -93,7 +93,7 @@ class WeekSummaryCardContent extends StatelessWidget {
           ),
         ),
         IconButton(
-          icon: Icon(Icons.navigate_next_rounded),
+          icon: const Icon(Icons.navigate_next_rounded),
           onPressed: hasNextWeek ? onNextweek : null,
         ),
       ],
@@ -115,10 +115,10 @@ class WeekSummaryCardContent extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(weekCost.toLocalString(), style: textTheme.headline5),
+        Text(weekCost.toLocalString(), style: textTheme.headlineSmall),
         Text(
           '$weekOfMonthOrdinal week of $monthName',
-          style: textTheme.bodyText2,
+          style: textTheme.bodyMedium,
         ),
       ],
     );

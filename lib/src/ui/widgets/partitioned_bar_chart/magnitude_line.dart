@@ -7,7 +7,7 @@ class MagnitudeLine extends StatelessWidget {
   final Size labelSize;
   final double labelOffset;
 
-  MagnitudeLine({
+  const MagnitudeLine({super.key, 
     required this.label,
     required this.lineThickness,
     required this.labelSize,
@@ -36,7 +36,7 @@ class MagnitudeLine extends StatelessWidget {
   }) {
     final textTheme = Theme.of(context).textTheme;
 
-    final labelStyle = textTheme.subtitle2!.copyWith(fontSize: 12);
+    final labelStyle = textTheme.titleSmall!.copyWith(fontSize: 12);
 
     return SizedBox(
       width: labelSize.width,

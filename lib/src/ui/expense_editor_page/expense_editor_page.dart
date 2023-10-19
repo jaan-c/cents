@@ -10,7 +10,7 @@ typedef _SetCreationTimeCallback = void Function(TimeOfDay);
 class ExpenseEditorPage extends StatefulWidget {
   final ExpenseEditorPageModel model;
 
-  ExpenseEditorPage({required this.model});
+  const ExpenseEditorPage({super.key, required this.model});
 
   @override
   _ExpenseEditorPageState createState() => _ExpenseEditorPageState(model);
@@ -33,7 +33,7 @@ class _ExpenseEditorPageState
       body: SingleChildScrollView(
         primary: true,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -43,14 +43,14 @@ class _ExpenseEditorPageState
                 costController: model.costController,
                 categorySelection: model.categorySelection,
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               _secondaryFields(
                 noteController: model.noteController,
                 createdAt: model.createdAt,
                 setCreationDate: model.setCreationDate,
                 setCreationTime: model.setCreationTime,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _sheetActions(
                 onSave: model.areFieldsValid ? () => model.save(context) : null,
                 onClose: () => model.close(context),
@@ -73,7 +73,7 @@ class _ExpenseEditorPageState
       actions: [
         if (!isExpenseNew)
           IconButton(
-            icon: Icon(Icons.delete_rounded),
+            icon: const Icon(Icons.delete_rounded),
             onPressed: onDelete,
           ),
       ],
@@ -95,7 +95,7 @@ class _ExpenseEditorPageState
             categorySelection: categorySelection,
           ),
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         SizedBox(
           width: 100,
           child: _costField(controller: costController),
@@ -114,7 +114,7 @@ class _ExpenseEditorPageState
       decoration: InputDecoration(
         labelText: 'Category',
         hintText: 'Uncategorized',
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
         suffixIcon: categorySelection.isNotEmpty
             ? _categorySelectionDropdown(
                 controller: controller,
@@ -131,7 +131,7 @@ class _ExpenseEditorPageState
   }) {
     return PopupMenuButton<String>(
       onSelected: (category) => controller.text = category,
-      icon: Icon(Icons.expand_more_rounded),
+      icon: const Icon(Icons.expand_more_rounded),
       itemBuilder: (_) => [
         for (final category in categorySelection)
           PopupMenuItem(
@@ -145,9 +145,9 @@ class _ExpenseEditorPageState
   Widget _costField({required TextEditingController controller}) {
     return TextField(
       controller: controller,
-      keyboardType: TextInputType.numberWithOptions(decimal: true),
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
       autofocus: true,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         labelText: 'Cost',
         hintText: '0.00',
         border: OutlineInputBorder(),
@@ -165,7 +165,7 @@ class _ExpenseEditorPageState
       mainAxisSize: MainAxisSize.min,
       children: [
         _noteField(controller: noteController),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         _creationDateTimePicker(
           createdAt: createdAt,
           setCreationDate: setCreationDate,
@@ -181,7 +181,7 @@ class _ExpenseEditorPageState
       textCapitalization: TextCapitalization.sentences,
       minLines: 3,
       maxLines: 5,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         labelText: 'Note',
         border: OutlineInputBorder(),
       ),
@@ -196,7 +196,7 @@ class _ExpenseEditorPageState
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
 
-    final subheaderStyle = textTheme.subtitle2?.apply(
+    final subheaderStyle = textTheme.titleSmall?.apply(
         color: theme.brightness == Brightness.light
             ? Colors.black54
             : Colors.white54);
@@ -206,7 +206,7 @@ class _ExpenseEditorPageState
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           child: Text('Creation Time', style: subheaderStyle),
         ),
         Row(
@@ -220,7 +220,7 @@ class _ExpenseEditorPageState
                 setCreationDate: setCreationDate,
               ),
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Expanded(
               child: _creationTimePicker(
                 creationTime: TimeOfDay.fromDateTime(createdAt),
@@ -242,7 +242,7 @@ class _ExpenseEditorPageState
       onTap: () => _showDatePicker(
           creationDate: createdAt, setCreationDate: setCreationDate),
       readOnly: true,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         prefixIcon: Icon(Icons.calendar_today_rounded),
         border: OutlineInputBorder(),
       ),
@@ -274,7 +274,7 @@ class _ExpenseEditorPageState
       onTap: () => _showTimePicker(
           creationTime: creationTime, setCreationTime: setCreationTime),
       readOnly: true,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         prefixIcon: Icon(Icons.schedule_rounded),
         border: OutlineInputBorder(),
       ),
@@ -304,9 +304,9 @@ class _ExpenseEditorPageState
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        TextButton(onPressed: onClose, child: Text('CANCEL')),
-        SizedBox(width: 8),
-        ElevatedButton(onPressed: onSave, child: Text('SAVE')),
+        TextButton(onPressed: onClose, child: const Text('CANCEL')),
+        const SizedBox(width: 8),
+        ElevatedButton(onPressed: onSave, child: const Text('SAVE')),
       ],
     );
   }

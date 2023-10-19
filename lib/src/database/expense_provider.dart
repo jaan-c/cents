@@ -106,7 +106,9 @@ class ExpenseProvider with ChangeNotifier {
   ) async {
     await _database.transaction((txn) async {
       final batch = txn.batch();
-      values.forEach((v) => exec(batch, v));
+      for (var v in values) {
+        exec(batch, v);
+      }
       await batch.commit(noResult: true, continueOnError: false);
     });
   }

@@ -11,7 +11,7 @@ const _FAB_PADDING = 16.0;
 class ExpenseListPage extends StatefulWidget {
   final ExpenseListPageModel model;
 
-  ExpenseListPage({required this.model});
+  const ExpenseListPage({super.key, required this.model});
 
   @override
   _ExpenseListPageState createState() => _ExpenseListPageState(model);
@@ -44,7 +44,7 @@ class _ExpenseListPageState
               child: MonthSummaryCard(
                 monthSummary: model.currentMonthSummary,
                 mode: MonthSummaryCardMode.week,
-                margin: EdgeInsets.all(8),
+                margin: const EdgeInsets.all(8),
               ),
             ),
           if (model.expenses.isNotEmpty) ...[
@@ -77,15 +77,15 @@ class _ExpenseListPageState
     required VoidCallback onOpenSettings,
   }) {
     return AppBar(
-      title: Text('Cents'),
+      title: const Text('Cents'),
       actions: [
         IconButton(
           onPressed: onOpenStats,
-          icon: Icon(Icons.table_chart_rounded),
+          icon: const Icon(Icons.table_chart_rounded),
         ),
         IconButton(
           onPressed: onOpenSettings,
-          icon: Icon(Icons.settings_rounded),
+          icon: const Icon(Icons.settings_rounded),
         ),
       ],
     );
@@ -98,13 +98,13 @@ class _ExpenseListPageState
   }) {
     return AppBar(
       leading: IconButton(
-        icon: Icon(Icons.close_rounded),
+        icon: const Icon(Icons.close_rounded),
         onPressed: onClearSelected,
       ),
       title: Text('$selectedCount selected'),
       actions: [
         IconButton(
-          icon: Icon(Icons.delete_rounded),
+          icon: const Icon(Icons.delete_rounded),
           onPressed: onDeleteSelected,
         ),
       ],
@@ -123,7 +123,7 @@ class _ExpenseListPageState
       child: ListTile(
         title: Text(
           subheaderText,
-          style: textTheme.subtitle2?.apply(color: colorScheme.secondary),
+          style: textTheme.titleSmall?.apply(color: colorScheme.secondary),
         ),
         dense: true,
       ),
@@ -139,8 +139,8 @@ class _ExpenseListPageState
   Widget _addExpenseFab({required VoidCallback onPressed}) {
     return FloatingActionButton.extended(
       onPressed: onPressed,
-      icon: Icon(Icons.add_rounded),
-      label: Text('Add Expense'),
+      icon: const Icon(Icons.add_rounded),
+      label: const Text('Add Expense'),
     );
   }
 }

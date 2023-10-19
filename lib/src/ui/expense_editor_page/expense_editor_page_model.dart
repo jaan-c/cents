@@ -4,7 +4,6 @@ import 'package:cents/src/domain/expense.dart';
 import 'package:cents/src/domain/expense_category.dart';
 import 'package:cents/src/ui/widgets/state_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ExpenseEditorPageModel extends StateModel {
   final ExpenseProvider provider;

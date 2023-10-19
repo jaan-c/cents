@@ -22,7 +22,7 @@ class PartitionedBarChart extends StatelessWidget {
   final double magnitudeLabelOffset;
   final double magnitudeLineWidth;
 
-  PartitionedBarChart({
+  PartitionedBarChart({super.key, 
     required this.maxValue,
     required this.barDatas,
     this.magnitudePartitionCount = 2,

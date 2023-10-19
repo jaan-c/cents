@@ -17,7 +17,7 @@ class MonthSummaryCard extends StatefulWidget {
   final WeekOfMonth weekOfMonth;
   final EdgeInsetsGeometry margin;
 
-  MonthSummaryCard._internal({
+  const MonthSummaryCard._internal({
     required this.monthSummary,
     required this.mode,
     required this.weekOfMonth,
@@ -84,7 +84,7 @@ class _MonthSummaryCardState extends State<MonthSummaryCard> {
     return Card(
       margin: margin,
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,

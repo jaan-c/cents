@@ -8,7 +8,7 @@ class CategoryBreakdown extends StatelessWidget {
   final Map<ExpenseCategory, Amount> categoryCosts;
   final TextToColor textToColor;
 
-  CategoryBreakdown({
+  CategoryBreakdown({super.key, 
     required Map<ExpenseCategory, Amount> categoryCosts,
     required this.textToColor,
   }) : categoryCosts = Map.fromEntries(
@@ -66,7 +66,7 @@ class CategoryBreakdown extends StatelessWidget {
         brightness == Brightness.light ? Colors.black12 : Colors.white10;
 
     return Container(
-      padding: EdgeInsets.fromLTRB(8, 4, 12, 4),
+      padding: const EdgeInsets.fromLTRB(8, 4, 12, 4),
       decoration: ShapeDecoration(
         shape: RoundedRectangleBorder(
           side: BorderSide(color: borderColor),
@@ -82,11 +82,11 @@ class CategoryBreakdown extends StatelessWidget {
             color: bulletColor,
             size: 16,
           ),
-          SizedBox(width: 4),
+          const SizedBox(width: 4),
           ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 100),
+            constraints: const BoxConstraints(maxWidth: 100),
             child: DefaultTextStyle(
-              style: textTheme.bodyText2!.copyWith(fontSize: 12),
+              style: textTheme.bodyMedium!.copyWith(fontSize: 12),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               child: Column(

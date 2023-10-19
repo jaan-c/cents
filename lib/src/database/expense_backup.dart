@@ -35,7 +35,7 @@ extension _JsonDecoder on String {
           .map((m) => (m as Map<String, dynamic>).cast<String, Object>())
           .toList();
     } on TypeError catch (_) {
-      throw FormatException('Unexpected JSON schema.');
+      throw const FormatException('Unexpected JSON schema.');
     }
 
     return maps.map((m) => m.fromRow()).toList();

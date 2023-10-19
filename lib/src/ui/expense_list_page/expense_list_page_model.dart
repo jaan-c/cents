@@ -7,7 +7,6 @@ import 'package:cents/src/ui/expense_stats_page/expense_stats_page.dart';
 import 'package:cents/src/ui/expense_stats_page/expense_stats_page_model.dart';
 import 'package:cents/src/ui/settings_page/settings_page.dart';
 import 'package:cents/src/ui/widgets/state_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

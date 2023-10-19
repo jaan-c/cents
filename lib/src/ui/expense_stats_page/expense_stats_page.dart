@@ -9,7 +9,7 @@ import 'expense_stats_page_model.dart';
 class ExpenseStatsPage extends StatefulWidget {
   final ExpenseStatsPageModel model;
 
-  ExpenseStatsPage({required this.model});
+  const ExpenseStatsPage({super.key, required this.model});
 
   @override
   _ExpenseStatsPageState createState() => _ExpenseStatsPageState(model);
@@ -25,7 +25,7 @@ class _ExpenseStatsPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Stats')),
+      appBar: AppBar(title: const Text('Stats')),
       body: SingleChildScrollView(
         primary: true,
         child: Padding(
@@ -40,7 +40,7 @@ class _ExpenseStatsPageState
                 selectedYear: model.selectedYear,
                 onSelectYear: model.selectYear,
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               if (model.selectedYearSummary.isNotEmpty)
                 _monthSummaryCards(yearSummary: model.selectedYearSummary),
             ],
@@ -67,7 +67,7 @@ class _ExpenseStatsPageState
               onSelected: () => onSelectYear(year),
               label: Text(year.toString()),
             ),
-        ].intersperse(builder: () => SizedBox(width: 8)),
+        ].intersperse(builder: () => const SizedBox(width: 8)),
       ),
     );
   }
@@ -101,7 +101,7 @@ class _ExpenseStatsPageState
               margin: EdgeInsets.zero,
               monthSummary: monthSummary,
             ),
-      ].intersperse(builder: () => SizedBox(height: 8)),
+      ].intersperse(builder: () => const SizedBox(height: 8)),
     );
   }
 }

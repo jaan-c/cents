@@ -12,7 +12,7 @@ class MonthSummaryChart extends StatelessWidget {
   final MonthSummary monthSummary;
   final TextToColor textToColor;
 
-  MonthSummaryChart({required this.monthSummary, required this.textToColor});
+  const MonthSummaryChart({super.key, required this.monthSummary, required this.textToColor});
 
   @override
   Widget build(BuildContext context) {
